@@ -26,7 +26,6 @@ import TextField from "../Shared/TextFieldWithAvatar";
 import SelectedImages from "../Images/Selected";
 import ImageInput from "../Images/Input";
 import { FieldNames, ResourcePaths } from "../../constants/common";
-import FormToggle from "../Motions/FormToggle";
 
 const CardActions = withStyles(() =>
   createStyles({
@@ -46,10 +45,7 @@ export interface PostsFormProps {
   posts?: ClientPost[];
   isEditing?: boolean;
   setPosts?: (posts: ClientPost[]) => void;
-  group?: ClientGroup;
-  event?: ClientEvent;
   bodyPlaceholder?: string;
-  withoutToggle?: boolean;
 }
 
 const PostsForm = ({
@@ -57,10 +53,7 @@ const PostsForm = ({
   posts,
   isEditing,
   setPosts,
-  group,
-  event,
   bodyPlaceholder,
-  withoutToggle,
 }: PostsFormProps) => {
   const [imagesInputKey, setImagesInputKey] = useState("");
   const [savedImages, setSavedImages] = useState<ClientImage[]>([]);
@@ -107,8 +100,6 @@ const PostsForm = ({
             variables: {
               body,
               images,
-              groupId: group?.id,
-              eventId: event?.id,
               userId: currentUser.id,
             },
           });
@@ -208,8 +199,6 @@ const PostsForm = ({
                 refreshKey={imagesInputKey}
                 multiple
               />
-
-              {!withoutToggle && <FormToggle />}
             </div>
 
             <SubmitButton

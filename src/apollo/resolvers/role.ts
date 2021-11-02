@@ -1,4 +1,5 @@
 import { ApolloError } from "apollo-server-micro";
+import { Role } from ".prisma/client";
 import prisma from "../../utils/initPrisma";
 import {
   ADMIN_ROLE_NAME,
@@ -7,13 +8,9 @@ import {
   INITIAL_GLOBAL_PERMISSIONS,
   INITIAL_GROUP_PERMISSIONS,
 } from "../../constants/role";
-import {
-  initializePermissions,
-  syncWithNewRolePermissions,
-} from "../models/role";
+import { initializePermissions } from "../models/role";
 import { TypeNames } from "../../constants/common";
 import Messages from "../../utils/messages";
-import { Role } from ".prisma/client";
 import { groupConnect } from "../models/group";
 
 interface RoleInput {
@@ -32,16 +29,9 @@ const roleResolvers = {
       return role;
     },
 
-    rolesByGroupId: async (_: any, { groupId }: { groupId: string }) => {
-      const roles = await prisma.role.findMany({
-        where: { groupId: parseInt(groupId) },
-      });
-      return roles;
-    },
-
     globalRoles: async () => {
       // TODO: Comment out the line below after refreshing on /roles to update all roles with new permissions
-      syncWithNewRolePermissions();
+      // syncWithNewRolePermissions();
 
       const roles = await prisma.role.findMany({
         where: { global: true },
@@ -54,11 +44,9 @@ const roleResolvers = {
     async createRole(
       _: any,
       {
-        groupId,
         global,
         input,
       }: {
-        groupId: string;
         global: boolean;
         input: RoleInput;
       }
@@ -72,17 +60,13 @@ const roleResolvers = {
             name,
             color,
             global,
-            ...groupConnect(groupId),
           },
         });
       } catch {
         throw new ApolloError(Messages.roles.errors.create());
       }
 
-      initializePermissions(
-        groupId ? INITIAL_GROUP_PERMISSIONS : INITIAL_GLOBAL_PERMISSIONS,
-        role
-      );
+      initializePermissions(INITIAL_GLOBAL_PERMISSIONS, role);
 
       return { role };
     },

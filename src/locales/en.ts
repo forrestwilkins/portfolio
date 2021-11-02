@@ -1,7 +1,7 @@
 import { pluralize } from "../utils/items";
 
 const en = {
-  brand: () => "praxis",
+  brand: () => "Portfolio",
 
   actions: {
     add: () => "Add",
@@ -17,7 +17,7 @@ const en = {
     pickColor: () => "Pick a Color",
     save: () => "Save",
     seeMore: () => "See More",
-    search: () => "Search Praxis",
+    search: () => "Search",
     share: () => "Share",
     submit: () => "Submit",
   },
@@ -63,10 +63,7 @@ const en = {
       about: () => "About",
     },
     welcomeCard: {
-      welcome: () => "Welcome to Praxis",
-      about: () =>
-        `Praxis is an open source social networking site. Motions are the main focus and come with a wide variety of voting features, with consensus as the default. Create a group and set it to no-admin, allowing group members to create motions and democratically decide on settings, name, theme, or planning of real world events.`,
-      inDev: () => "This project is still in development.",
+      welcome: () => "Welcome",
     },
   },
 

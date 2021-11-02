@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { useRouter } from "next/router";
 import { useQuery } from "@apollo/client";
 import Link from "next/link";
 import {
@@ -17,20 +16,15 @@ import { IMAGES_BY_POST_ID } from "../../apollo/client/queries";
 import UserAvatar from "../Users/Avatar";
 import ItemMenu from "../Shared/ItemMenu";
 import styles from "../../styles/Shared/Shared.module.scss";
-import GroupItemAvatar from "../Groups/ItemAvatar";
 import { ModelNames, ResourcePaths } from "../../constants/common";
-import { GlobalPermissions, GroupPermissions } from "../../constants/role";
+import { GlobalPermissions } from "../../constants/role";
 import {
   useCurrentUser,
-  useEventById,
-  useGroupById,
-  useHasPermissionByGroupId,
   useHasPermissionGlobally,
   useUserById,
 } from "../../hooks";
 import { noCache, timeAgo } from "../../utils/clientIndex";
 import CardFooter from "./CardFooter";
-import EventItemAvatar from "../Events/ItemAvatar";
 
 const useStyles = makeStyles({
   cardHeaderTitle: {
@@ -47,18 +41,12 @@ interface Props {
 }
 
 const Post = ({ post, deletePost }: Props) => {
-  const { id, userId, groupId, eventId, postGroupId, body, createdAt } = post;
+  const { id, userId, body, createdAt } = post;
   const currentUser = useCurrentUser();
   const [canManagePostsGlobally] = useHasPermissionGlobally(
     GlobalPermissions.ManagePosts
   );
-  const [canManagePostsByGroup] = useHasPermissionByGroupId(
-    GroupPermissions.ManagePosts,
-    groupId
-  );
   const [user] = useUserById(userId);
-  const [event] = useEventById(eventId);
-  const [group] = useGroupById(groupId ? groupId : postGroupId);
   const [images, setImages] = useState<ClientImage[]>([]);
   const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
   const imagesRes = useQuery(IMAGES_BY_POST_ID, {
@@ -66,7 +54,6 @@ const Post = ({ post, deletePost }: Props) => {
     ...noCache,
   });
   const classes = useStyles();
-  const router = useRouter();
 
   useEffect(() => {
     if (imagesRes.data) setImages(imagesRes.data.imagesByPostId);
@@ -77,39 +64,20 @@ const Post = ({ post, deletePost }: Props) => {
     return false;
   };
 
-  const onGroupPage = (): boolean => {
-    return router.asPath.includes(ResourcePaths.Group);
-  };
-
-  const onEventPage = (): boolean => {
-    return router.asPath.includes(ResourcePaths.Event);
-  };
-
   return (
     <div key={id}>
       <Card>
         <CardHeader
-          avatar={
-            group && !onGroupPage() ? (
-              <GroupItemAvatar user={user} group={group} post={post} />
-            ) : event && !onEventPage() ? (
-              <EventItemAvatar user={user} event={event} post={post} />
-            ) : (
-              <UserAvatar user={user} />
-            )
-          }
+          avatar={<UserAvatar user={user} />}
           title={
-            (!group || onGroupPage()) &&
-            (!event || onEventPage()) && (
-              <>
-                <Link href={`${ResourcePaths.User}${user?.name}`}>
-                  <a>{user?.name}</a>
-                </Link>
-                <Link href={`${ResourcePaths.Post}${id}`}>
-                  <a className={styles.timeAgo}>{timeAgo(createdAt)}</a>
-                </Link>
-              </>
-            )
+            <>
+              <Link href={`${ResourcePaths.User}${user?.name}`}>
+                <a>{user?.name}</a>
+              </Link>
+              <Link href={`${ResourcePaths.Post}${id}`}>
+                <a className={styles.timeAgo}>{timeAgo(createdAt)}</a>
+              </Link>
+            </>
           }
           action={
             <ItemMenu
@@ -119,9 +87,7 @@ const Post = ({ post, deletePost }: Props) => {
               setAnchorEl={setMenuAnchorEl}
               deleteItem={deletePost}
               canEdit={ownPost()}
-              canDelete={
-                ownPost() || canManagePostsGlobally || canManagePostsByGroup
-              }
+              canDelete={ownPost() || canManagePostsGlobally}
             />
           }
           classes={{ title: classes.cardHeaderTitle }}

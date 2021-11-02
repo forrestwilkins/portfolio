@@ -59,18 +59,6 @@ const postResolvers = {
       });
       return user?.posts;
     },
-
-    postsByGroupName: async (_: any, { name }: { name: string }) => {
-      const group = await prisma.group.findFirst({
-        where: {
-          name,
-        },
-        include: {
-          posts: true,
-        },
-      });
-      return group?.posts;
-    },
   },
 
   Mutation: {

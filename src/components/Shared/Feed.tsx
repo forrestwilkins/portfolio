@@ -8,16 +8,13 @@ import { useReactiveVar } from "@apollo/client";
 import { Card, LinearProgress } from "@material-ui/core";
 
 import { feedVar } from "../../apollo/client/localState";
-import Motion from "../Motions/Motion";
 import Post from "../Posts/Post";
-import { TypeNames } from "../../constants/common";
 
 interface Props {
-  deleteMotion?: (id: string) => void;
   deletePost: (id: string) => void;
 }
 
-const List = ({ deleteMotion, deletePost }: Props) => {
+const List = ({ deletePost }: Props) => {
   const { items, loading: feedLoading } = useReactiveVar(feedVar);
   const [mounted, setMounted] = useState(false);
 
@@ -37,17 +34,11 @@ const List = ({ deleteMotion, deletePost }: Props) => {
   return (
     <>
       {items.map((item) => {
-        return item.__typename === TypeNames.Motion && deleteMotion ? (
-          <Motion
-            motion={item as ClientMotion}
-            deleteMotion={deleteMotion}
-            key={`motion-${item.id}`}
-          />
-        ) : (
+        return (
           <Post
             post={item as ClientPost}
             deletePost={deletePost}
-            key={`post-${item.id}`}
+            key={item.id}
           />
         );
       })}

@@ -1,22 +1,18 @@
 import { useEffect } from "react";
 import { useMutation, useReactiveVar, useLazyQuery } from "@apollo/client";
-
 import Feed from "../components/Shared/Feed";
 import { HOME_FEED } from "../apollo/client/queries";
-import { DELETE_POST, DELETE_MOTION } from "../apollo/client/mutations";
-import WelcomeCard from "../components/About/Welcome";
+import { DELETE_POST } from "../apollo/client/mutations";
 import { TypeNames } from "../constants/common";
 import { feedVar, paginationVar } from "../apollo/client/localState";
 import { useCurrentUser } from "../hooks";
 import { noCache, resetFeed } from "../utils/clientIndex";
 import Pagination from "../components/Shared/Pagination";
-import ToggleForms from "../components/Shared/ToggleForms";
 
 const Home = () => {
   const currentUser = useCurrentUser();
   const feed = useReactiveVar(feedVar);
   const { currentPage, pageSize } = useReactiveVar(paginationVar);
-  const [deleteMotion] = useMutation(DELETE_MOTION);
   const [deletePost] = useMutation(DELETE_POST);
   const [getFeedRes, feedRes] = useLazyQuery(HOME_FEED, noCache);
 
@@ -66,33 +62,10 @@ const Home = () => {
     });
   };
 
-  const deleteMotionHandler = async (id: string) => {
-    await deleteMotion({
-      variables: {
-        id,
-      },
-    });
-    feedVar({
-      ...feed,
-      items: feed.items.filter(
-        (item: ClientFeedItem) =>
-          item.id !== id || item.__typename !== TypeNames.Motion
-      ),
-      totalItems: feed.totalItems - 1,
-    });
-  };
-
   return (
     <>
-      <WelcomeCard isLoggedIn={Boolean(currentUser)} />
-
-      {currentUser && <ToggleForms />}
-
       <Pagination>
-        <Feed
-          deletePost={deletePostHandler}
-          deleteMotion={deleteMotionHandler}
-        />
+        <Feed deletePost={deletePostHandler} />
       </Pagination>
     </>
   );

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { ArrowDropDown } from "@material-ui/icons";
@@ -19,7 +19,6 @@ import { NavigationPaths, ResourcePaths } from "../../constants/common";
 import UserAvatar from "../Users/Avatar";
 import TopNavDropdown from "./TopNavDropdown";
 import SearchBar from "../Shared/SearchBar";
-import { redeemedInviteToken } from "../../utils/clientIndex";
 
 const useStyles = makeStyles(() =>
   createStyles({
@@ -32,14 +31,9 @@ const useStyles = makeStyles(() =>
 const TopNavDesktop = () => {
   const currentUser = useCurrentUser();
   const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
-  const [inviteToken, setInviteToken] = useState<string | null>();
   const [user] = useUserById(currentUser?.id);
   const classes = useStyles();
   const router = useRouter();
-
-  useEffect(() => {
-    setInviteToken(redeemedInviteToken());
-  }, []);
 
   const handleMenuButtonClick = (
     event: React.MouseEvent<HTMLButtonElement>
@@ -90,7 +84,7 @@ const TopNavDesktop = () => {
             </Link>
           )}
 
-          {!currentUser && inviteToken && (
+          {!currentUser && (
             <Link href={NavigationPaths.SignUp}>
               <a>
                 <Button color="primary">

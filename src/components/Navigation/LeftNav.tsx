@@ -12,10 +12,7 @@ import {
 } from "@material-ui/core";
 import {
   Home as HomeIcon,
-  Link as InvitesIcon,
-  Group as GroupsIcon,
   AccountBox as RolesIcon,
-  EventNote as EventsIcon,
   SupervisedUserCircle as UsersIcon,
 } from "@material-ui/icons";
 
@@ -23,11 +20,10 @@ import { navKeyVar } from "../../apollo/client/localState";
 import { NavigationPaths } from "../../constants/common";
 import { WHITE } from "../../styles/Shared/theme";
 import Messages from "../../utils/messages";
-import { useCurrentUser, useHasPermissionGlobally } from "../../hooks";
+import { useHasPermissionGlobally } from "../../hooks";
 import { GlobalPermissions } from "../../constants/role";
 import styles from "../../styles/Navigation/LeftNav.module.scss";
 import { useRouter } from "next/router";
-import MotionButton from "../Motions/MotionButton";
 
 const ListItem = withStyles(() =>
   createStyles({
@@ -53,7 +49,6 @@ const useStyles = makeStyles({
 });
 
 const LeftNav = () => {
-  const currentUser = useCurrentUser();
   const refreshKey = useReactiveVar(navKeyVar);
   const [canManageRoles] = useHasPermissionGlobally(
     GlobalPermissions.ManageRoles,
@@ -61,14 +56,6 @@ const LeftNav = () => {
   );
   const [canManageUsers] = useHasPermissionGlobally(
     GlobalPermissions.ManageUsers,
-    refreshKey
-  );
-  const [canManageInvites] = useHasPermissionGlobally(
-    GlobalPermissions.ManageInvites,
-    refreshKey
-  );
-  const [canCreateInvites] = useHasPermissionGlobally(
-    GlobalPermissions.CreateInvites,
     refreshKey
   );
   const { asPath: currentPath } = useRouter();
@@ -102,40 +89,6 @@ const LeftNav = () => {
               <ListItemText
                 primary={Messages.navigation.home()}
                 classes={makeBold(NavigationPaths.Home)}
-              />
-            </ListItem>
-          </a>
-        </Link>
-
-        <Link href={NavigationPaths.Groups}>
-          <a>
-            <ListItem button>
-              <ListItemIcon>
-                <GroupsIcon
-                  style={makeLarge(NavigationPaths.Groups)}
-                  color="primary"
-                />
-              </ListItemIcon>
-              <ListItemText
-                primary={Messages.navigation.groups()}
-                classes={makeBold(NavigationPaths.Groups)}
-              />
-            </ListItem>
-          </a>
-        </Link>
-
-        <Link href={NavigationPaths.Events}>
-          <a>
-            <ListItem button>
-              <ListItemIcon>
-                <EventsIcon
-                  style={makeLarge(NavigationPaths.Events)}
-                  color="primary"
-                />
-              </ListItemIcon>
-              <ListItemText
-                primary={Messages.navigation.events()}
-                classes={makeBold(NavigationPaths.Events)}
               />
             </ListItem>
           </a>
@@ -178,28 +131,7 @@ const LeftNav = () => {
             </a>
           </Link>
         )}
-
-        {(canManageInvites || canCreateInvites) && (
-          <Link href={NavigationPaths.Invites}>
-            <a>
-              <ListItem button>
-                <ListItemIcon>
-                  <InvitesIcon
-                    color="primary"
-                    style={makeLarge(NavigationPaths.Invites)}
-                  />
-                </ListItemIcon>
-                <ListItemText
-                  primary={Messages.navigation.invites()}
-                  classes={makeBold(NavigationPaths.Invites)}
-                />
-              </ListItem>
-            </a>
-          </Link>
-        )}
       </List>
-
-      {currentUser && <MotionButton />}
     </div>
   );
 };

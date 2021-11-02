@@ -21,7 +21,6 @@ import TopNavDesktop from "../Navigation/TopNavDesktop";
 import NavDrawer from "../Navigation/NavDrawer";
 import LeftNav from "../Navigation/LeftNav";
 import ScrollToTop from "../Navigation/ScrollToTop";
-import MotionFormModal from "../Motions/FormModal";
 
 const Container = withStyles((theme: Theme) =>
   createStyles({
@@ -82,8 +81,6 @@ const Layout = ({ children }: Props) => {
         {children}
         <Toast />
       </Container>
-
-      <MotionFormModal />
     </ThemeProvider>
   );
 };

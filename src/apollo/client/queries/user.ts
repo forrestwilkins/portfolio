@@ -1,5 +1,5 @@
 import gql from "graphql-tag";
-import { FEED_MOTION, FEED_POST, USER_SUMMARY } from "../fragments";
+import { FEED_POST, USER_SUMMARY } from "../fragments";
 
 export const CURRENT_USER = gql`
   {
@@ -46,15 +46,11 @@ export const HOME_FEED = gql`
         ... on Post {
           ...FeedPost
         }
-        ... on Motion {
-          ...FeedMotion
-        }
       }
       totalItems
     }
   }
   ${FEED_POST}
-  ${FEED_MOTION}
 `;
 
 export const PROFILE_FEED = gql`
@@ -64,13 +60,9 @@ export const PROFILE_FEED = gql`
         ... on Post {
           ...FeedPost
         }
-        ... on Motion {
-          ...FeedMotion
-        }
       }
       totalItems
     }
   }
   ${FEED_POST}
-  ${FEED_MOTION}
 `;

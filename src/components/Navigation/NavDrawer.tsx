@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import Link from "next/link";
 import Router from "next/router";
 import { useMutation, useReactiveVar } from "@apollo/client";
@@ -38,9 +38,7 @@ import {
 } from "../../hooks";
 import { GlobalPermissions } from "../../constants/role";
 import { LOGOUT_USER } from "../../apollo/client/mutations";
-import { redeemedInviteToken } from "../../utils/clientIndex";
 import styles from "../../styles/Shared/Shared.module.scss";
-import MotionButton from "../Motions/MotionButton";
 import UserAvatar from "../Users/Avatar";
 
 const ListItemText = withStyles(() =>
@@ -57,7 +55,6 @@ const NavDrawer = () => {
   const open = useReactiveVar(navOpenVar);
   const refreshKey = useReactiveVar(navKeyVar);
   const openModal = useReactiveVar(modalOpenVar);
-  const [inviteToken, setInviteToken] = useState<string | null>();
   const [canManageRoles] = useHasPermissionGlobally(
     GlobalPermissions.ManageRoles,
     refreshKey
@@ -76,10 +73,6 @@ const NavDrawer = () => {
   );
   const [logoutUser] = useMutation(LOGOUT_USER);
   const windowSize = useWindowSize();
-
-  useEffect(() => {
-    setInviteToken(redeemedInviteToken());
-  }, []);
 
   useEffect(() => {
     handleCose();
@@ -184,7 +177,7 @@ const NavDrawer = () => {
           </Link>
         )}
 
-        {!currentUser && inviteToken && (
+        {!currentUser && (
           <Link href={NavigationPaths.SignUp}>
             <a>
               <ListItem button>
@@ -199,12 +192,6 @@ const NavDrawer = () => {
 
         {currentUser && <Divider style={{ marginBottom: 6 }} />}
       </List>
-
-      {currentUser && (
-        <div style={{ display: "flex", justifyContent: "center" }}>
-          <MotionButton />
-        </div>
-      )}
     </Drawer>
   );
 };

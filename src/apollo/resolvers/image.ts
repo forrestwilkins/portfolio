@@ -15,13 +15,6 @@ const imageResolvers = {
       return images;
     },
 
-    imagesByMotionId: async (_: any, { motionId }: { motionId: string }) => {
-      const images = await prisma.image.findMany({
-        where: { motionId: parseInt(motionId) },
-      });
-      return images;
-    },
-
     imagesByCommentId: async (_: any, { commentId }: { commentId: string }) => {
       const images = await prisma.image.findMany({
         where: { commentId: parseInt(commentId) },
@@ -53,26 +46,6 @@ const imageResolvers = {
       const coverPhotos = await prisma.image.findMany({
         where: {
           userId: parseInt(userId),
-          variety: ImageVariety.CoverPhoto,
-        },
-      });
-      return sortByNewest(coverPhotos)[0];
-    },
-
-    coverPhotoByGroupId: async (_: any, { groupId }: { groupId: string }) => {
-      const coverPhotos = await prisma.image.findMany({
-        where: {
-          groupId: parseInt(groupId),
-          variety: ImageVariety.CoverPhoto,
-        },
-      });
-      return sortByNewest(coverPhotos)[0];
-    },
-
-    coverPhotoByEventId: async (_: any, { eventId }: { eventId: string }) => {
-      const coverPhotos = await prisma.image.findMany({
-        where: {
-          eventId: parseInt(eventId),
           variety: ImageVariety.CoverPhoto,
         },
       });
