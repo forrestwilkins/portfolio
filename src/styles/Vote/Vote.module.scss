@@ -1,0 +1,16 @@
+@import "../Shared/Shared.module.scss";
+
+.vote {
+  @extend .form;
+  display: flex;
+  margin-bottom: 0;
+}
+
+.avatar {
+  margin-right: 12px;
+}
+
+.voteTypeLabel {
+  font-size: 13px;
+  color: $lightGray;
+}
