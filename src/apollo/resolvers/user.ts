@@ -14,7 +14,6 @@ import {
 } from "../../utils/validation";
 import { EXPIRES_IN, TypeNames } from "../../constants/common";
 import Messages from "../../utils/messages";
-import { BackendMotion } from "../models/motion";
 import { BackendPost } from "../models/post";
 import { BackendFeedItem, paginate } from "../models/common";
 import { saveCoverPhoto, saveProfilePicture } from "../models/user";
@@ -31,108 +30,11 @@ const userResolvers = {
   FileUpload: GraphQLUpload,
 
   Query: {
-    homeFeed: async (
-      _: any,
-      { userId, currentPage, pageSize }: HomeFeedInput
-    ) => {
+    homeFeed: async (_: any, { currentPage, pageSize }: HomeFeedInput) => {
       let feed: BackendFeedItem[] = [];
 
-      // TODO: Extract as model functions to make code more legible, remove comments below
-      if (userId) {
-        // Users own posts
-        const ownPosts = await prisma.post.findMany({
-          where: {
-            userId: parseInt(userId),
-          },
-        });
-        feed = [...feed, ...ownPosts];
-
-        // Followed feed items
-        const userWithFollowing = await prisma.user.findFirst({
-          where: {
-            id: parseInt(userId),
-          },
-          include: {
-            following: true,
-          },
-        });
-        if (userWithFollowing)
-          for (const follow of userWithFollowing.following) {
-            let userWithFeedItems;
-            if (follow.userId)
-              userWithFeedItems = await prisma.user.findFirst({
-                where: {
-                  id: follow.userId,
-                },
-                include: {
-                  posts: true,
-                  motions: true,
-                },
-              });
-            if (userWithFeedItems)
-              feed = [
-                ...feed,
-                ...userWithFeedItems.posts.filter(
-                  (post) => post.groupId === null
-                ),
-                ...userWithFeedItems.motions.map((motion) => ({
-                  ...motion,
-                  __typename: TypeNames.Motion,
-                })),
-              ];
-          }
-        // Group feed items
-        const groupMembers = await prisma.groupMember.findMany({
-          where: {
-            userId: parseInt(userId),
-          },
-        });
-        for (const groupMember of groupMembers) {
-          const whereGroupId = {
-            where: {
-              groupId: groupMember.groupId,
-            },
-          };
-          const groupPosts = await prisma.post.findMany(whereGroupId);
-          const groupMotions = await prisma.motion.findMany(whereGroupId);
-          if (groupPosts.length) feed = [...feed, ...groupPosts];
-          if (groupMotions.length)
-            feed = [
-              ...feed,
-              ...groupMotions.map((motion) => ({
-                ...motion,
-                __typename: TypeNames.Motion,
-              })),
-            ];
-        }
-        feed.forEach((item) => {
-          if (!item.__typename) item.__typename = TypeNames.Post;
-        });
-        const uniq: BackendFeedItem[] = [];
-        for (const item of feed) {
-          if (
-            !uniq.find(
-              (uniqItem) =>
-                item.id === uniqItem.id &&
-                item.__typename === uniqItem.__typename
-            )
-          )
-            uniq.push(item);
-        }
-        feed = uniq;
-      } else {
-        // Logged out home feed
-        const posts: BackendPost[] = await prisma.post.findMany();
-        const motions: BackendMotion[] = await prisma.motion.findMany();
-        posts.forEach((item) => {
-          item.__typename = TypeNames.Post;
-        });
-        motions.forEach((item) => {
-          item.__typename = TypeNames.Motion;
-        });
-
-        feed = [...posts, ...motions];
-      }
+      const allPosts = await prisma.post.findMany();
+      feed = [...feed, ...allPosts];
 
       return {
         pagedItems: paginate(feed, currentPage, pageSize),
@@ -151,18 +53,13 @@ const userResolvers = {
         },
         include: {
           posts: true,
-          motions: true,
         },
       });
       const posts = userWithFeedItems?.posts as BackendPost[];
-      const motions = userWithFeedItems?.motions as BackendMotion[];
       posts.forEach((item) => {
         item.__typename = TypeNames.Post;
       });
-      motions.forEach((item) => {
-        item.__typename = TypeNames.Motion;
-      });
-      feed.push(...posts, ...motions);
+      feed.push(...posts);
 
       return {
         pagedItems: paginate(feed, currentPage, pageSize),

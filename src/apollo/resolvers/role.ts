@@ -6,12 +6,10 @@ import {
   DEFAULT_ROLE_COLOR,
   INITIAL_GLOBAL_ADMIN_PERMISSIONS,
   INITIAL_GLOBAL_PERMISSIONS,
-  INITIAL_GROUP_PERMISSIONS,
 } from "../../constants/role";
 import { initializePermissions } from "../models/role";
 import { TypeNames } from "../../constants/common";
 import Messages from "../../utils/messages";
-import { groupConnect } from "../models/group";
 
 interface RoleInput {
   name: string;
@@ -30,12 +28,10 @@ const roleResolvers = {
     },
 
     globalRoles: async () => {
-      // TODO: Comment out the line below after refreshing on /roles to update all roles with new permissions
+      // TODO: Uncomment the line below before refreshing on /roles to update all roles with new permissions
       // syncWithNewRolePermissions();
 
-      const roles = await prisma.role.findMany({
-        where: { global: true },
-      });
+      const roles = await prisma.role.findMany();
       return roles;
     },
   },
@@ -44,10 +40,8 @@ const roleResolvers = {
     async createRole(
       _: any,
       {
-        global,
         input,
       }: {
-        global: boolean;
         input: RoleInput;
       }
     ) {
@@ -59,7 +53,6 @@ const roleResolvers = {
           data: {
             name,
             color,
-            global,
           },
         });
       } catch {
@@ -105,11 +98,7 @@ const roleResolvers = {
     },
 
     async initializeAdminRole(_: any, { userId }: { userId: string }) {
-      const roles = await prisma.role.findMany({
-        where: {
-          global: true,
-        },
-      });
+      const roles = await prisma.role.findMany();
       if (roles.length > 0)
         throw new ApolloError(Messages.errors.somethingWrong());
 
@@ -117,7 +106,6 @@ const roleResolvers = {
         data: {
           name: ADMIN_ROLE_NAME,
           color: DEFAULT_ROLE_COLOR,
-          global: true,
         },
       });
       initializePermissions(INITIAL_GLOBAL_ADMIN_PERMISSIONS, role);

@@ -1,12 +1,9 @@
 import { ApolloError, GraphQLUpload } from "apollo-server-micro";
 import { Post } from ".prisma/client";
-
 import { saveImage, deleteImage, FileUpload } from "../../utils/image";
 import prisma from "../../utils/initPrisma";
 import Messages from "../../utils/messages";
 import { TypeNames } from "../../constants/common";
-import { groupConnect } from "../models/group";
-import { eventConnect } from "../models/event";
 
 interface PostInput {
   body: string;
@@ -64,12 +61,7 @@ const postResolvers = {
   Mutation: {
     async createPost(
       _: any,
-      {
-        userId,
-        groupId,
-        eventId,
-        input,
-      }: { userId: string; groupId: string; eventId: string; input: PostInput }
+      { userId, input }: { userId: string; input: PostInput }
     ) {
       let post: Post;
       const { body, images } = input;
@@ -81,8 +73,6 @@ const postResolvers = {
                 id: parseInt(userId),
               },
             },
-            ...groupConnect(groupId),
-            ...eventConnect(eventId),
             body,
           },
         });
