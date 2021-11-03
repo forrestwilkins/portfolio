@@ -51,7 +51,7 @@ const Edit = () => {
   if (!post || !user) return <CircularProgress />;
   if (!ownPost()) return <>{Messages.users.permissionDenied()}</>;
 
-  return <PostsFormWithCard post={post} isEditing withoutToggle />;
+  return <PostsFormWithCard post={post} isEditing />;
 };
 
 export default Edit;

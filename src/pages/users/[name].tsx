@@ -10,7 +10,6 @@ import { USER_BY_NAME, PROFILE_FEED } from "../../apollo/client/queries";
 import {
   DELETE_USER,
   DELETE_POST,
-  DELETE_MOTION,
   LOGOUT_USER,
 } from "../../apollo/client/mutations";
 import { feedVar, paginationVar } from "../../apollo/client/localState";
@@ -31,7 +30,6 @@ const Show = () => {
   const [getFeedRes, feedRes] = useLazyQuery(PROFILE_FEED, noCache);
   const [deleteUser] = useMutation(DELETE_USER);
   const [deletePost] = useMutation(DELETE_POST);
-  const [deleteMotion] = useMutation(DELETE_MOTION);
   const [logoutUser] = useMutation(LOGOUT_USER);
 
   useEffect(() => {
@@ -106,22 +104,6 @@ const Show = () => {
       });
   };
 
-  const deleteMotionHandler = async (id: string) => {
-    await deleteMotion({
-      variables: {
-        id,
-      },
-    });
-    if (feed)
-      feedVar({
-        ...feed,
-        items: feed.items.filter(
-          (item: ClientFeedItem) =>
-            item.id !== id || item.__typename !== TypeNames.Motion
-        ),
-      });
-  };
-
   const ownUser = (): boolean => {
     if (currentUser && user && currentUser.id === user.id) return true;
     return false;
@@ -134,10 +116,7 @@ const Show = () => {
           <ProfileHeader user={user} deleteUser={deleteUserHandler} />
 
           <Pagination>
-            <Feed
-              deleteMotion={deleteMotionHandler}
-              deletePost={deletePostHandler}
-            />
+            <Feed deletePost={deletePostHandler} />
           </Pagination>
         </>
       ) : (

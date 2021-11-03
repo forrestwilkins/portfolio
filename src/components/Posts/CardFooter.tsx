@@ -52,7 +52,7 @@ const CardFooter = ({ postId }: Props) => {
   const likesByPostIdRes = useQuery(LIKES_BY_POST_ID, queryPayload);
   const totalCommentsRes = useQuery(TOTAL_COMMENTS_BY_POST_ID, queryPayload);
   const classes = useStyles();
-  const router = useRouter();
+  const { asPath } = useRouter();
 
   const postPagePath = `${ResourcePaths.Post}${postId}`;
 
@@ -67,7 +67,7 @@ const CardFooter = ({ postId }: Props) => {
   }, [totalCommentsRes.data]);
 
   const onPostPage = (): boolean => {
-    return router.asPath.includes(ResourcePaths.Post);
+    return asPath.includes(ResourcePaths.Post);
   };
 
   return (
