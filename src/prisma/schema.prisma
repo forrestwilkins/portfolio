@@ -1,0 +1,117 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id               Int          @id @default(autoincrement())
+  name             String
+  email            String
+  password         String
+  bio              String?
+  posts            Post[]
+  comments         Comment[]
+  likes            Like[]
+  images           Image[]
+  settings         Setting[]
+  rolesMembers     RoleMember[]
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+}
+
+model Post {
+  id        Int       @id @default(autoincrement())
+  body      String?
+  user      User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    Int?
+  comments  Comment[]
+  likes     Like[]
+  images    Image[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Comment {
+  id        Int      @id @default(autoincrement())
+  body      String?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    Int?
+  post      Post?    @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId    Int?
+  likes     Like[]
+  images    Image[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Like {
+  id        Int      @id @default(autoincrement())
+  user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    Int?
+  post      Post?    @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId    Int?
+  comment   Comment? @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  commentId Int?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, postId, commentId])
+}
+
+model Image {
+  id             Int      @id @default(autoincrement())
+  path           String
+  user           User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId         Int?
+  post           Post?    @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId         Int?
+  comment        Comment? @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  commentId      Int?
+  variety        String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model Setting {
+  id        Int      @id @default(autoincrement())
+  name      String
+  value     String
+  user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    Int?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Role {
+  id          Int          @id @default(autoincrement())
+  name        String
+  color       String
+  permissions Permission[]
+  members     RoleMember[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+model RoleMember {
+  id        Int      @id @default(autoincrement())
+  role      Role?    @relation(fields: [roleId], references: [id])
+  roleId    Int?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    Int?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Permission {
+  id          Int      @id @default(autoincrement())
+  name        String
+  enabled     Boolean  @default(false)
+  role        Role?    @relation(fields: [roleId], references: [id])
+  roleId      Int?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}

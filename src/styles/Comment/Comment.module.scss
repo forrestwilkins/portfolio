@@ -1,0 +1,11 @@
+@import "../Shared/Shared.module.scss";
+
+.comment {
+  @extend .form;
+  display: flex;
+  margin-bottom: 0;
+}
+
+.avatar {
+  margin-right: 12px;
+}

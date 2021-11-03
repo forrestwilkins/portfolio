@@ -1,9 +1,0 @@
-{
-  "script": "server.js",
-  "watch": true,
-  "ignore_watch": ["logs", "uploads"],
-  "watch_options": {
-      "followSymlinks": false
-  },
-  "name": "server"
-}
