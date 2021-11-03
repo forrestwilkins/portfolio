@@ -1,7 +1,7 @@
 import { pluralize } from "../utils/items";
 
 const en = {
-  brand: () => "Portfolio",
+  brand: () => "portfolio",
 
   actions: {
     add: () => "Add",
