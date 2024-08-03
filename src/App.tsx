@@ -2,18 +2,26 @@ import './App.css';
 
 const App = () => {
   const makeSound = () => {
-    var context = new AudioContext();
-    var oscillator = context.createOscillator();
-    oscillator.type = 'triangle';
-    oscillator.frequency.value = 800;
+    const context = new AudioContext();
+    const oscillator = context.createOscillator();
+
+    oscillator.type = 'sine';
+    oscillator.frequency.value = 400;
     oscillator.connect(context.destination);
     oscillator.start();
-    setTimeout(() => oscillator.stop(), 100);
+
+    setTimeout(() => {
+      oscillator.stop();
+    }, 100);
   };
 
   return (
     <div
-      style={{ display: 'flex', justifyContent: 'center', paddingTop: '200px' }}
+      style={{
+        display: 'flex',
+        justifyContent: 'center',
+        paddingTop: '200px',
+      }}
     >
       <div
         style={{
