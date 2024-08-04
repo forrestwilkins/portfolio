@@ -1,54 +1,62 @@
+import { useEffect, useRef, useState } from 'react';
 import './App.css';
 
-const App = () => (
-  <div
-    style={{
-      display: 'flex',
-      justifyContent: 'center',
-      paddingTop: '200px',
-    }}
-  >
+export default function App() {
+  const [isPlaying, setIsPlaying] = useState(false);
+  const audioContextRef = useRef<AudioContext>();
+
+  useEffect(() => {
+    const audioContext = new AudioContext();
+    const osc = audioContext.createOscillator();
+    osc.type = 'sine';
+    osc.frequency.value = 300;
+
+    // Connect and start
+    osc.connect(audioContext.destination);
+    osc.start();
+
+    // Store context and start suspended
+    audioContextRef.current = audioContext;
+    audioContext.suspend();
+
+    // Effect cleanup function to disconnect
+    return () => {
+      osc.disconnect(audioContext.destination);
+    };
+  }, []);
+
+  const toggleOscillator = () => {
+    if (!audioContextRef.current) {
+      return;
+    }
+    if (isPlaying) {
+      audioContextRef.current.suspend();
+    } else {
+      audioContextRef.current.resume();
+    }
+    setIsPlaying((play) => !play);
+  };
+
+  return (
     <div
       style={{
-        cursor: 'pointer',
-        userSelect: 'none',
-        fontSize: '40px',
-        padding: '10px 20px',
-        color: 'white',
-      }}
-      onClick={() => {
-        const context = new AudioContext();
-        const oscillator = context.createOscillator();
-
-        oscillator.type = 'sine';
-        oscillator.frequency.value = 500;
-        oscillator.connect(context.destination);
-        oscillator.start();
-
-        setTimeout(() => {
-          oscillator.frequency.value = 400;
-        }, 100);
-
-        setTimeout(() => {
-          oscillator.frequency.value = 300;
-        }, 200);
-
-        setTimeout(() => {
-          oscillator.frequency.value = 200;
-        }, 300);
-
-        setTimeout(() => {
-          oscillator.frequency.value = 50;
-        }, 400);
-
-        setTimeout(() => {
-          oscillator.stop();
-        }, 500);
+        display: 'flex',
+        justifyContent: 'center',
+        paddingTop: '200px',
       }}
     >
-      beep
+      <div
+        style={{
+          cursor: 'pointer',
+          userSelect: 'none',
+          fontSize: '40px',
+          padding: '10px 20px',
+          color: 'white',
+        }}
+        onClick={toggleOscillator}
+      >
+        {isPlaying ? 'pause' : 'play'}
+      </div>
     </div>
-  </div>
-);
-
-export default App;
+  );
+}
