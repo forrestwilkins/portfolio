@@ -40,6 +40,7 @@ const App = () => {
   const handleClick = () => {
     if (!isEnabled) {
       init();
+      return;
     }
     if (!audioContextRef.current || !oscillatorRef.current) {
       return;
