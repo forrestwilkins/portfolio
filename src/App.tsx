@@ -1,11 +1,17 @@
 import { useEffect, useRef, useState } from 'react';
 
+const STARTING_FREQUENCY = 360;
+
 const App = () => {
+  const [frequency, setFrequency] = useState(STARTING_FREQUENCY);
+
   const [isPlaying, setIsPlaying] = useState(false);
   const [isEnabled, setIsEnabled] = useState(false);
 
   const audioContextRef = useRef<AudioContext>();
   const oscillatorRef = useRef<OscillatorNode>();
+
+  const bgGray = Math.min(frequency / 3.5, 100);
 
   useEffect(() => {
     return () => {
@@ -20,7 +26,7 @@ const App = () => {
     const oscillator = audioContext.createOscillator();
 
     oscillator.type = 'sine';
-    oscillator.frequency.value = 500;
+    oscillator.frequency.value = STARTING_FREQUENCY;
 
     // Connect and start
     oscillator.connect(audioContext.destination);
@@ -48,10 +54,11 @@ const App = () => {
       audioContextRef.current.suspend();
     } else {
       audioContextRef.current.resume();
+
+      oscillatorRef.current.frequency.value -= 20;
+      setFrequency(oscillatorRef.current.frequency.value);
     }
     setIsPlaying((prev) => !prev);
-
-    oscillatorRef.current.frequency.value -= 20;
   };
 
   const getBtnText = () => {
@@ -64,10 +71,19 @@ const App = () => {
     return 'play';
   };
 
+  const getOverlayBgColor = () => {
+    if (!isEnabled) {
+      return 'black';
+    }
+    return `rgb(${bgGray}, ${bgGray}, ${bgGray})`;
+  };
+
   return (
     <div
       style={{
         position: 'fixed',
+        backgroundColor: getOverlayBgColor(),
+        transition: 'background-color 0.5s',
         top: 0,
         left: 0,
         width: '100%',
