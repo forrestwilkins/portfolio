@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from 'react';
-import './App.css';
 
 const App = () => {
   const [isPlaying, setIsPlaying] = useState(false);
@@ -68,9 +67,13 @@ const App = () => {
   return (
     <div
       style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
         display: 'flex',
         justifyContent: 'center',
-        paddingTop: '200px',
       }}
     >
       <div
@@ -80,6 +83,7 @@ const App = () => {
           fontSize: '40px',
           padding: '10px 20px',
           color: 'white',
+          marginTop: '150px',
         }}
         onClick={handleClick}
       >
