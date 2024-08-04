@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import './App.css';
 
-export default function App() {
+const App = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const audioContextRef = useRef<AudioContext>();
 
@@ -34,7 +34,7 @@ export default function App() {
     } else {
       audioContextRef.current.resume();
     }
-    setIsPlaying((play) => !play);
+    setIsPlaying((prev) => !prev);
   };
 
   return (
@@ -59,4 +59,6 @@ export default function App() {
       </div>
     </div>
   );
-}
+};
+
+export default App;
