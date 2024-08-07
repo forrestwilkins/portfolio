@@ -1,17 +1,14 @@
 import { useEffect, useRef, useState } from 'react';
-
-const STARTING_FREQUENCY = 360;
+import { convertFrequencyToColor, generateMelody } from './utils';
 
 const App = () => {
-  const [frequency, setFrequency] = useState(STARTING_FREQUENCY);
-
   const [isPlaying, setIsPlaying] = useState(false);
   const [isEnabled, setIsEnabled] = useState(false);
 
+  const [textColor, setTextColor] = useState('white');
+
   const audioContextRef = useRef<AudioContext>();
   const oscillatorRef = useRef<OscillatorNode>();
-
-  const bgGray = Math.min(frequency / 3.5, 100);
 
   useEffect(() => {
     return () => {
@@ -26,7 +23,6 @@ const App = () => {
     const oscillator = audioContext.createOscillator();
 
     oscillator.type = 'sine';
-    oscillator.frequency.value = STARTING_FREQUENCY;
 
     // Connect and start
     oscillator.connect(audioContext.destination);
@@ -47,7 +43,7 @@ const App = () => {
       init();
       return;
     }
-    if (!audioContextRef.current || !oscillatorRef.current) {
+    if (!audioContextRef.current) {
       return;
     }
     if (isPlaying) {
@@ -55,8 +51,27 @@ const App = () => {
     } else {
       audioContextRef.current.resume();
 
-      oscillatorRef.current.frequency.value -= 20;
-      setFrequency(oscillatorRef.current.frequency.value);
+      const { melody, durations } = generateMelody(50);
+
+      let i = 0;
+      const interval = setInterval(() => {
+        if (!audioContextRef.current || !oscillatorRef.current) {
+          return;
+        }
+        if (i >= melody.length) {
+          setIsPlaying(false);
+          audioContextRef.current.suspend();
+          clearInterval(interval);
+          return;
+        }
+
+        const frequency = melody[i];
+        const color = convertFrequencyToColor(frequency);
+        oscillatorRef.current.frequency.value = frequency;
+        setTextColor(color);
+
+        i++;
+      }, durations[i] * 1000);
     }
     setIsPlaying((prev) => !prev);
   };
@@ -71,19 +86,11 @@ const App = () => {
     return 'play';
   };
 
-  const getOverlayBgColor = () => {
-    if (!isEnabled) {
-      return 'black';
-    }
-    return `rgb(${bgGray}, ${bgGray}, ${bgGray})`;
-  };
-
   return (
     <div
       style={{
         position: 'fixed',
-        backgroundColor: getOverlayBgColor(),
-        transition: 'background-color 0.5s',
+        backgroundColor: 'black',
         top: 0,
         left: 0,
         width: '100%',
@@ -97,8 +104,12 @@ const App = () => {
           cursor: 'pointer',
           userSelect: 'none',
           fontSize: '40px',
-          padding: '10px 20px',
-          color: 'white',
+          padding: '10px 20px 13px',
+          color: isPlaying ? textColor : 'white',
+          border: `2px solid ${isPlaying ? textColor : 'white'}`,
+          transition: 'all 0.4s ease-in-out',
+          height: 'fit-content',
+          borderRadius: '8px',
           marginTop: '150px',
         }}
         onClick={handleClick}

@@ -6,8 +6,8 @@ export const generateMelody = (numNotes: number) => {
   const durations: number[] = [];
 
   for (let i = 0; i < numNotes; i++) {
-    const frequency = getRandom(20, 4000);
-    const duration = Math.random() * 0.1 + 0.1;
+    const frequency = getRandom(20, 3000);
+    const duration = Math.random() * 0.25 + 0.1;
     melody.push(frequency);
     durations.push(duration);
   }
