@@ -4,7 +4,6 @@ import { convertFrequencyToColor, generateMelody } from './utils';
 const App = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isEnabled, setIsEnabled] = useState(false);
-
   const [textColor, setTextColor] = useState('white');
 
   const audioContextRef = useRef<AudioContext>();
@@ -51,7 +50,7 @@ const App = () => {
     } else {
       audioContextRef.current.resume();
 
-      const { melody, durations } = generateMelody(50);
+      const { melody, durations } = generateMelody(100);
 
       let i = 0;
       const interval = setInterval(() => {
