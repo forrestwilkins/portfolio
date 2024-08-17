@@ -1,12 +1,12 @@
 import { createBrowserRouter } from 'react-router-dom';
-import Layout from '../components/App/Layout';
+import App from '../components/App/App';
 import HelloSound from '../pages/HelloSound';
 import HomePage from '../pages/HomePage';
 
 const appRouter = createBrowserRouter([
   {
     path: '/',
-    element: <Layout />,
+    element: <App />,
     children: [
       {
         index: true,
