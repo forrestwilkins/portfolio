@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
-import { convertFrequencyToColor, generateMelody } from './utils';
+import { convertFrequencyToColor, generateMelody } from '../utils';
 
-const App = () => {
+const HelloSound = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isEnabled, setIsEnabled] = useState(false);
   const [textColor, setTextColor] = useState('white');
@@ -119,4 +119,4 @@ const App = () => {
   );
 };
 
-export default App;
+export default HelloSound;
