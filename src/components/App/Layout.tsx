@@ -1,5 +1,3 @@
-// TODO: Add styles for the layout
-
 import { CSSProperties, ReactNode } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
