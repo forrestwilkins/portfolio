@@ -13,5 +13,5 @@ $ cd rhizome && npm run dev
 
 ```bash
 # Enable pre-commit hook with Husky
-$ npx husky && npx husky .husky/pre-commit "npx lint-staged
+$ npx husky && npx husky .husky/pre-commit "npx lint-staged"
 ```
