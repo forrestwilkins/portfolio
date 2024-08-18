@@ -3,6 +3,8 @@ import { Link, useLocation } from 'react-router-dom';
 const HomePage = () => {
   const location = useLocation();
 
+  console.log('Test');
+
   return (
     <>
       <Link
