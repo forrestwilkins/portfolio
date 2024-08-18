@@ -7,7 +7,7 @@ const HomePage = () => {
     <>
       <Link
         to="/hello-sound"
-        state={{ from: 'rhizome', prev: location.pathname }}
+        state={{ rhizome: true, prev: location.pathname }}
         style={{ color: 'white', textDecoration: 'none', fontSize: '30px' }}
       >
         Hello Sound

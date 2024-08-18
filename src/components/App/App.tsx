@@ -8,7 +8,7 @@ const App = () => {
 
   useEffect(() => {
     const lastVisitedPage = localStorage.getItem('last-visited-page');
-    if (lastVisitedPage && location.state?.from !== 'rhizome') {
+    if (lastVisitedPage && !location.state?.rhizome) {
       navigate(lastVisitedPage);
       return;
     }

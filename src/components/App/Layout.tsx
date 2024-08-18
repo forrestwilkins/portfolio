@@ -30,7 +30,7 @@ const Layout = ({ children, style }: Props) => {
   return (
     <div style={{ padding: '50px 50px 0', position: 'relative', ...style }}>
       {!isHomePage && (
-        <Link to="/" state={{ from: 'rhizome' }} style={btnStyle}>
+        <Link to="/" state={{ rhizome: true }} style={btnStyle}>
           home
         </Link>
       )}
