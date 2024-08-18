@@ -7,15 +7,14 @@ const App = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    localStorage.setItem('last-visited-page', location.pathname);
-  }, [location]);
-
-  useEffect(() => {
     const lastVisitedPage = localStorage.getItem('last-visited-page');
-    if (lastVisitedPage) {
-      navigate(lastVisitedPage, { replace: true });
+    if (lastVisitedPage && location.state?.from !== 'rhizome') {
+      navigate(lastVisitedPage);
+      return;
     }
-  }, [navigate]);
+
+    localStorage.setItem('last-visited-page', location.pathname);
+  }, [navigate, location.pathname]);
 
   return (
     <Layout>

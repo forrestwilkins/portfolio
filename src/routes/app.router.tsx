@@ -9,6 +9,7 @@ const appRouter = createBrowserRouter([
   {
     path: '/',
     element: <App />,
+    errorElement: <ErrorPage />,
     children: [
       {
         index: true,
@@ -23,7 +24,6 @@ const appRouter = createBrowserRouter([
         element: <PageNotFound />,
       },
     ],
-    errorElement: <ErrorPage />,
   },
 ]);
 

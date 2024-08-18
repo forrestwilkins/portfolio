@@ -5,8 +5,6 @@ const ErrorPage = () => {
   const [textColor, setTextColor] = useState('white');
   const [backgroundColor, setBackgroundColor] = useState('black');
 
-  console.log(textColor);
-
   useEffect(() => {
     const interval = setInterval(() => {
       setTextColor(
