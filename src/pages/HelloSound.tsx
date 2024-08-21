@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { convertFrequencyToColor, generateMelody } from '../utils';
+import { convertFrequencyToColor, generateMelody } from '../utils/sound.utils';
 
 const HelloSound = () => {
   const [isPlaying, setIsPlaying] = useState(false);
