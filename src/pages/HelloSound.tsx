@@ -86,30 +86,12 @@ const HelloSound = () => {
   };
 
   return (
-    <div
-      style={{
-        position: 'fixed',
-        backgroundColor: 'black',
-        top: 0,
-        left: 0,
-        width: '100%',
-        height: '100%',
-        display: 'flex',
-        justifyContent: 'center',
-      }}
-    >
+    <div className="bg-black fixed top-0 left-0 w-full h-full flex justify-center">
       <div
+        className="cursor-pointer no-underline text-4xl mt-44 pt-2.5 px-5 pb-3.5 transition-all h-fit rounded-lg"
         style={{
-          cursor: 'pointer',
-          userSelect: 'none',
-          fontSize: '40px',
-          padding: '10px 20px 13px',
           color: isPlaying ? textColor : 'white',
           border: `2px solid ${isPlaying ? textColor : 'white'}`,
-          transition: 'all 0.4s ease-in-out',
-          height: 'fit-content',
-          borderRadius: '8px',
-          marginTop: '150px',
         }}
         onClick={handleClick}
       >
