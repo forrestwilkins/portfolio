@@ -16,7 +16,7 @@ const Layout = ({ children, style }: Props) => {
         <Link
           to="/"
           state={{ rhizome: true }}
-          className="fixed top-3 left-3 text-gray-400 cursor-pointer select-none no-underline font-medium bg-zinc-900 px-2 py-1 rounded-md z-10"
+          className="fixed left-3 top-3 z-10 cursor-pointer select-none rounded-md bg-zinc-900 px-2 py-1 font-medium text-gray-400 no-underline"
         >
           home
         </Link>

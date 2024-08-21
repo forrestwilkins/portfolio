@@ -9,14 +9,14 @@ const ErrorPage = () => {
     const interval = setInterval(() => {
       setTextColor(
         `rgb(${Math.floor(Math.random() * 255)}, ${Math.floor(
-          Math.random() * 255
-        )}, ${Math.floor(Math.random() * 255)})`
+          Math.random() * 255,
+        )}, ${Math.floor(Math.random() * 255)})`,
       );
 
       setBackgroundColor(
         `rgb(${Math.floor(Math.random() * 55)}, ${Math.floor(
-          Math.random() * 55
-        )}, ${Math.floor(Math.random() * 55)})`
+          Math.random() * 55,
+        )}, ${Math.floor(Math.random() * 55)})`,
       );
     }, 2000);
 

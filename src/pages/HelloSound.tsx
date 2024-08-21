@@ -86,9 +86,9 @@ const HelloSound = () => {
   };
 
   return (
-    <div className="bg-black fixed top-0 left-0 w-full h-full flex justify-center">
+    <div className="fixed left-0 top-0 flex h-full w-full justify-center bg-black">
       <div
-        className="cursor-pointer no-underline text-4xl mt-44 pt-2.5 px-5 pb-3.5 transition-all h-fit rounded-lg"
+        className="mt-44 h-fit cursor-pointer rounded-lg px-5 pb-3.5 pt-2.5 text-4xl no-underline transition-all"
         style={{
           color: isPlaying ? textColor : 'white',
           border: `2px solid ${isPlaying ? textColor : 'white'}`,
