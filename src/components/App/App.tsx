@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import Layout from './Layout';
+import { ThemeProvider } from './ThemeProvider';
 
 const App = () => {
   const location = useLocation();
@@ -17,9 +18,11 @@ const App = () => {
   }, [navigate, location.pathname, location.state?.rhizome]);
 
   return (
-    <Layout>
-      <Outlet />
-    </Layout>
+    <ThemeProvider>
+      <Layout>
+        <Outlet />
+      </Layout>
+    </ThemeProvider>
   );
 };
 
