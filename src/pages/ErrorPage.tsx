@@ -27,19 +27,12 @@ const ErrorPage = () => {
 
   return (
     <Layout
-      style={{
-        backgroundColor,
-        transition: 'all 0.4s ease-in-out',
-        height: '100vh',
-      }}
+      className="h-screen transition-all duration-500"
+      style={{ backgroundColor }}
     >
       <div
-        style={{
-          color: textColor,
-          textDecoration: 'none',
-          fontSize: '30px',
-          transition: 'all 0.4s ease-in-out',
-        }}
+        className="text-3xl transition-all duration-500"
+        style={{ color: textColor }}
       >
         Something went wrong.
       </div>
