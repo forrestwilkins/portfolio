@@ -14,7 +14,7 @@ const App = () => {
     }
 
     localStorage.setItem('last-visited-page', location.pathname);
-  }, [navigate, location.pathname]);
+  }, [navigate, location.pathname, location.state?.rhizome]);
 
   return (
     <Layout>

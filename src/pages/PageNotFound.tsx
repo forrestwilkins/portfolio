@@ -3,7 +3,7 @@ import Layout from '../components/App/Layout';
 const PageNotFound = () => {
   return (
     <Layout>
-      <div style={{ color: 'white', textDecoration: 'none', fontSize: '30px' }}>
+      <div className="pt-20 text-center font-mono text-5xl text-gray-50">
         404
       </div>
     </Layout>

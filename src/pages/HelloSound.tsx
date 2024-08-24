@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { convertFrequencyToColor, generateMelody } from '../utils';
+import { convertFrequencyToColor, generateMelody } from '../utils/sound.utils';
 
 const HelloSound = () => {
   const [isPlaying, setIsPlaying] = useState(false);
@@ -86,30 +86,12 @@ const HelloSound = () => {
   };
 
   return (
-    <div
-      style={{
-        position: 'fixed',
-        backgroundColor: 'black',
-        top: 0,
-        left: 0,
-        width: '100%',
-        height: '100%',
-        display: 'flex',
-        justifyContent: 'center',
-      }}
-    >
+    <div className="fixed left-0 top-0 flex h-full w-full justify-center bg-black">
       <div
+        className="mt-44 h-fit cursor-pointer rounded-lg px-5 pb-3.5 pt-2.5 text-4xl no-underline transition-all"
         style={{
-          cursor: 'pointer',
-          userSelect: 'none',
-          fontSize: '40px',
-          padding: '10px 20px 13px',
           color: isPlaying ? textColor : 'white',
           border: `2px solid ${isPlaying ? textColor : 'white'}`,
-          transition: 'all 0.4s ease-in-out',
-          height: 'fit-content',
-          borderRadius: '8px',
-          marginTop: '150px',
         }}
         onClick={handleClick}
       >
