@@ -1,21 +1,27 @@
+import Button from '@/components/ui/button';
+import { useTheme } from '@/hooks/shared.hooks';
 import { useEffect, useRef, useState } from 'react';
 import { convertFrequencyToColor, generateMelody } from '../utils/sound.utils';
 
 const HelloSound = () => {
+  const { theme } = useTheme();
+  const isLightMode = theme === 'light';
+  const baseColor = isLightMode ? 'black' : 'white';
+
   const [isPlaying, setIsPlaying] = useState(false);
   const [isEnabled, setIsEnabled] = useState(false);
-  const [textColor, setTextColor] = useState('white');
+  const [textColor, setTextColor] = useState(baseColor);
 
   const audioContextRef = useRef<AudioContext>();
   const oscillatorRef = useRef<OscillatorNode>();
 
   useEffect(() => {
     return () => {
-      if (oscillatorRef.current && audioContextRef.current) {
+      if (oscillatorRef.current && audioContextRef.current && isEnabled) {
         oscillatorRef.current.disconnect(audioContextRef.current.destination);
       }
     };
-  }, []);
+  }, [isEnabled]);
 
   const init = () => {
     const audioContext = new AudioContext();
@@ -86,17 +92,18 @@ const HelloSound = () => {
   };
 
   return (
-    <div className="fixed left-0 top-0 flex h-full w-full justify-center bg-black">
-      <div
-        className="mt-44 h-fit cursor-pointer rounded-lg px-5 pb-3.5 pt-2.5 text-4xl no-underline transition-all"
+    <div className="flex justify-center">
+      <Button
+        className="mt-44 h-fit rounded-lg bg-transparent px-5 pb-3.5 pt-2.5 text-4xl no-underline transition-all hover:bg-transparent"
+        variant="secondary"
         style={{
-          color: isPlaying ? textColor : 'white',
-          border: `2px solid ${isPlaying ? textColor : 'white'}`,
+          color: isPlaying ? textColor : baseColor,
+          border: `4px solid ${isPlaying ? textColor : baseColor}`,
         }}
         onClick={handleClick}
       >
         {getBtnText()}
-      </div>
+      </Button>
     </div>
   );
 };
