@@ -1,4 +1,5 @@
 import useAppStore from '@/store/app.store';
+import { getToneJS } from '@/utils/shared.utils';
 import { useEffect, useRef } from 'react';
 
 const AudioVisual = () => {
@@ -11,7 +12,7 @@ const AudioVisual = () => {
     }
 
     const playMelody = async () => {
-      const Tone = await import('tone');
+      const Tone = await getToneJS();
       const synth = new Tone.Synth().toDestination();
 
       // Play a middle 'C' for the duration of an 8th note

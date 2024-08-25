@@ -1,5 +1,6 @@
 import Layout from '@/components/app/layout';
 import useAppStore from '@/store/app.store';
+import { getToneJS } from '@/utils/shared.utils';
 import { useEffect } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import ThemeProvider from './theme-provider';
@@ -26,7 +27,7 @@ const App = () => {
       return;
     }
 
-    const Tone = await import('tone');
+    const Tone = await getToneJS();
     await Tone.start();
 
     setIsAudioEnabled(true);
