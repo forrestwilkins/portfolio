@@ -16,7 +16,7 @@ const TopNav = () => {
         </Link>
       )}
 
-      <ModeToggle />
+      <ModeToggle className="fixed right-3 top-3" />
     </div>
   );
 };
