@@ -8,7 +8,7 @@ export let Tone: ToneJS | null = null;
 
 export const getToneJS = async (): Promise<ToneJS> => {
   if (!Tone) {
-    const Tone = await import('tone');
+    Tone = await import('tone');
     return Tone;
   }
   return Tone;
