@@ -17,11 +17,11 @@ const HelloSound = () => {
 
   useEffect(() => {
     return () => {
-      if (oscillatorRef.current && audioContextRef.current?.destination) {
+      if (oscillatorRef.current && audioContextRef.current && isEnabled) {
         oscillatorRef.current.disconnect(audioContextRef.current.destination);
       }
     };
-  }, []);
+  }, [isEnabled]);
 
   const init = () => {
     const audioContext = new AudioContext();
