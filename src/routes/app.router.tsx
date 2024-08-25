@@ -1,9 +1,9 @@
 import { createBrowserRouter } from 'react-router-dom';
-import App from '../components/App/App';
-import ErrorPage from '../pages/ErrorPage';
-import HelloSound from '../pages/HelloSound';
-import HomePage from '../pages/HomePage';
-import PageNotFound from '../pages/PageNotFound';
+import App from '../components/app/app';
+import ErrorPage from '../pages/error-page';
+import HelloSound from '../pages/hello-sound';
+import HomePage from '../pages/home-page';
+import PageNotFound from '../pages/page-not-found';
 
 const appRouter = createBrowserRouter([
   {

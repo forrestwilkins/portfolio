@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
-import Layout from './Layout';
-import { ThemeProvider } from './ThemeProvider';
+import Layout from './layout';
+import { ThemeProvider } from './theme-provider';
 
 const App = () => {
   const location = useLocation();
