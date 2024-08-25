@@ -1,6 +1,9 @@
-import { createContext, useContext, useEffect, useState } from 'react';
-
-type Theme = 'dark' | 'light' | 'system';
+import {
+  INITIAL_THEME_STATE,
+  Theme,
+  ThemeProviderState,
+} from '@/hooks/shared.hooks';
+import { createContext, useEffect, useState } from 'react';
 
 type ThemeProviderProps = {
   children: React.ReactNode;
@@ -8,19 +11,10 @@ type ThemeProviderProps = {
   storageKey?: string;
 };
 
-type ThemeProviderState = {
-  theme: Theme;
-  setTheme: (theme: Theme) => void;
-};
+const ThemeProviderContext =
+  createContext<ThemeProviderState>(INITIAL_THEME_STATE);
 
-const initialState: ThemeProviderState = {
-  theme: 'dark',
-  setTheme: () => null,
-};
-
-const ThemeProviderContext = createContext<ThemeProviderState>(initialState);
-
-export const ThemeProvider = ({
+const ThemeProvider = ({
   children,
   defaultTheme = 'dark',
   storageKey = 'vite-ui-theme',
@@ -62,12 +56,4 @@ export const ThemeProvider = ({
   );
 };
 
-export const useTheme = () => {
-  const context = useContext(ThemeProviderContext);
-
-  if (context === undefined) {
-    throw new Error('useTheme must be used within a ThemeProvider');
-  }
-
-  return context;
-};
+export default ThemeProvider;

@@ -1,4 +1,3 @@
-import { useTheme } from '@/components/app/theme-provider';
 import Button from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -6,6 +5,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { useTheme } from '@/hooks/shared.hooks';
 import { Moon, Sun } from 'lucide-react';
 
 interface Props {
