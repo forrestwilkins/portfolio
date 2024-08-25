@@ -10,11 +10,7 @@ const TopNav = () => {
     <div>
       {!isHomePage && (
         <Link to="/" state={{ rhizome: true }}>
-          <Button
-            className="fixed left-3 top-3 z-10"
-            variant="secondary"
-            size="sm"
-          >
+          <Button className="fixed left-3 top-3" variant="secondary" size="sm">
             Home
           </Button>
         </Link>
