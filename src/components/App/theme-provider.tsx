@@ -1,18 +1,11 @@
-import {
-  INITIAL_THEME_STATE,
-  Theme,
-  ThemeProviderState,
-} from '@/hooks/shared.hooks';
-import { createContext, useEffect, useState } from 'react';
+import { Theme, ThemeProviderContext } from '@/hooks/shared.hooks';
+import { ReactNode, useEffect, useState } from 'react';
 
 type ThemeProviderProps = {
-  children: React.ReactNode;
+  children: ReactNode;
   defaultTheme?: Theme;
   storageKey?: string;
 };
-
-const ThemeProviderContext =
-  createContext<ThemeProviderState>(INITIAL_THEME_STATE);
 
 const ThemeProvider = ({
   children,
