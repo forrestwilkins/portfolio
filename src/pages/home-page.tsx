@@ -4,15 +4,11 @@ const HomePage = () => {
   const location = useLocation();
 
   return (
-    <>
-      <Link
-        to="/hello-sound"
-        state={{ rhizome: true, prev: location.pathname }}
-        className="text-3xl text-gray-50 no-underline"
-      >
+    <Link to="/hello-sound" state={{ rhizome: true, prev: location.pathname }}>
+      <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
         Hello Sound
-      </Link>
-    </>
+      </h1>
+    </Link>
   );
 };
 

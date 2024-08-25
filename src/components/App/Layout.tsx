@@ -14,7 +14,7 @@ const Layout = ({ children, style, className }: Props) => {
   const isHomePage = location.pathname === '/';
 
   return (
-    <div className={cn('p-12', className)} style={{ ...style }}>
+    <div className={cn('p-24', className)} style={{ ...style }}>
       {!isHomePage && (
         <Link to="/" state={{ rhizome: true }}>
           <Button
