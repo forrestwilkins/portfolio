@@ -1,5 +1,5 @@
 import { useTheme } from '@/components/app/theme-provider';
-import { Button } from '@/components/ui/button';
+import Button from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,

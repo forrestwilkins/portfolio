@@ -1,5 +1,5 @@
 import { ModeToggle } from '@/components/app/mode-toggle';
-import { Button } from '@/components/ui/button';
+import Button from '@/components/ui/button';
 import { Link, useLocation } from 'react-router-dom';
 
 const TopNav = () => {
