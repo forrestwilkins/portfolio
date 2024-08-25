@@ -1,4 +1,4 @@
-import Layout from '../components/app/layout';
+import Layout from '@/components/app/layout-test';
 
 const PageNotFound = () => {
   return (

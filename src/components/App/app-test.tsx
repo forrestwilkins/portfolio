@@ -1,9 +1,13 @@
+import Layout from '@/components/app/layout-test';
+import useAppStore from '@/store/app.store';
 import { useEffect } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
-import Layout from './layout';
 import ThemeProvider from './theme-provider';
 
 const App = () => {
+  const isAudioEnabled = useAppStore((state) => state.isAudioEnabled);
+  const setIsAudioEnabled = useAppStore((state) => state.setIsAudioEnabled);
+
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -17,9 +21,21 @@ const App = () => {
     localStorage.setItem('last-visited-page', location.pathname);
   }, [navigate, location.pathname, location.state?.rhizome]);
 
+  const initToneJS = async () => {
+    if (isAudioEnabled) {
+      return;
+    }
+
+    const Tone = await import('tone');
+    await Tone.start();
+
+    setIsAudioEnabled(true);
+    console.log('Audio enabled.');
+  };
+
   return (
     <ThemeProvider>
-      <Layout>
+      <Layout onClick={initToneJS}>
         <Outlet />
       </Layout>
     </ThemeProvider>
