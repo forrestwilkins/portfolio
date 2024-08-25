@@ -1,7 +1,7 @@
+import { Button } from '@/components/shared/button';
+import { cn } from '@/utils/shared.utils';
 import { CSSProperties, ReactNode } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { cn } from '../../utils/shared.utils';
-import { Button } from '../ui/button';
 
 interface Props {
   children: ReactNode;
