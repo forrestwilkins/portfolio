@@ -10,7 +10,7 @@ type ThemeProviderProps = {
 const ThemeProvider = ({
   children,
   defaultTheme = 'dark',
-  storageKey = 'vite-ui-theme',
+  storageKey = 'ui-theme',
   ...props
 }: ThemeProviderProps) => {
   const [theme, setTheme] = useState<Theme>(
