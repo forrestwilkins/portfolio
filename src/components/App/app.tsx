@@ -1,4 +1,4 @@
-import Layout from '@/components/app/layout-test';
+import Layout from '@/components/app/layout';
 import useAppStore from '@/store/app.store';
 import { useEffect } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
