@@ -1,5 +1,3 @@
-// TODO: Resolve issue with name of file
-
 import TopNav from '@/components/nav/top-nav';
 import { cn } from '@/utils/shared.utils';
 import { CSSProperties, ReactNode } from 'react';
