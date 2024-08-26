@@ -1,5 +1,5 @@
+import Layout from '@/components/app/layout';
 import { useEffect, useState } from 'react';
-import Layout from '../components/app/layout';
 
 const ErrorPage = () => {
   const [textColor, setTextColor] = useState('white');

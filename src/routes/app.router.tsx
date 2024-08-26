@@ -1,9 +1,10 @@
+import App from '@/components/app/app';
+import AudioVisual from '@/pages/audio-visual';
+import ErrorPage from '@/pages/error-page';
+import HelloSound from '@/pages/hello-sound';
+import HomePage from '@/pages/home-page';
+import PageNotFound from '@/pages/page-not-found';
 import { createBrowserRouter } from 'react-router-dom';
-import App from '../components/app/app';
-import ErrorPage from '../pages/error-page';
-import HelloSound from '../pages/hello-sound';
-import HomePage from '../pages/home-page';
-import PageNotFound from '../pages/page-not-found';
 
 const appRouter = createBrowserRouter([
   {
@@ -18,6 +19,10 @@ const appRouter = createBrowserRouter([
       {
         path: 'hello-sound',
         element: <HelloSound />,
+      },
+      {
+        path: 'audio-visual',
+        element: <AudioVisual />,
       },
       {
         path: '*',
