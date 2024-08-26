@@ -1,4 +1,4 @@
-import Layout from '@/components/app-test/layout';
+import Layout from '@/components/app/layout';
 import useAppStore from '@/store/app.store';
 import { getToneJS } from '@/utils/shared.utils';
 import { useEffect } from 'react';
