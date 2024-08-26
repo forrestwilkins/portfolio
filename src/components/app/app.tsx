@@ -12,16 +12,6 @@ const App = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const lastVisitedPage = localStorage.getItem('last-visited-page');
-    if (lastVisitedPage && !location.state?.rhizome) {
-      navigate(lastVisitedPage);
-      return;
-    }
-
-    localStorage.setItem('last-visited-page', location.pathname);
-  }, [navigate, location.pathname, location.state?.rhizome]);
-
   const enableAudio = useCallback(async () => {
     if (isAudioEnabled) {
       return;
@@ -36,14 +26,26 @@ const App = () => {
 
   useEffect(() => {
     window.addEventListener('keydown', enableAudio);
+    window.addEventListener('mousedown', enableAudio);
     return () => {
       window.removeEventListener('keydown', enableAudio);
+      window.removeEventListener('mousedown', enableAudio);
     };
   }, [enableAudio]);
 
+  useEffect(() => {
+    const lastVisitedPage = localStorage.getItem('last-visited-page');
+    if (lastVisitedPage && !location.state?.rhizome) {
+      navigate(lastVisitedPage);
+      return;
+    }
+
+    localStorage.setItem('last-visited-page', location.pathname);
+  }, [navigate, location.pathname, location.state?.rhizome]);
+
   return (
     <ThemeProvider>
-      <Layout onClick={enableAudio}>
+      <Layout>
         <Outlet />
       </Layout>
     </ThemeProvider>

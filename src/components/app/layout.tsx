@@ -6,11 +6,10 @@ interface Props {
   children: ReactNode;
   style?: CSSProperties;
   className?: string;
-  onClick?(): void;
 }
 
-const Layout = ({ children, style, className, onClick }: Props) => (
-  <div className={cn('p-24', className)} style={{ ...style }} onClick={onClick}>
+const Layout = ({ children, style, className }: Props) => (
+  <div className={cn('p-24', className)} style={{ ...style }}>
     <TopNav />
 
     {children}
