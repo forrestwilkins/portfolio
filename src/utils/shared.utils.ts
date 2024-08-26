@@ -4,7 +4,7 @@ import type ToneType from 'tone';
 
 type ToneJS = typeof ToneType;
 
-export let Tone: ToneJS | null = null;
+let Tone: ToneJS | null = null;
 
 export const getToneJS = async (): Promise<ToneJS> => {
   if (!Tone) {
