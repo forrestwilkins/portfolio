@@ -22,7 +22,7 @@ const App = () => {
     localStorage.setItem('last-visited-page', location.pathname);
   }, [navigate, location.pathname, location.state?.rhizome]);
 
-  const initToneJS = async () => {
+  const enableAudio = async () => {
     if (isAudioEnabled) {
       return;
     }
@@ -36,7 +36,7 @@ const App = () => {
 
   return (
     <ThemeProvider>
-      <Layout onClick={initToneJS}>
+      <Layout onClick={enableAudio}>
         <Outlet />
       </Layout>
     </ThemeProvider>
