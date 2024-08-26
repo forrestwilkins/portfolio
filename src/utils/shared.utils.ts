@@ -6,7 +6,7 @@ type ToneJS = typeof ToneType;
 
 let Tone: ToneJS | null = null;
 
-export const getToneJS = async (): Promise<ToneJS> => {
+export const getToneJS = async () => {
   if (!Tone) {
     Tone = await import('tone');
     return Tone;
