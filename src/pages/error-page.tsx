@@ -1,4 +1,4 @@
-import Layout from '@/components/app/layout';
+import Layout from '@/components/app-test/layout';
 import { useEffect, useState } from 'react';
 
 const ErrorPage = () => {

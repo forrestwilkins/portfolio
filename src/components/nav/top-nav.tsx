@@ -1,4 +1,4 @@
-import { ModeToggle } from '@/components/app/mode-toggle';
+import { ModeToggle } from '@/components/app-test/mode-toggle';
 import Button from '@/components/ui/button';
 import { Link, useLocation } from 'react-router-dom';
 

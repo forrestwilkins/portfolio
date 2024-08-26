@@ -1,4 +1,4 @@
-import App from '@/components/app/app';
+import App from '@/components/app-test/app';
 import AudioVisual from '@/pages/audio-visual';
 import ErrorPage from '@/pages/error-page';
 import HelloSound from '@/pages/hello-sound';
