@@ -2,6 +2,26 @@ import useAppStore from '@/store/app.store';
 import { getToneJS } from '@/utils/shared.utils';
 import { useRef } from 'react';
 
+const NOTES = ['A', 'B', 'C', 'D', 'E', 'F', 'G'];
+
+const getAudioVisualScript = (now: number) => {
+  const frameCount = 5;
+  const script = [];
+
+  for (let i = 0; i < frameCount; i++) {
+    const note = NOTES[Math.floor(Math.random() * NOTES.length)];
+    const octave = Math.floor(Math.random() * 5) + 2;
+
+    script.push({
+      note: `${note}${octave}`,
+    });
+  }
+
+  return script.map((item, index) => {
+    return { ...item, time: now + index * 0.5 };
+  });
+};
+
 const AudioVisual = () => {
   const isAudioEnabled = useAppStore((state) => state.isAudioEnabled);
   const visualRef = useRef<HTMLDivElement | null>(null);
@@ -10,24 +30,27 @@ const AudioVisual = () => {
     if (!isAudioEnabled) {
       return;
     }
+
     const Tone = await getToneJS();
     const synth = new Tone.PolySynth(Tone.Synth).toDestination();
+
     const now = Tone.now();
+    const script = getAudioVisualScript(now);
 
-    synth.triggerAttack('D4', now);
-    synth.triggerAttack('F4', now + 0.5);
-    synth.triggerAttack('A4', now + 1);
-    synth.triggerAttack('C5', now + 1.5);
-    synth.triggerAttack('E5', now + 2);
-
-    synth.triggerRelease(['D4', 'F4', 'A4', 'C5', 'E5'], now + 4);
+    for (const frame of script) {
+      synth.triggerAttack(frame.note, frame.time);
+    }
+    synth.triggerRelease(
+      script.map((f) => f.note),
+      now + script.length * 0.5,
+    );
   };
 
   return (
     <div className="flex items-center justify-center pt-32">
       <div
         ref={visualRef}
-        className="h-32 w-32 bg-blue-500"
+        className="h-32 w-32 cursor-pointer rounded-full bg-gray-900 transition-all duration-700 hover:scale-110 hover:bg-red-500"
         onClick={handleClick}
       ></div>
     </div>
