@@ -4,16 +4,25 @@ import { useRef } from 'react';
 
 const NOTES = ['A', 'B', 'C', 'D', 'E', 'F', 'G'];
 
+const getRandomRGB = () => {
+  const red = Math.random() * 255;
+  const green = Math.random() * 255;
+  const blue = Math.random() * 255;
+  return `rgb(${red}, ${green}, ${blue})`;
+};
+
 const getAudioVisualScript = (now: number) => {
-  const frameCount = 5;
+  const frameCount = 10;
   const script = [];
 
   for (let i = 0; i < frameCount; i++) {
     const note = NOTES[Math.floor(Math.random() * NOTES.length)];
-    const octave = Math.floor(Math.random() * 5) + 2;
+    const octave = Math.floor(Math.random() * 3) + 1;
 
     script.push({
       note: `${note}${octave}`,
+      color: getRandomRGB(),
+      duration: '8n',
     });
   }
 
@@ -27,7 +36,7 @@ const AudioVisual = () => {
   const visualRef = useRef<HTMLDivElement | null>(null);
 
   const handleClick = async () => {
-    if (!isAudioEnabled) {
+    if (!isAudioEnabled || !visualRef.current) {
       return;
     }
 
@@ -36,21 +45,27 @@ const AudioVisual = () => {
 
     const now = Tone.now();
     const script = getAudioVisualScript(now);
+    const initialBGColor = visualRef.current.style.backgroundColor;
 
     for (const frame of script) {
-      synth.triggerAttack(frame.note, frame.time);
+      synth.triggerAttackRelease(frame.note, frame.duration, frame.time);
     }
-    synth.triggerRelease(
-      script.map((f) => f.note),
-      now + script.length * 0.5,
-    );
+
+    for (const frame of script) {
+      visualRef.current.style.backgroundColor = frame.color;
+
+      await new Promise((resolve) =>
+        setTimeout(resolve, (frame.time - Tone.now()) * 1000),
+      );
+    }
+    visualRef.current.style.backgroundColor = initialBGColor;
   };
 
   return (
     <div className="flex items-center justify-center pt-32">
       <div
         ref={visualRef}
-        className="h-32 w-32 cursor-pointer rounded-full bg-gray-900 transition-all duration-700 hover:scale-110 hover:bg-blue-500 dark:bg-gray-100 dark:hover:bg-blue-500"
+        className="h-32 w-32 cursor-pointer rounded-full bg-gray-900 transition-all hover:scale-110 hover:bg-blue-500 dark:bg-gray-100 dark:hover:bg-blue-500"
         onClick={handleClick}
       ></div>
     </div>
