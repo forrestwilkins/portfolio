@@ -1,15 +1,9 @@
 import useAppStore from '@/store/app.store';
 import { getToneJS } from '@/utils/shared.utils';
+import { getRandomRGB } from '@/utils/visual.utils';
 import { useRef } from 'react';
 
 const NOTES = ['A', 'B', 'C', 'D', 'E', 'F', 'G'];
-
-const getRandomRGB = () => {
-  const red = Math.random() * 255;
-  const green = Math.random() * 255;
-  const blue = Math.random() * 255;
-  return `rgb(${red}, ${green}, ${blue})`;
-};
 
 const getAudioVisualScript = (now: number) => {
   const frameCount = 10;
