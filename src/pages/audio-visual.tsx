@@ -50,7 +50,7 @@ const AudioVisual = () => {
     <div className="flex items-center justify-center pt-32">
       <div
         ref={visualRef}
-        className="h-32 w-32 cursor-pointer rounded-full bg-gray-900 transition-all duration-700 hover:scale-110 hover:bg-red-500"
+        className="h-32 w-32 cursor-pointer rounded-full bg-gray-900 transition-all duration-700 hover:scale-110 hover:bg-blue-500 dark:bg-gray-100 dark:hover:bg-blue-500"
         onClick={handleClick}
       ></div>
     </div>
