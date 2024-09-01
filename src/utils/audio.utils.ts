@@ -1,6 +1,3 @@
-export const getRandom = (min: number, max: number) =>
-  Math.random() * (max - min) + min;
-
 export const generateMelody = (numNotes: number) => {
   const melody: number[] = [];
   const durations: number[] = [];

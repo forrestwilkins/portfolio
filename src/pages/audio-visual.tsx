@@ -1,5 +1,5 @@
 import useAppStore from '@/store/app.store';
-import { getToneJS } from '@/utils/shared.utils';
+import { getRandom, getToneJS } from '@/utils/shared.utils';
 import { getRandomRGB } from '@/utils/visual.utils';
 import { useRef } from 'react';
 
@@ -11,13 +11,13 @@ const getAudioVisualScript = (now: number) => {
 
   for (let i = 0; i < frameCount; i++) {
     const note = NOTES[Math.floor(Math.random() * NOTES.length)];
-    const octave = Math.floor(Math.random() * 3) + 1;
-    const duration = Math.floor(Math.random() * 7) + 4;
+    const duration = getRandom(4, 7);
+    const octave = getRandom(1, 3);
 
     script.push({
       note: `${note}${octave}`,
-      color: getRandomRGB(),
       duration: `${duration}n`,
+      color: getRandomRGB(),
     });
   }
 
