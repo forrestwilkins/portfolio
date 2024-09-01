@@ -1,6 +1,6 @@
 import Canvas from '@/components/shared/canvas';
 import { getRandomRGB } from '@/utils/visual.utils';
-import { MouseEvent } from 'react';
+import { MouseEvent, TouchEvent } from 'react';
 
 const CanvasPage = () => {
   const handleCanvasMount = (canvas: HTMLCanvasElement) => {
@@ -17,18 +17,30 @@ const CanvasPage = () => {
     }
   };
 
-  const handleCanvasClick = (
+  const getMousePosition = (
     canvas: HTMLCanvasElement,
-    e: MouseEvent<Element>,
+    e: MouseEvent<Element> | TouchEvent<Element>,
+  ) => {
+    const rect = canvas.getBoundingClientRect();
+    const clientX = 'clientX' in e ? e.clientX : e.touches[0].clientX;
+    const clientY = 'clientY' in e ? e.clientY : e.touches[0].clientY;
+
+    return {
+      x: clientX - rect.left,
+      y: clientY - rect.top,
+    };
+  };
+
+  const handleMouseMove = (
+    canvas: HTMLCanvasElement,
+    e: TouchEvent<Element> | MouseEvent<Element>,
   ) => {
     const context = canvas.getContext('2d');
     if (!context) {
       return;
     }
 
-    const rect = canvas.getBoundingClientRect();
-    const mouseX = e.clientX - rect.left;
-    const mouseY = e.clientY - rect.top;
+    const { x: mouseX, y: mouseY } = getMousePosition(canvas, e);
 
     for (let y = 0; y < canvas.height; y += 8) {
       for (let x = 0; x < canvas.width; x += 8) {
@@ -48,7 +60,8 @@ const CanvasPage = () => {
         width={500}
         height={250}
         onMount={handleCanvasMount}
-        onMouseMove={handleCanvasClick}
+        onMouseMove={handleMouseMove}
+        onTouchMove={handleMouseMove}
         className="rounded-md"
       />
     </div>
