@@ -1,11 +1,11 @@
-import { useEffect, useRef } from 'react';
+import { MouseEvent, useEffect, useRef } from 'react';
 
 interface Props {
   width?: number;
   height?: number;
   className?: string;
-  onClick?(canvas: HTMLCanvasElement): void;
   onMount?(canvas: HTMLCanvasElement): void;
+  onClick?(canvas: HTMLCanvasElement, e: MouseEvent<Element>): void;
   onFrameRender?(canvas: HTMLCanvasElement, frameCount: number): void;
 }
 
@@ -43,9 +43,9 @@ const Canvas = ({
     };
   }, [onFrameRender]);
 
-  const handleClick = () => {
+  const handleClick = (e: MouseEvent<Element>) => {
     if (canvasRef.current && onClick) {
-      onClick(canvasRef.current);
+      onClick(canvasRef.current, e);
     }
   };
 
