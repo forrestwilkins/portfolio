@@ -21,6 +21,7 @@ export default defineConfig({
         short_name: 'rhizome',
         description: 'An interactive art piece',
         theme_color: '#000000',
+        orientation: 'portrait',
         icons: [
           {
             src: 'src/assets/pwa-192x192.png',
