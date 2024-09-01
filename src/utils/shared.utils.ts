@@ -17,3 +17,7 @@ export const getToneJS = async () => {
 export const cn = (...args: ClassValue[]) => {
   return twMerge(clsx(args));
 };
+
+export const getRandom = (min: number, max: number) => {
+  return Math.floor(Math.random() * max) + min;
+};

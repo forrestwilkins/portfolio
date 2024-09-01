@@ -1,7 +1,7 @@
 import Button from '@/components/ui/button';
 import { useTheme } from '@/hooks/shared.hooks';
 import { useEffect, useRef, useState } from 'react';
-import { convertFrequencyToColor, generateMelody } from '../utils/sound.utils';
+import { convertFrequencyToColor, generateMelody } from '../utils/audio.utils';
 
 const HelloSound = () => {
   const { theme } = useTheme();
