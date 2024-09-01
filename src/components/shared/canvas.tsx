@@ -6,6 +6,7 @@ interface Props {
   className?: string;
   onClick?(canvas: HTMLCanvasElement): void;
   onMount?(canvas: HTMLCanvasElement): void;
+  onFrameRender?(canvas: HTMLCanvasElement, frameCount: number): void;
 }
 
 const Canvas = ({
@@ -13,6 +14,7 @@ const Canvas = ({
   height = 250,
   className,
   onClick,
+  onFrameRender,
   onMount,
 }: Props) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -22,6 +24,24 @@ const Canvas = ({
       onMount(canvasRef.current);
     }
   }, [onMount]);
+
+  useEffect(() => {
+    let frameCount = 1;
+    let animationFrameId: number;
+
+    if (canvasRef.current && onFrameRender) {
+      const canvas = canvasRef.current;
+      const render = () => {
+        onFrameRender(canvas, frameCount);
+        animationFrameId = window.requestAnimationFrame(render);
+        frameCount++;
+      };
+      render();
+    }
+    return () => {
+      window.cancelAnimationFrame(animationFrameId);
+    };
+  }, [onFrameRender]);
 
   const handleClick = () => {
     if (canvasRef.current && onClick) {
