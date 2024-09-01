@@ -1,13 +1,13 @@
 import Canvas from '@/components/shared/canvas';
-import { useIsDesktop } from '@/hooks/shared.hooks';
+import { useIsLarge } from '@/hooks/shared.hooks';
 import { getRandomRGB } from '@/utils/visual.utils';
 import { MouseEvent, TouchEvent } from 'react';
 
 const CanvasPage = () => {
-  const isDesktop = useIsDesktop();
+  const isLarge = useIsLarge();
 
-  const canvasWidth = isDesktop ? 500 : 250;
-  const canvasHeight = isDesktop ? 250 : 500;
+  const canvasWidth = isLarge ? 500 : 250;
+  const canvasHeight = isLarge ? 250 : 500;
 
   const handleCanvasMount = (canvas: HTMLCanvasElement) => {
     const context = canvas.getContext('2d');

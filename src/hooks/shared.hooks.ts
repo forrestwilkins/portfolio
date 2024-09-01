@@ -41,7 +41,7 @@ export const useScreenSize = () => {
   return screenSize;
 };
 
-export const useIsDesktop = () => {
+export const useIsLarge = () => {
   const { width } = useScreenSize();
   return width > 1024;
 };
