@@ -1,19 +1,14 @@
-import { createContext, useContext } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 
 export type Theme = 'dark' | 'light' | 'system';
 
-export type ThemeProviderState = {
+export const ThemeProviderContext = createContext<{
   theme: Theme;
   setTheme: (theme: Theme) => void;
-};
-
-export const INITIAL_THEME_STATE: ThemeProviderState = {
+}>({
   theme: 'dark',
   setTheme: () => null,
-};
-
-export const ThemeProviderContext =
-  createContext<ThemeProviderState>(INITIAL_THEME_STATE);
+});
 
 export const useTheme = () => {
   const context = useContext(ThemeProviderContext);
@@ -23,4 +18,30 @@ export const useTheme = () => {
   }
 
   return context;
+};
+
+export const useScreenSize = () => {
+  const [screenSize, setScreenSize] = useState({
+    width: window.innerWidth,
+    height: window.innerHeight,
+  });
+
+  useEffect(() => {
+    const handleResize = () => {
+      setScreenSize({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  return screenSize;
+};
+
+export const useIsLarge = () => {
+  const { width } = useScreenSize();
+  return width > 1024;
 };
