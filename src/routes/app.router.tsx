@@ -1,5 +1,6 @@
 import App from '@/components/app/app';
 import AudioVisual from '@/pages/audio-visual';
+import CanvasPage from '@/pages/canvas-page';
 import ErrorPage from '@/pages/error-page';
 import HelloSound from '@/pages/hello-sound';
 import HomePage from '@/pages/home-page';
@@ -23,6 +24,10 @@ const appRouter = createBrowserRouter([
       {
         path: 'audio-visual',
         element: <AudioVisual />,
+      },
+      {
+        path: 'canvas',
+        element: <CanvasPage />,
       },
       {
         path: '*',
