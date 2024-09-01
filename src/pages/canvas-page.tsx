@@ -1,8 +1,14 @@
 import Canvas from '@/components/shared/canvas';
+import { useIsDesktop } from '@/hooks/shared.hooks';
 import { getRandomRGB } from '@/utils/visual.utils';
 import { MouseEvent, TouchEvent } from 'react';
 
 const CanvasPage = () => {
+  const isDesktop = useIsDesktop();
+
+  const canvasWidth = isDesktop ? 500 : 250;
+  const canvasHeight = isDesktop ? 250 : 500;
+
   const handleCanvasMount = (canvas: HTMLCanvasElement) => {
     const context = canvas.getContext('2d');
     if (!context) {
@@ -48,17 +54,22 @@ const CanvasPage = () => {
         context.beginPath();
         context.moveTo(x, y);
 
-        context.quadraticCurveTo(250, 125, mouseX, mouseY);
+        context.quadraticCurveTo(
+          canvasWidth / 2,
+          canvasHeight / 2,
+          mouseX,
+          mouseY,
+        );
         context.stroke();
       }
     }
   };
 
   return (
-    <div className="flex justify-center pt-28">
+    <div className="flex justify-center lg:pt-28">
       <Canvas
-        width={500}
-        height={250}
+        width={canvasWidth}
+        height={canvasHeight}
         onMount={handleCanvasMount}
         onMouseMove={handleMouseMove}
         onTouchMove={handleMouseMove}
