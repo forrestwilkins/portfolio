@@ -1,8 +1,28 @@
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 
-const Canvas = () => {
-  const canvasRef = useRef(null);
+interface Props {
+  width?: number;
+  height?: number;
+  onMount?(canvas: HTMLCanvasElement): void;
+  className?: string;
+}
 
-  return <canvas ref={canvasRef} />;
+const Canvas = ({ width = 250, height = 250, onMount, className }: Props) => {
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+
+  useEffect(() => {
+    if (canvasRef.current && onMount) {
+      onMount(canvasRef.current);
+    }
+  }, [onMount]);
+
+  return (
+    <canvas
+      width={width}
+      height={height}
+      ref={canvasRef}
+      className={className}
+    />
+  );
 };
 export default Canvas;
