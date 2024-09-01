@@ -6,6 +6,7 @@ interface Props {
   className?: string;
   onMount?(canvas: HTMLCanvasElement): void;
   onClick?(canvas: HTMLCanvasElement, e: MouseEvent<Element>): void;
+  onMouseMove?(canvas: HTMLCanvasElement, e: MouseEvent<Element>): void;
   onFrameRender?(canvas: HTMLCanvasElement, frameCount: number): void;
 }
 
@@ -15,6 +16,7 @@ const Canvas = ({
   className,
   onClick,
   onFrameRender,
+  onMouseMove,
   onMount,
 }: Props) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -49,12 +51,19 @@ const Canvas = ({
     }
   };
 
+  const handleMouseMove = (e: MouseEvent<Element>) => {
+    if (canvasRef.current && onMouseMove) {
+      onMouseMove(canvasRef.current, e);
+    }
+  };
+
   return (
     <canvas
       width={width}
       height={height}
       className={className}
       onClick={handleClick}
+      onMouseMove={handleMouseMove}
       ref={canvasRef}
     />
   );
