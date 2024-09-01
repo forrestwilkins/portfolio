@@ -6,22 +6,23 @@ import { useRef } from 'react';
 const NOTES = ['A', 'B', 'C', 'D', 'E', 'F', 'G'];
 
 const getAudioVisualScript = (now: number) => {
-  const frameCount = 10;
+  const frameCount = 25;
   const script = [];
 
   for (let i = 0; i < frameCount; i++) {
     const note = NOTES[Math.floor(Math.random() * NOTES.length)];
     const octave = Math.floor(Math.random() * 3) + 1;
+    const duration = Math.floor(Math.random() * 7) + 4;
 
     script.push({
       note: `${note}${octave}`,
       color: getRandomRGB(),
-      duration: '8n',
+      duration: `${duration}n`,
     });
   }
 
   return script.map((item, index) => {
-    return { ...item, time: now + index * 0.5 };
+    return { ...item, time: now + index * 0.2 };
   });
 };
 
