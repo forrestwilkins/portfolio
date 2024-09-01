@@ -3,11 +3,18 @@ import { useEffect, useRef } from 'react';
 interface Props {
   width?: number;
   height?: number;
-  onMount?(canvas: HTMLCanvasElement): void;
   className?: string;
+  onClick?(canvas: HTMLCanvasElement): void;
+  onMount?(canvas: HTMLCanvasElement): void;
 }
 
-const Canvas = ({ width = 250, height = 250, onMount, className }: Props) => {
+const Canvas = ({
+  width = 250,
+  height = 250,
+  className,
+  onClick,
+  onMount,
+}: Props) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   useEffect(() => {
@@ -16,12 +23,19 @@ const Canvas = ({ width = 250, height = 250, onMount, className }: Props) => {
     }
   }, [onMount]);
 
+  const handleClick = () => {
+    if (canvasRef.current && onClick) {
+      onClick(canvasRef.current);
+    }
+  };
+
   return (
     <canvas
       width={width}
       height={height}
-      ref={canvasRef}
       className={className}
+      onClick={handleClick}
+      ref={canvasRef}
     />
   );
 };
