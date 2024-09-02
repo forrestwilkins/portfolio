@@ -1,13 +1,13 @@
 import Canvas from '@/components/shared/canvas';
 import { useScreenSize } from '@/hooks/shared.hooks';
-import { mapRange } from '@/utils/math.utils';
+import { constrain, mapRange } from '@/utils/math.utils';
 import { MouseEvent, TouchEvent } from 'react';
 
 const CanvasPage = () => {
   const [screenWidth, screenHeight] = useScreenSize();
 
-  const canvasWidth = screenWidth * 0.5;
-  const canvasHeight = screenHeight * 0.6;
+  const canvasWidth = constrain(screenWidth * 0.8, 0, 600);
+  const canvasHeight = constrain(screenHeight * 0.65, 0, 500);
 
   const getMousePosition = (
     canvas: HTMLCanvasElement,
@@ -70,7 +70,7 @@ const CanvasPage = () => {
   };
 
   return (
-    <div className="flex justify-center lg:pt-28">
+    <div className="flex justify-center lg:pt-5">
       <Canvas
         width={canvasWidth}
         height={canvasHeight}
