@@ -67,3 +67,9 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Disable pull-to-refresh and overscroll stretch effect */
+body,
+html {
+  overscroll-behavior: none;
+}
