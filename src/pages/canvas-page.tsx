@@ -7,7 +7,7 @@ const CanvasPage = () => {
   const isLarge = useIsLarge();
 
   const canvasWidth = isLarge ? 500 : 250;
-  const canvasHeight = isLarge ? 250 : 500;
+  const canvasHeight = isLarge ? 250 : 400;
 
   const handleCanvasMount = (canvas: HTMLCanvasElement) => {
     const context = canvas.getContext('2d');
