@@ -9,20 +9,6 @@ const CanvasPage = () => {
   const canvasWidth = isLarge ? 500 : 250;
   const canvasHeight = isLarge ? 250 : 400;
 
-  const handleCanvasMount = (canvas: HTMLCanvasElement) => {
-    const context = canvas.getContext('2d');
-    if (!context) {
-      return;
-    }
-
-    for (let y = 0; y < canvas.height; y += 8) {
-      for (let x = 0; x < canvas.width; x += 8) {
-        context.fillStyle = `rgb(${x}, ${y}, 100)`;
-        context.fillRect(x, y, 4, 4);
-      }
-    }
-  };
-
   const getMousePosition = (
     canvas: HTMLCanvasElement,
     e: MouseEvent<Element> | TouchEvent<Element>,
@@ -61,6 +47,20 @@ const CanvasPage = () => {
           mouseY,
         );
         context.stroke();
+      }
+    }
+  };
+
+  const handleCanvasMount = (canvas: HTMLCanvasElement) => {
+    const context = canvas.getContext('2d');
+    if (!context) {
+      return;
+    }
+
+    for (let y = 0; y < canvas.height; y += 8) {
+      for (let x = 0; x < canvas.width; x += 8) {
+        context.fillStyle = `rgb(${x}, ${y}, 100)`;
+        context.fillRect(x, y, 4, 4);
       }
     }
   };
