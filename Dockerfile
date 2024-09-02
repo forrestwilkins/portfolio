@@ -4,6 +4,8 @@ RUN apk add --update python3 build-base
 
 COPY src /app/src
 COPY public /app/public
+
+COPY index.html /app
 COPY package.json /app
 COPY package-lock.json /app
 COPY tsconfig.json /app
@@ -11,7 +13,6 @@ COPY tsconfig.app.json /app
 COPY tsconfig.node.json /app
 COPY postcss.config.js /app
 COPY tailwind.config.js /app
-COPY index.html /app
 COPY vite.config.ts /app
 
 WORKDIR /app
