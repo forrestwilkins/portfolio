@@ -1,6 +1,6 @@
 import Canvas from '@/components/shared/canvas';
 import { useIsLarge } from '@/hooks/shared.hooks';
-import { getRandomRGB } from '@/utils/visual.utils';
+import { mapRange } from '@/utils/math.utils';
 import { MouseEvent, TouchEvent } from 'react';
 
 const CanvasPage = () => {
@@ -36,7 +36,11 @@ const CanvasPage = () => {
 
     for (let y = 0; y < canvas.height; y += 8) {
       for (let x = 0; x < canvas.width; x += 8) {
-        context.strokeStyle = getRandomRGB();
+        const red = mapRange(x, 0, canvas.width, 0, 255);
+        const green = mapRange(y, 0, canvas.height, 0, 255);
+        const blue = mapRange(mouseX, 0, canvas.width, 0, 255);
+
+        context.strokeStyle = `rgb(${red}, ${green}, ${blue})`;
         context.beginPath();
         context.moveTo(x, y);
 
