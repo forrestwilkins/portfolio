@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  app:
+    container_name: rhizome
+    build:
+      context: .
+      target: runtime_stage
+      args:
+        - NODE_ENV=${NODE_ENV}
+        - PORT=${PORT}
+    ports:
+      - ${PORT}:80
+    restart: always
+    env_file: .env
