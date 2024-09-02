@@ -3,6 +3,7 @@ FROM node:20.16.0-alpine AS build_stage
 RUN apk add --update python3 build-base
 
 COPY src /app/src
+COPY public /app/public
 COPY package.json /app
 COPY package-lock.json /app
 COPY tsconfig.json /app
@@ -22,10 +23,10 @@ RUN rm -rf node_modules
 RUN npm ci --only=production
 RUN rm -rf src
 
-FROM node:20.16.0-alpine AS runtime_stage
+FROM nginx:stable-alpine AS runtime_stage
 
-COPY --from=build_stage /app /app
+COPY --from=build_stage /app/dist /usr/share/nginx/html
 
-RUN ls
+EXPOSE 80
 
-COPY /dist /var/www/html
+CMD ["nginx", "-g", "daemon off;"]
