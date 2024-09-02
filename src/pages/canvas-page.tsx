@@ -1,13 +1,13 @@
 import Canvas from '@/components/shared/canvas';
-import { useIsLarge } from '@/hooks/shared.hooks';
+import { useScreenSize } from '@/hooks/shared.hooks';
 import { mapRange } from '@/utils/math.utils';
 import { MouseEvent, TouchEvent } from 'react';
 
 const CanvasPage = () => {
-  const isLarge = useIsLarge();
+  const [screenWidth, screenHeight] = useScreenSize();
 
-  const canvasWidth = isLarge ? 500 : 250;
-  const canvasHeight = isLarge ? 250 : 400;
+  const canvasWidth = screenWidth * 0.5;
+  const canvasHeight = screenHeight * 0.6;
 
   const getMousePosition = (
     canvas: HTMLCanvasElement,
@@ -37,7 +37,7 @@ const CanvasPage = () => {
     for (let y = 0; y < canvas.height; y += 8) {
       for (let x = 0; x < canvas.width; x += 8) {
         const red = mapRange(x, 0, canvas.width, 0, 255);
-        const green = mapRange(y, 0, canvas.height, 0, 255);
+        const green = mapRange(mouseY, 0, canvas.height, 0, 255);
         const blue = mapRange(mouseX, 0, canvas.width, 0, 255);
 
         context.strokeStyle = `rgb(${red}, ${green}, ${blue})`;

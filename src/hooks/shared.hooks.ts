@@ -38,10 +38,15 @@ export const useScreenSize = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  return screenSize;
+  return [screenSize.width, screenSize.height];
 };
 
-export const useIsLarge = () => {
-  const { width } = useScreenSize();
-  return width > 1024;
+export const useBreakpoint = () => {
+  const [screenWidth] = useScreenSize();
+
+  const isSmall = screenWidth < 640;
+  const isMedium = screenWidth >= 768;
+  const isLarge = screenWidth >= 1024;
+
+  return { isSmall, isMedium, isLarge };
 };
