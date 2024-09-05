@@ -1,7 +1,7 @@
 import Layout from '@/components/app/layout';
 import ThemeProvider from '@/components/app/theme-provider';
 import useAppStore from '@/store/app.store';
-import { getToneJS } from '@/utils/shared.utils';
+import { getToneJS } from '@/utils/audio.utils';
 import { useEffect } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 
