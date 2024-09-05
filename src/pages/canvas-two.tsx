@@ -9,6 +9,7 @@ interface Ripple {
   red: number;
   green: number;
   blue: number;
+  opacity: number;
   radius: number;
 }
 
@@ -26,6 +27,7 @@ const CanvasTwo = () => {
     const red = Math.random() * 255;
     const green = Math.random() * 255;
     const blue = Math.random() * 255;
+    const opacity = Math.random() * 0.5 + 0.5;
 
     ripplesRef.current.push({
       x,
@@ -33,6 +35,7 @@ const CanvasTwo = () => {
       red,
       green,
       blue,
+      opacity,
       radius: 0,
     });
   };
@@ -47,16 +50,30 @@ const CanvasTwo = () => {
       const ripple = ripplesRef.current[i];
       ctx.beginPath();
       ctx.arc(ripple.x, ripple.y, ripple.radius, 0, 2 * Math.PI);
-      ctx.strokeStyle = `rgb(${ripple.red}, ${ripple.green}, ${ripple.blue})`;
       ctx.lineWidth = 2;
+      ctx.strokeStyle = `
+        rgba(
+          ${ripple.red},
+          ${ripple.green},
+          ${ripple.blue},
+          ${ripple.opacity}
+        )`;
       ctx.stroke();
 
       if (frameCount % 4 === 0) {
         ripple.radius += 1;
 
-        ripple.red += Math.random() * 10 - 5;
-        ripple.green += Math.random() * 10 - 5;
-        ripple.blue += Math.random() * 10 - 5;
+        const redDelta = ripple.red + (Math.random() * 10 - 5);
+        ripple.red = constrain(redDelta, 0, 255);
+
+        const greenDelta = ripple.green + (Math.random() * 10 - 5);
+        ripple.green = constrain(greenDelta, 0, 255);
+
+        const blueDelta = ripple.blue + (Math.random() * 10 - 5);
+        ripple.blue = constrain(blueDelta, 0, 255);
+
+        const opacityDelta = ripple.opacity + (Math.random() * 0.1 - 0.05);
+        ripple.opacity = constrain(opacityDelta, 0.1, 1);
       }
     }
   };
