@@ -1,3 +1,17 @@
+import type ToneType from 'tone';
+
+type ToneJS = typeof ToneType;
+
+let Tone: ToneJS | null = null;
+
+export const getToneJS = async () => {
+  if (!Tone) {
+    Tone = await import('tone');
+    return Tone;
+  }
+  return Tone;
+};
+
 export const generateMelody = (numNotes: number) => {
   const melody: number[] = [];
   const durations: number[] = [];

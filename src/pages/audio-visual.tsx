@@ -1,5 +1,6 @@
 import useAppStore from '@/store/app.store';
-import { getRandom, getToneJS } from '@/utils/shared.utils';
+import { getToneJS } from '@/utils/audio.utils';
+import { getRandom } from '@/utils/math.utils';
 import { getRandomRGB } from '@/utils/visual.utils';
 import { useRef } from 'react';
 
