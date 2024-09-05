@@ -6,11 +6,19 @@ const HomePage = () => {
   return (
     <div className="flex flex-col gap-7">
       <Link
-        to="/canvas"
+        to="/canvas-1"
         state={{ rhizome: true, prev: location.pathname }}
         className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl"
       >
-        Canvas
+        Canvas 1
+      </Link>
+
+      <Link
+        to="/canvas-2"
+        state={{ rhizome: true, prev: location.pathname }}
+        className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl"
+      >
+        Canvas 2
       </Link>
 
       <Link
