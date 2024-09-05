@@ -18,8 +18,8 @@ const CanvasTwo = () => {
 
   const [screenWidth, screenHeight] = useScreenSize();
 
-  const canvasWidth = constrain(screenWidth * 0.8, 0, 600);
-  const canvasHeight = constrain(screenHeight * 0.65, 0, 500);
+  const canvasWidth = constrain(screenWidth * 0.9, 0, 700);
+  const canvasHeight = constrain(screenHeight * 0.95, 0, 500);
 
   const handleClick = (canvas: HTMLCanvasElement, e: MouseEvent<Element>) => {
     const x = e.clientX - canvas.offsetLeft;
