@@ -1,7 +1,7 @@
 import App from '@/components/app/app';
 import AudioVisual from '@/pages/audio-visual';
-import CanvasOne from '@/pages/canvas-one';
-import CanvasTwo from '@/pages/canvas-two';
+import Ripples from '@/pages/ripples';
+import ColorGrid from '@/pages/color-grid';
 import ErrorPage from '@/pages/error-page';
 import HelloSound from '@/pages/hello-sound';
 import HomePage from '@/pages/home-page';
@@ -27,12 +27,12 @@ const appRouter = createBrowserRouter([
         element: <AudioVisual />,
       },
       {
-        path: 'canvas-1',
-        element: <CanvasOne />,
+        path: 'color-grid',
+        element: <ColorGrid />,
       },
       {
-        path: 'canvas-2',
-        element: <CanvasTwo />,
+        path: 'ripples',
+        element: <Ripples />,
       },
       {
         path: '*',
