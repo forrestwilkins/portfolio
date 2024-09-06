@@ -68,6 +68,13 @@ const Ripples = () => {
 
     for (let i = 0; i < ripplesRef.current.length; i++) {
       const ripple = ripplesRef.current[i];
+
+      // Remove ripples that exceed the canvas width
+      if (ripple.radius / 2 >= canvasWidth) {
+        ripplesRef.current.splice(i, 1);
+        continue;
+      }
+
       ctx.beginPath();
       ctx.arc(ripple.x, ripple.y, ripple.radius, 0, 2 * Math.PI);
       ctx.lineWidth = 2;
