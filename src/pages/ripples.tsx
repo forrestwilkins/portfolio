@@ -3,6 +3,8 @@ import { useScreenSize } from '@/hooks/shared.hooks';
 import { constrain } from '@/utils/math.utils';
 import { MouseEvent, useRef } from 'react';
 
+const RIPPLES_MAX_COUNT = 200;
+
 const COLOR_CHANGE_RATE = 2;
 const OPACITY_CHANGE_RATE = 0.01;
 const OPACITY_MIN = 0.2;
@@ -44,6 +46,11 @@ const Ripples = () => {
 
     const opacity = Math.random() * 0.5 + 0.5;
     const isHighOpacity = opacity >= 1;
+
+    // Remove the oldest ripple if the count exceeds the max
+    if (ripplesRef.current.length >= RIPPLES_MAX_COUNT) {
+      ripplesRef.current.shift();
+    }
 
     ripplesRef.current.push({
       x,
@@ -90,6 +97,7 @@ const Ripples = () => {
       if (frameCount % 4 === 0) {
         ripple.radius += 1;
 
+        // Sync high flags for color
         if (ripple.red >= 255) {
           ripple.isHighRed = true;
         } else if (ripple.red <= 0) {
