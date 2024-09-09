@@ -7,7 +7,7 @@ const RIPPLES_MAX_COUNT = 200;
 
 const COLOR_CHANGE_RATE = 2;
 const OPACITY_CHANGE_RATE = 0.01;
-const OPACITY_MIN = 0.2;
+const OPACITY_MIN = 0.4;
 
 interface Ripple {
   x: number;
