@@ -82,18 +82,6 @@ const Ripples = () => {
         continue;
       }
 
-      ctx.beginPath();
-      ctx.arc(ripple.x, ripple.y, ripple.radius, 0, 2 * Math.PI);
-      ctx.lineWidth = 2;
-      ctx.strokeStyle = `
-        rgba(
-          ${ripple.red},
-          ${ripple.green},
-          ${ripple.blue},
-          ${ripple.opacity}
-        )`;
-      ctx.stroke();
-
       if (frameCount % 4 === 0) {
         ripple.radius += 1;
 
@@ -139,6 +127,18 @@ const Ripples = () => {
           : ripple.opacity + OPACITY_CHANGE_RATE;
         ripple.opacity = constrain(opacityDelta, OPACITY_MIN, 1);
       }
+
+      ctx.beginPath();
+      ctx.arc(ripple.x, ripple.y, ripple.radius, 0, 2 * Math.PI);
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = `
+        rgba(
+          ${ripple.red},
+          ${ripple.green},
+          ${ripple.blue},
+          ${ripple.opacity}
+        )`;
+      ctx.stroke();
     }
   };
 
