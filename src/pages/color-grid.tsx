@@ -3,7 +3,7 @@ import { useScreenSize } from '@/hooks/shared.hooks';
 import { constrain, mapRange } from '@/utils/math.utils';
 import { MouseEvent, TouchEvent } from 'react';
 
-const CanvasPage = () => {
+const ColorGrid = () => {
   const [screenWidth, screenHeight] = useScreenSize();
 
   const canvasWidth = constrain(screenWidth * 0.8, 0, 600);
@@ -83,4 +83,4 @@ const CanvasPage = () => {
   );
 };
 
-export default CanvasPage;
+export default ColorGrid;
