@@ -22,6 +22,14 @@ const HomePage = () => {
       </Link>
 
       <Link
+        to="/modern-jungle"
+        state={{ rhizome: true, prev: location.pathname }}
+        className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl"
+      >
+        Modern Jungle
+      </Link>
+
+      <Link
         to="/audio-visual"
         state={{ rhizome: true, prev: location.pathname }}
         className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl"
