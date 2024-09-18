@@ -9,7 +9,7 @@ const TopNav = () => {
   return (
     <div>
       {!isHomePage && (
-        <Link to="/" state={{ rhizome: true }}>
+        <Link to="/">
           <Button
             className="fixed left-3 top-3 select-none"
             variant="secondary"
