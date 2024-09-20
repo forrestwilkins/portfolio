@@ -1,7 +1,9 @@
 import Layout from '@/components/app/layout';
-import ThemeProvider from '@/components/app/theme-provider';
 import useAppStore from '@/store/app.store';
+import theme from '@/styles/theme';
 import { getToneJS } from '@/utils/audio.utils';
+import { ThemeProvider } from '@mui/material';
+import CssBaseline from '@mui/material/CssBaseline';
 import { useEffect } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 
@@ -52,7 +54,8 @@ const App = () => {
   }, [navigate, location.pathname, location.state?.rhizome]);
 
   return (
-    <ThemeProvider>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
       <Layout>
         <Outlet />
       </Layout>

@@ -27,8 +27,7 @@ const ErrorPage = () => {
 
   return (
     <Layout
-      className="h-screen transition-all duration-500"
-      style={{ backgroundColor }}
+      sx={{ transition: 'all 0.5s', height: '100vh', bgcolor: backgroundColor }}
     >
       <div
         className="text-3xl transition-all duration-500"

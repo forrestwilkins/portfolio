@@ -2,6 +2,31 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+  font-family: 'Comfortaa';
+  src: url('/fonts/Comfortaa.ttf') format('woff');
+}
+
+@font-face {
+  font-family: 'JosefinSans';
+  src: url('/fonts/JosefinSans.ttf') format('woff');
+}
+
+@font-face {
+  font-family: 'Raleway';
+  src: url('/fonts/Raleway.ttf') format('woff');
+}
+
+@font-face {
+  font-family: 'Rubik80sFade';
+  src: url('/fonts/Rubik80sFade.ttf') format('woff');
+}
+
+@font-face {
+  font-family: 'RubikDoodleShadow';
+  src: url('/fonts/RubikDoodleShadow.ttf') format('woff');
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;
