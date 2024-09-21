@@ -19,6 +19,14 @@ const theme = createTheme(initialTheme, {
         },
       },
     },
+
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          textTransform: 'none',
+        },
+      },
+    },
   },
 });
 

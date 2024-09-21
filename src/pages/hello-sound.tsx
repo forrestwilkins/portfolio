@@ -1,5 +1,5 @@
-import Button from '@/components/ui/button';
 import { useTheme } from '@/hooks/shared.hooks';
+import { Box, Button, SxProps } from '@mui/material';
 import { useEffect, useRef, useState } from 'react';
 import { convertFrequencyToColor, generateMelody } from '../utils/audio.utils';
 
@@ -14,6 +14,19 @@ const HelloSound = () => {
 
   const audioContextRef = useRef<AudioContext>();
   const oscillatorRef = useRef<OscillatorNode>();
+
+  const btnStyles: SxProps = {
+    border: `4px solid ${isPlaying ? textColor : baseColor}`,
+    borderRadius: '20px',
+    color: isPlaying ? textColor : baseColor,
+    fontSize: '36px',
+    height: 'fit-content',
+    marginTop: '176px',
+    px: '20px',
+    paddingBottom: '8px',
+    textDecoration: 'none',
+    transition: 'all 150ms cubic-bezier(0.4, 0, 0.2, 1)',
+  };
 
   useEffect(() => {
     return () => {
@@ -92,19 +105,11 @@ const HelloSound = () => {
   };
 
   return (
-    <div className="flex justify-center">
-      <Button
-        className="mt-44 h-fit rounded-lg bg-transparent px-5 pb-3.5 pt-2.5 text-4xl no-underline transition-all hover:bg-transparent"
-        variant="secondary"
-        style={{
-          color: isPlaying ? textColor : baseColor,
-          border: `4px solid ${isPlaying ? textColor : baseColor}`,
-        }}
-        onClick={handleClick}
-      >
+    <Box display="flex" justifyContent="center">
+      <Button sx={btnStyles} onClick={handleClick}>
         {getBtnText()}
       </Button>
-    </div>
+    </Box>
   );
 };
 
