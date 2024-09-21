@@ -1,10 +1,18 @@
+import { Box } from '@mui/material';
 import { Link, useLocation } from 'react-router-dom';
 
 const HomePage = () => {
   const location = useLocation();
 
   return (
-    <div className="flex flex-col gap-7">
+    <Box
+      sx={{
+        padding: '80px 70px',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '28px',
+      }}
+    >
       <Link
         to="/ripples"
         state={{ rhizome: true, prev: location.pathname }}
@@ -36,7 +44,7 @@ const HomePage = () => {
       >
         Hello Sound
       </Link>
-    </div>
+    </Box>
   );
 };
 
