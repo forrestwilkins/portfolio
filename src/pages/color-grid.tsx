@@ -1,9 +1,11 @@
 import Canvas from '@/components/shared/canvas';
 import { useScreenSize } from '@/hooks/shared.hooks';
 import { constrain, mapRange } from '@/utils/math.utils';
+import { Box, useTheme } from '@mui/material';
 import { MouseEvent, TouchEvent } from 'react';
 
 const ColorGrid = () => {
+  const theme = useTheme();
   const [screenWidth, screenHeight] = useScreenSize();
 
   const canvasWidth = constrain(screenWidth * 0.8, 0, 600);
@@ -70,16 +72,24 @@ const ColorGrid = () => {
   };
 
   return (
-    <div className="flex justify-center lg:pt-5">
+    <Box
+      sx={{
+        display: 'flex',
+        justifyContent: 'center',
+        [theme.breakpoints.up('lg')]: {
+          paddingTop: '90px',
+        },
+      }}
+    >
       <Canvas
         width={canvasWidth}
         height={canvasHeight}
         onMount={handleCanvasMount}
         onMouseMove={handleMouseMove}
         onTouchMove={handleMouseMove}
-        className="rounded-md"
+        style={{ borderRadius: '8px' }}
       />
-    </div>
+    </Box>
   );
 };
 

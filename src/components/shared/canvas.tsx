@@ -1,25 +1,31 @@
-import { MouseEvent, TouchEvent, useEffect, useRef } from 'react';
+import {
+  CSSProperties,
+  MouseEvent,
+  TouchEvent,
+  useEffect,
+  useRef,
+} from 'react';
 
 interface Props {
   width?: number;
   height?: number;
-  className?: string;
   onMount?(canvas: HTMLCanvasElement): void;
   onClick?(canvas: HTMLCanvasElement, e: MouseEvent<Element>): void;
   onMouseMove?(canvas: HTMLCanvasElement, e: MouseEvent<Element>): void;
   onTouchMove?(canvas: HTMLCanvasElement, e: TouchEvent<Element>): void;
   onFrameRender?(canvas: HTMLCanvasElement, frameCount: number): void;
+  style?: CSSProperties;
 }
 
 const Canvas = ({
   width = 250,
   height = 250,
-  className,
   onClick,
   onFrameRender,
   onTouchMove,
   onMouseMove,
   onMount,
+  style,
 }: Props) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
@@ -69,7 +75,7 @@ const Canvas = ({
     <canvas
       width={width}
       height={height}
-      className={className}
+      style={style}
       onClick={handleClick}
       onMouseMove={handleMouseMove}
       onTouchMove={handleTouchMove}

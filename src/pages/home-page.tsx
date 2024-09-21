@@ -7,7 +7,7 @@ const HomePage = () => (
       padding: '80px 70px',
       display: 'flex',
       flexDirection: 'column',
-      gap: '28px',
+      gap: '24px',
     }}
   >
     <Link
