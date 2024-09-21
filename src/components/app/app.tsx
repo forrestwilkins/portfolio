@@ -3,14 +3,11 @@ import ThemeProvider from '@/components/app/theme-provider';
 import useAppStore from '@/store/app.store';
 import { getToneJS } from '@/utils/audio.utils';
 import { useEffect } from 'react';
-import { Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
 
 const App = () => {
   const isAudioEnabled = useAppStore((state) => state.isAudioEnabled);
   const setIsAudioEnabled = useAppStore((state) => state.setIsAudioEnabled);
-
-  const location = useLocation();
-  const navigate = useNavigate();
 
   useEffect(() => {
     const enableAudio = async () => {
@@ -40,16 +37,6 @@ const App = () => {
       window.removeEventListener('mousedown', enableAudio);
     };
   }, [isAudioEnabled, setIsAudioEnabled]);
-
-  useEffect(() => {
-    const lastVisitedPage = localStorage.getItem('last-visited-page');
-    if (lastVisitedPage && !location.state?.rhizome) {
-      navigate(lastVisitedPage);
-      return;
-    }
-
-    localStorage.setItem('last-visited-page', location.pathname);
-  }, [navigate, location.pathname, location.state?.rhizome]);
 
   return (
     <ThemeProvider>
