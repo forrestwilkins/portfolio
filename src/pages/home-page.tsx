@@ -1,5 +1,6 @@
+import Link from '@/components/shared/link';
 import { Box } from '@mui/material';
-import { Link, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 
 const HomePage = () => {
   const location = useLocation();
@@ -16,7 +17,7 @@ const HomePage = () => {
       <Link
         to="/ripples"
         state={{ rhizome: true, prev: location.pathname }}
-        className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl"
+        sx={{ scrollMargin: '20px', fontSize: '36px', fontWeight: 800 }}
       >
         Ripples
       </Link>
@@ -24,7 +25,7 @@ const HomePage = () => {
       <Link
         to="/color-grid"
         state={{ rhizome: true, prev: location.pathname }}
-        className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl"
+        sx={{ scrollMargin: '20px', fontSize: '36px', fontWeight: 800 }}
       >
         Color Grid
       </Link>
@@ -32,7 +33,7 @@ const HomePage = () => {
       <Link
         to="/audio-visual"
         state={{ rhizome: true, prev: location.pathname }}
-        className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl"
+        sx={{ scrollMargin: '20px', fontSize: '36px', fontWeight: 800 }}
       >
         Audio Visual
       </Link>
@@ -40,7 +41,7 @@ const HomePage = () => {
       <Link
         to="/hello-sound"
         state={{ rhizome: true, prev: location.pathname }}
-        className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl"
+        sx={{ scrollMargin: '20px', fontSize: '36px', fontWeight: 800 }}
       >
         Hello Sound
       </Link>
