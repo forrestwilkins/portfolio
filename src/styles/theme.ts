@@ -5,7 +5,13 @@ const initialTheme = createTheme({
     fontFamily: 'system-ui',
   },
   colorSchemes: {
-    dark: true,
+    dark: {
+      palette: {
+        background: {
+          default: 'rgba(10, 10, 10)',
+        },
+      },
+    },
     light: true,
   },
 });
