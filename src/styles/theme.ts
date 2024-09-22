@@ -4,6 +4,10 @@ const initialTheme = createTheme({
   typography: {
     fontFamily: 'system-ui',
   },
+  colorSchemes: {
+    dark: true,
+    light: true,
+  },
 });
 
 const theme = createTheme(initialTheme, {

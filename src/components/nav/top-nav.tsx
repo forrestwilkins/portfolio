@@ -27,7 +27,7 @@ const TopNav = () => {
         </Link>
       )}
 
-      <ModeToggle className="fixed right-3 top-3" />
+      <ModeToggle sx={{ right: '12px', top: '12px' }} />
     </div>
   );
 };

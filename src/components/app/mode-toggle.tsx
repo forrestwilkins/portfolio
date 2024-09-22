@@ -1,39 +1,54 @@
-import Button from '@/components/ui/button';
+import { DarkModeOutlined, LightModeOutlined } from '@mui/icons-material';
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { useTheme } from '@/hooks/shared.hooks';
-import { Moon, Sun } from 'lucide-react';
+  Box,
+  IconButton,
+  Menu,
+  MenuItem,
+  PaletteMode,
+  SxProps,
+  useColorScheme,
+} from '@mui/material';
+import { MouseEvent, useState } from 'react';
+
+type Mode = PaletteMode | 'system';
 
 interface Props {
-  className?: string;
+  sx?: SxProps;
 }
 
-export const ModeToggle = ({ className }: Props) => {
-  const { setTheme } = useTheme();
+export const ModeToggle = ({ sx }: Props) => {
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const { mode, setMode } = useColorScheme();
+
+  const handleBtnClick = (e: MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(e.currentTarget);
+  };
+
+  const handleSelect = (mode: Mode) => {
+    setMode(mode);
+    setAnchorEl(null);
+  };
+
+  const renderIcon = () => {
+    if (mode === 'light') {
+      return <LightModeOutlined sx={{ color: 'black' }} />;
+    }
+    return <DarkModeOutlined sx={{ color: 'white' }} />;
+  };
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="outline" size="icon" className={className}>
-          <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-          <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={() => setTheme('light')}>
-          Light
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme('dark')}>
-          Dark
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme('system')}>
-          System
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <Box sx={{ position: 'fixed', ...sx }}>
+      <IconButton onClick={handleBtnClick}>{renderIcon()}</IconButton>
+
+      <Menu
+        anchorEl={anchorEl}
+        open={!!anchorEl}
+        onClose={() => setAnchorEl(null)}
+      >
+        <MenuItem onClick={() => handleSelect('light')}>Light</MenuItem>
+        <MenuItem onClick={() => handleSelect('dark')}>Dark</MenuItem>
+        <MenuItem onClick={() => handleSelect('system')}>System</MenuItem>
+      </Menu>
+    </Box>
   );
 };
