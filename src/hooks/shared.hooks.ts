@@ -1,3 +1,4 @@
+import { useColorScheme } from '@mui/material';
 import { createContext, useContext, useEffect, useState } from 'react';
 
 export type Theme = 'dark' | 'light' | 'system';
@@ -18,6 +19,11 @@ export const useTheme = () => {
   }
 
   return context;
+};
+
+export const useIsLightMode = () => {
+  const { mode } = useColorScheme();
+  return mode === 'light';
 };
 
 export const useScreenSize = () => {
