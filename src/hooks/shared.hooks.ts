@@ -1,10 +1,18 @@
-import { useColorScheme } from '@mui/material';
+import {
+  Breakpoint,
+  useColorScheme,
+  useMediaQuery,
+  useTheme,
+} from '@mui/material';
 import { useEffect, useState } from 'react';
 
 export const useIsLightMode = () => {
   const { mode } = useColorScheme();
   return mode === 'light';
 };
+
+export const useAboveBreakpoint = (breakpoint: Breakpoint) =>
+  useMediaQuery(useTheme().breakpoints.up(breakpoint));
 
 export const useScreenSize = () => {
   const [screenSize, setScreenSize] = useState({
@@ -25,14 +33,4 @@ export const useScreenSize = () => {
   }, []);
 
   return [screenSize.width, screenSize.height];
-};
-
-export const useBreakpoint = () => {
-  const [screenWidth] = useScreenSize();
-
-  const isSmall = screenWidth < 640;
-  const isMedium = screenWidth >= 768;
-  const isLarge = screenWidth >= 1024;
-
-  return { isSmall, isMedium, isLarge };
 };
