@@ -1,11 +1,10 @@
 import Canvas from '@/components/shared/canvas';
 import { useScreenSize } from '@/hooks/shared.hooks';
 import { constrain, mapRange } from '@/utils/math.utils';
-import { Box, useTheme } from '@mui/material';
+import { Box } from '@mui/material';
 import { MouseEvent, TouchEvent } from 'react';
 
 const ColorGrid = () => {
-  const theme = useTheme();
   const [screenWidth, screenHeight] = useScreenSize();
 
   const canvasWidth = constrain(screenWidth * 0.8, 0, 600);
@@ -72,15 +71,7 @@ const ColorGrid = () => {
   };
 
   return (
-    <Box
-      sx={{
-        display: 'flex',
-        justifyContent: 'center',
-        [theme.breakpoints.up('lg')]: {
-          paddingTop: '90px',
-        },
-      }}
-    >
+    <Box display="flex" justifyContent="center">
       <Canvas
         width={canvasWidth}
         height={canvasHeight}

@@ -11,10 +11,10 @@ const theme = createTheme(initialTheme, {
     MuiContainer: {
       styleOverrides: {
         root: {
-          paddingTop: 8,
+          paddingTop: '70px',
 
-          [initialTheme.breakpoints.up('sm')]: {
-            paddingTop: 16,
+          [initialTheme.breakpoints.up('md')]: {
+            paddingTop: '100px',
           },
         },
       },
