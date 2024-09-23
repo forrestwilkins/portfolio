@@ -1,11 +1,11 @@
 @font-face {
-  font-family: 'Comfortaa';
-  src: url('/fonts/Comfortaa.ttf') format('woff');
+  font-family: 'Inter';
+  src: url('/fonts/Inter.ttf') format('woff');
 }
 
 @font-face {
-  font-family: 'JosefinSans';
-  src: url('/fonts/JosefinSans.ttf') format('woff');
+  font-family: 'Rubik';
+  src: url('/fonts/Rubik.ttf') format('woff');
 }
 
 @font-face {
@@ -14,13 +14,8 @@
 }
 
 @font-face {
-  font-family: 'Rubik80sFade';
-  src: url('/fonts/Rubik80sFade.ttf') format('woff');
-}
-
-@font-face {
-  font-family: 'RubikDoodleShadow';
-  src: url('/fonts/RubikDoodleShadow.ttf') format('woff');
+  font-family: 'Comfortaa';
+  src: url('/fonts/Comfortaa.ttf') format('woff');
 }
 
 /* Disable pull-to-refresh and overscroll stretch effect */
