@@ -3,7 +3,7 @@ import useAppStore from '@/store/app.store';
 import { getToneJS } from '@/utils/audio.utils';
 import { getRandom } from '@/utils/math.utils';
 import { getRandomRGB } from '@/utils/visual.utils';
-import { Box } from '@mui/material';
+import { Box, SxProps } from '@mui/material';
 import { useRef } from 'react';
 
 const NOTES = ['A', 'B', 'C', 'D', 'E', 'F', 'G'];
@@ -34,6 +34,16 @@ const AudioVisual = () => {
   const visualRef = useRef<HTMLDivElement | null>(null);
   const isLightMode = useIsLightMode();
 
+  const btnStles: SxProps = {
+    width: '128px',
+    height: '128px',
+    borderRadius: '9999px',
+    cursor: 'pointer',
+    transition: 'all 0.3s',
+    bgcolor: isLightMode ? 'grey.900' : 'grey.100',
+    '&:hover': { transform: 'scale(1.1)', bgcolor: '#2e8b57' },
+  };
+
   const handleClick = async () => {
     if (!isAudioEnabled || !visualRef.current) {
       return;
@@ -62,22 +72,7 @@ const AudioVisual = () => {
 
   return (
     <Box display="flex" justifyContent="center" paddingTop="15vh">
-      <Box
-        ref={visualRef}
-        sx={{
-          width: '128px',
-          height: '128px',
-          borderRadius: '9999px',
-          cursor: 'pointer',
-          transition: 'all 0.3s',
-          bgcolor: isLightMode ? 'grey.900' : 'grey.100',
-          '&:hover': {
-            transform: 'scale(1.1)',
-            bgcolor: 'red',
-          },
-        }}
-        onClick={handleClick}
-      />
+      <Box ref={visualRef} sx={btnStles} onClick={handleClick} />
     </Box>
   );
 };
