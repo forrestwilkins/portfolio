@@ -150,7 +150,7 @@ const Ripples = () => {
         height={canvasHeight}
         onClick={handleClick}
         onFrameRender={handleRender}
-        style={{ borderRadius: 8 }}
+        sx={{ borderRadius: 8 }}
       />
     </Box>
   );

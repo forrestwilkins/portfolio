@@ -78,7 +78,7 @@ const ColorGrid = () => {
         onMount={handleCanvasMount}
         onMouseMove={handleMouseMove}
         onTouchMove={handleMouseMove}
-        style={{ borderRadius: '8px' }}
+        sx={{ borderRadius: '8px' }}
       />
     </Box>
   );
