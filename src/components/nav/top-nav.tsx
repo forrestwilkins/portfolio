@@ -1,9 +1,13 @@
 import { ModeToggle } from '@/components/app/mode-toggle';
-import Button from '@/components/ui/button';
-import { Link, useLocation } from 'react-router-dom';
+import Link from '@/components/shared/link';
+import { useIsLightMode } from '@/hooks/shared.hooks';
+import { Button } from '@mui/material';
+import { useLocation } from 'react-router-dom';
 
 const TopNav = () => {
+  const isLightMode = useIsLightMode();
   const location = useLocation();
+
   const isHomePage = location.pathname === '/';
 
   return (
@@ -11,16 +15,28 @@ const TopNav = () => {
       {!isHomePage && (
         <Link to="/">
           <Button
-            className="fixed left-3 top-3 select-none"
-            variant="secondary"
-            size="sm"
+            sx={{
+              position: 'fixed',
+              left: '12px',
+              top: '12px',
+              color: isLightMode ? 'black' : 'white',
+              backgroundColor: isLightMode
+                ? 'rgb(0, 0, 0, 0.04)'
+                : 'rgb(255, 255, 255, 0.04)',
+              '&:hover': {
+                backgroundColor: isLightMode
+                  ? 'rgb(0, 0, 0, 0.07)'
+                  : 'rgb(255, 255, 255, 0.07)',
+              },
+            }}
+            disableTouchRipple
           >
             Home
           </Button>
         </Link>
       )}
 
-      <ModeToggle className="fixed right-3 top-3" />
+      <ModeToggle sx={{ right: '12px', top: '12px' }} />
     </div>
   );
 };

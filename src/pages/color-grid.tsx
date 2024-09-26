@@ -1,6 +1,7 @@
 import Canvas from '@/components/shared/canvas';
 import { useScreenSize } from '@/hooks/shared.hooks';
 import { constrain, mapRange } from '@/utils/math.utils';
+import { Box } from '@mui/material';
 import { MouseEvent, TouchEvent } from 'react';
 
 const ColorGrid = () => {
@@ -70,16 +71,16 @@ const ColorGrid = () => {
   };
 
   return (
-    <div className="flex justify-center lg:pt-5">
+    <Box display="flex" justifyContent="center">
       <Canvas
         width={canvasWidth}
         height={canvasHeight}
         onMount={handleCanvasMount}
         onMouseMove={handleMouseMove}
         onTouchMove={handleMouseMove}
-        className="rounded-md"
+        sx={{ borderRadius: '8px' }}
       />
-    </div>
+    </Box>
   );
 };
 

@@ -1,7 +1,9 @@
+import { useIsLightMode } from '@/hooks/shared.hooks';
 import useAppStore from '@/store/app.store';
 import { getToneJS } from '@/utils/audio.utils';
 import { getRandom } from '@/utils/math.utils';
 import { getRandomRGB } from '@/utils/visual.utils';
+import { Box, SxProps } from '@mui/material';
 import { useRef } from 'react';
 
 const NOTES = ['A', 'B', 'C', 'D', 'E', 'F', 'G'];
@@ -30,6 +32,17 @@ const getAudioVisualScript = (now: number) => {
 const AudioVisual = () => {
   const isAudioEnabled = useAppStore((state) => state.isAudioEnabled);
   const visualRef = useRef<HTMLDivElement | null>(null);
+  const isLightMode = useIsLightMode();
+
+  const btnStles: SxProps = {
+    width: '128px',
+    height: '128px',
+    borderRadius: '9999px',
+    cursor: 'pointer',
+    transition: 'all 0.3s',
+    bgcolor: isLightMode ? 'grey.900' : 'grey.100',
+    '&:hover': { transform: 'scale(1.1)', bgcolor: '#2e8b57' },
+  };
 
   const handleClick = async () => {
     if (!isAudioEnabled || !visualRef.current) {
@@ -58,13 +71,9 @@ const AudioVisual = () => {
   };
 
   return (
-    <div className="flex items-center justify-center pt-32">
-      <div
-        ref={visualRef}
-        className="h-32 w-32 cursor-pointer rounded-full bg-gray-900 transition-all hover:scale-110 hover:bg-blue-500 dark:bg-gray-100 dark:hover:bg-blue-500"
-        onClick={handleClick}
-      ></div>
-    </div>
+    <Box display="flex" justifyContent="center" paddingTop="15vh">
+      <Box ref={visualRef} sx={btnStles} onClick={handleClick} />
+    </Box>
   );
 };
 

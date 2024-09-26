@@ -1,4 +1,4 @@
-import Layout from '@/components/app/layout';
+import { Box } from '@mui/material';
 import { useEffect, useState } from 'react';
 
 const ErrorPage = () => {
@@ -26,17 +26,24 @@ const ErrorPage = () => {
   }, []);
 
   return (
-    <Layout
-      className="h-screen transition-all duration-500"
-      style={{ backgroundColor }}
+    <Box
+      sx={{
+        transition: 'all 0.5s',
+        height: '100vh',
+        bgcolor: backgroundColor,
+      }}
     >
-      <div
-        className="text-3xl transition-all duration-500"
-        style={{ color: textColor }}
+      <Box
+        sx={{
+          color: textColor,
+          fontSize: '30px',
+          transition: 'all 150ms cubic-bezier(0.4, 0, 0.2, 1)',
+          padding: '50px 70px',
+        }}
       >
         Something went wrong.
-      </div>
-    </Layout>
+      </Box>
+    </Box>
   );
 };
 

@@ -1,13 +1,17 @@
 import Layout from '@/components/app/layout';
+import { Typography } from '@mui/material';
 
-const PageNotFound = () => {
-  return (
-    <Layout>
-      <div className="pt-20 text-center font-mono text-5xl text-gray-50">
-        404
-      </div>
-    </Layout>
-  );
-};
+const PageNotFound = () => (
+  <Layout>
+    <Typography
+      paddingTop="80px"
+      textAlign="center"
+      fontFamily="monospace"
+      fontSize="48px"
+    >
+      404
+    </Typography>
+  </Layout>
+);
 
 export default PageNotFound;

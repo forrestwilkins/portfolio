@@ -1,6 +1,7 @@
 import Canvas from '@/components/shared/canvas';
 import { useScreenSize } from '@/hooks/shared.hooks';
 import { constrain } from '@/utils/math.utils';
+import { Box } from '@mui/material';
 import { MouseEvent, useRef } from 'react';
 
 const RIPPLES_MAX_COUNT = 200;
@@ -143,15 +144,15 @@ const Ripples = () => {
   };
 
   return (
-    <div className="flex justify-center lg:pt-5">
+    <Box display="flex" justifyContent="center">
       <Canvas
         width={canvasWidth}
         height={canvasHeight}
         onClick={handleClick}
         onFrameRender={handleRender}
-        className="rounded-md"
+        sx={{ borderRadius: 8 }}
       />
-    </div>
+    </Box>
   );
 };
 

@@ -1,33 +1,39 @@
+import { Box, SxProps } from '@mui/material';
 import { MouseEvent, TouchEvent, useEffect, useRef } from 'react';
 
 interface Props {
   width?: number;
   height?: number;
-  className?: string;
   onMount?(canvas: HTMLCanvasElement): void;
   onClick?(canvas: HTMLCanvasElement, e: MouseEvent<Element>): void;
   onMouseMove?(canvas: HTMLCanvasElement, e: MouseEvent<Element>): void;
   onTouchMove?(canvas: HTMLCanvasElement, e: TouchEvent<Element>): void;
   onFrameRender?(canvas: HTMLCanvasElement, frameCount: number): void;
+  sx?: SxProps;
 }
 
 const Canvas = ({
   width = 250,
   height = 250,
-  className,
   onClick,
   onFrameRender,
   onTouchMove,
   onMouseMove,
   onMount,
+  sx,
 }: Props) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   useEffect(() => {
-    if (canvasRef.current && onMount) {
-      onMount(canvasRef.current);
+    if (canvasRef.current) {
+      canvasRef.current.width = width;
+      canvasRef.current.height = height;
+
+      if (onMount) {
+        onMount(canvasRef.current);
+      }
     }
-  }, [onMount]);
+  }, [onMount, width, height]);
 
   useEffect(() => {
     let frameCount = 1;
@@ -66,15 +72,15 @@ const Canvas = ({
   };
 
   return (
-    <canvas
-      width={width}
-      height={height}
-      className={className}
+    <Box
+      component="canvas"
       onClick={handleClick}
       onMouseMove={handleMouseMove}
       onTouchMove={handleTouchMove}
       ref={canvasRef}
+      sx={sx}
     />
   );
 };
+
 export default Canvas;

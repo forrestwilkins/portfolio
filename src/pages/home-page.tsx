@@ -1,35 +1,42 @@
-import { Link } from 'react-router-dom';
+import Link from '@/components/shared/link';
+import { useAboveBreakpoint } from '@/hooks/shared.hooks';
+import { Box, SxProps } from '@mui/material';
 
-const HomePage = () => (
-  <div className="flex flex-col gap-7">
-    <Link
-      to="/ripples"
-      className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl"
-    >
-      Ripples
-    </Link>
+const HomePage = () => {
+  const isAboveMd = useAboveBreakpoint('md');
+  const isAboveLg = useAboveBreakpoint('lg');
 
-    <Link
-      to="/color-grid"
-      className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl"
-    >
-      Color Grid
-    </Link>
+  const linkStyles: SxProps = {
+    scrollMargin: '20px',
+    fontSize: isAboveMd ? '50px' : '35px',
+    fontWeight: 800,
+  };
 
-    <Link
-      to="/audio-visual"
-      className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl"
+  return (
+    <Box
+      display="flex"
+      flexDirection="column"
+      gap={isAboveMd ? '4px' : '16px'}
+      paddingLeft={isAboveLg ? 0 : '70px'}
+      paddingTop={isAboveLg ? 0 : '20px'}
     >
-      Audio Visual
-    </Link>
+      <Link to="/ripples" sx={linkStyles}>
+        Ripples
+      </Link>
 
-    <Link
-      to="/hello-sound"
-      className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl"
-    >
-      Hello Sound
-    </Link>
-  </div>
-);
+      <Link to="/color-grid" sx={linkStyles}>
+        Color Grid
+      </Link>
+
+      <Link to="/audio-visual" sx={linkStyles}>
+        Audio Visual
+      </Link>
+
+      <Link to="/hello-sound" sx={linkStyles}>
+        Hello Sound
+      </Link>
+    </Box>
+  );
+};
 
 export default HomePage;
