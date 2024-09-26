@@ -33,7 +33,7 @@ const Canvas = ({
         onMount(canvasRef.current);
       }
     }
-  }, [onMount]);
+  }, [onMount, width, height]);
 
   useEffect(() => {
     let frameCount = 1;
