@@ -1,4 +1,4 @@
-import { useIsLightMode } from '@/hooks/shared.hooks';
+import { useColorScheme } from '@/hooks/shared.hooks';
 import useAppStore from '@/store/app.store';
 import { getToneJS } from '@/utils/audio.utils';
 import { getRandom } from '@/utils/math.utils';
@@ -32,7 +32,7 @@ const getAudioVisualScript = (now: number) => {
 const AudioVisual = () => {
   const isAudioEnabled = useAppStore((state) => state.isAudioEnabled);
   const visualRef = useRef<HTMLDivElement | null>(null);
-  const isLightMode = useIsLightMode();
+  const isLightMode = useColorScheme();
 
   const btnStles: SxProps = {
     width: '128px',

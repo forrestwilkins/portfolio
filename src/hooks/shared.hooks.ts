@@ -1,31 +1,33 @@
-import {
-  Breakpoint,
-  useColorScheme,
-  useMediaQuery,
-  useTheme,
-} from '@mui/material';
+import { Breakpoint, useMediaQuery, useTheme } from '@mui/material';
 import { useEffect, useState } from 'react';
+import { useTheme as useNextTheme } from 'next-themes';
 
-export const useIsLightMode = () => {
-  const [prefersDarkMode, setPrefersDarkMode] = useState(true);
-  const { mode } = useColorScheme();
+// TODO: Add useIsLightMode hook
+
+export const useColorScheme = () => {
+  const { theme, setTheme } = useNextTheme();
+  const [prefersDark, setPrefersDark] = useState(true);
+
+  const isLight = () => {
+    if (theme === 'system') {
+      return !prefersDark;
+    }
+    return theme === 'light';
+  };
 
   useEffect(() => {
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    setPrefersDarkMode(mediaQuery.matches);
+    setPrefersDark(mediaQuery.matches);
 
-    const handleChange = (e: MediaQueryListEvent) =>
-      setPrefersDarkMode(e.matches);
+    const handleChange = (e: MediaQueryListEvent) => {
+      setPrefersDark(e.matches);
+    };
 
     mediaQuery.addEventListener('change', handleChange);
     return () => mediaQuery.removeEventListener('change', handleChange);
   }, []);
 
-  if (mode === 'system') {
-    return !prefersDarkMode;
-  }
-
-  return mode === 'light';
+  return [isLight(), setTheme] as const;
 };
 
 export const useAboveBreakpoint = (breakpoint: Breakpoint) =>

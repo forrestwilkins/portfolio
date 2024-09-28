@@ -1,10 +1,10 @@
-import { useIsLightMode } from '@/hooks/shared.hooks';
+import { useColorScheme } from '@/hooks/shared.hooks';
 import { Box, Button, SxProps } from '@mui/material';
 import { useEffect, useRef, useState } from 'react';
 import { convertFrequencyToColor, generateMelody } from '../utils/audio.utils';
 
 const HelloSound = () => {
-  const isLightMode = useIsLightMode();
+  const isLightMode = useColorScheme();
   const baseColor = isLightMode ? 'black' : 'white';
 
   const [isPlaying, setIsPlaying] = useState(false);

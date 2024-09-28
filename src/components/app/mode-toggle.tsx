@@ -1,17 +1,9 @@
-import { useIsLightMode } from '@/hooks/shared.hooks';
+import { useColorScheme } from '@/hooks/shared.hooks';
 import { DarkModeOutlined, LightModeOutlined } from '@mui/icons-material';
-import {
-  Box,
-  IconButton,
-  Menu,
-  MenuItem,
-  PaletteMode,
-  SxProps,
-  useColorScheme,
-} from '@mui/material';
+import { Box, IconButton, Menu, MenuItem, SxProps } from '@mui/material';
 import { MouseEvent, useState } from 'react';
 
-type Mode = PaletteMode | 'system';
+type Mode = 'light' | 'dark' | 'system';
 
 interface Props {
   sx?: SxProps;
@@ -19,9 +11,7 @@ interface Props {
 
 export const ModeToggle = ({ sx }: Props) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-
-  const { setMode } = useColorScheme();
-  const isLightMode = useIsLightMode();
+  const [isLightMode, setMode] = useColorScheme();
 
   const handleBtnClick = (e: MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(e.currentTarget);

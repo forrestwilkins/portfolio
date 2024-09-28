@@ -1,11 +1,11 @@
 import { ModeToggle } from '@/components/app/mode-toggle';
 import Link from '@/components/shared/link';
-import { useIsLightMode } from '@/hooks/shared.hooks';
+import { useColorScheme } from '@/hooks/shared.hooks';
 import { Button } from '@mui/material';
 import { useLocation } from 'react-router-dom';
 
 const TopNav = () => {
-  const isLightMode = useIsLightMode();
+  const isLightMode = useColorScheme();
   const location = useLocation();
 
   const isHomePage = location.pathname === '/';
