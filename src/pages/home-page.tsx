@@ -35,6 +35,10 @@ const HomePage = () => {
       <Link to="/hello-sound" sx={linkStyles}>
         Hello Sound
       </Link>
+
+      <Link to="/sketch" sx={linkStyles}>
+        Sketch
+      </Link>
     </Box>
   );
 };
