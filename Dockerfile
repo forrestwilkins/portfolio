@@ -11,8 +11,6 @@ COPY package-lock.json /app
 COPY tsconfig.json /app
 COPY tsconfig.app.json /app
 COPY tsconfig.node.json /app
-COPY postcss.config.js /app
-COPY tailwind.config.js /app
 COPY vite.config.ts /app
 
 WORKDIR /app

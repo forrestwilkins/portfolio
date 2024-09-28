@@ -1,50 +1,45 @@
-import { Link, useLocation } from 'react-router-dom';
+import Link from '@/components/shared/link';
+import { useAboveBreakpoint } from '@/hooks/shared.hooks';
+import { Box, SxProps } from '@mui/material';
 
 const HomePage = () => {
-  const location = useLocation();
+  const isAboveMd = useAboveBreakpoint('md');
+  const isAboveLg = useAboveBreakpoint('lg');
+
+  const linkStyles: SxProps = {
+    scrollMargin: '20px',
+    fontSize: isAboveMd ? '50px' : '35px',
+    fontWeight: 800,
+  };
 
   return (
-    <div className="flex flex-col gap-7">
-      <Link
-        to="/ripples"
-        state={{ rhizome: true, prev: location.pathname }}
-        className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl"
-      >
+    <Box
+      display="flex"
+      flexDirection="column"
+      gap={isAboveMd ? '4px' : '16px'}
+      paddingLeft={isAboveLg ? 0 : '70px'}
+      paddingTop={isAboveLg ? 0 : '20px'}
+    >
+      <Link to="/ripples" sx={linkStyles}>
         Ripples
       </Link>
 
-      <Link
-        to="/color-grid"
-        state={{ rhizome: true, prev: location.pathname }}
-        className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl"
-      >
+      <Link to="/color-grid" sx={linkStyles}>
         Color Grid
       </Link>
 
-      <Link
-        to="/modern-jungle"
-        state={{ rhizome: true, prev: location.pathname }}
-        className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl"
-      >
+      <Link to="/modern-jungle" sx={linkStyles}>
         Modern Jungle
       </Link>
 
-      <Link
-        to="/audio-visual"
-        state={{ rhizome: true, prev: location.pathname }}
-        className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl"
-      >
+      <Link to="/audio-visual" sx={linkStyles}>
         Audio Visual
       </Link>
 
-      <Link
-        to="/hello-sound"
-        state={{ rhizome: true, prev: location.pathname }}
-        className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl"
-      >
+      <Link to="/hello-sound" sx={linkStyles}>
         Hello Sound
       </Link>
-    </div>
+    </Box>
   );
 };
 

@@ -1,24 +1,35 @@
-import { createContext, useContext, useEffect, useState } from 'react';
+import {
+  Breakpoint,
+  useColorScheme,
+  useMediaQuery,
+  useTheme,
+} from '@mui/material';
+import { useEffect, useState } from 'react';
 
-export type Theme = 'dark' | 'light' | 'system';
+export const useIsLightMode = () => {
+  const [prefersDarkMode, setPrefersDarkMode] = useState(true);
+  const { mode } = useColorScheme();
 
-export const ThemeProviderContext = createContext<{
-  theme: Theme;
-  setTheme: (theme: Theme) => void;
-}>({
-  theme: 'dark',
-  setTheme: () => null,
-});
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    setPrefersDarkMode(mediaQuery.matches);
 
-export const useTheme = () => {
-  const context = useContext(ThemeProviderContext);
+    const handleChange = (e: MediaQueryListEvent) =>
+      setPrefersDarkMode(e.matches);
 
-  if (context === undefined) {
-    throw new Error('useTheme must be used within a ThemeProvider');
+    mediaQuery.addEventListener('change', handleChange);
+    return () => mediaQuery.removeEventListener('change', handleChange);
+  }, []);
+
+  if (mode === 'system') {
+    return !prefersDarkMode;
   }
 
-  return context;
+  return mode === 'light';
 };
+
+export const useAboveBreakpoint = (breakpoint: Breakpoint) =>
+  useMediaQuery(useTheme().breakpoints.up(breakpoint));
 
 export const useScreenSize = () => {
   const [screenSize, setScreenSize] = useState({
@@ -39,14 +50,4 @@ export const useScreenSize = () => {
   }, []);
 
   return [screenSize.width, screenSize.height];
-};
-
-export const useBreakpoint = () => {
-  const [screenWidth] = useScreenSize();
-
-  const isSmall = screenWidth < 640;
-  const isMedium = screenWidth >= 768;
-  const isLarge = screenWidth >= 1024;
-
-  return { isSmall, isMedium, isLarge };
 };
