@@ -20,20 +20,20 @@ const HomePage = () => {
       paddingLeft={isAboveLg ? 0 : '70px'}
       paddingTop={isAboveLg ? 0 : '20px'}
     >
-      <Link to="/ripples" sx={linkStyles}>
-        Ripples
-      </Link>
-
-      <Link to="/color-grid" sx={linkStyles}>
-        Color Grid
-      </Link>
-
       <Link to="/modern-jungle" sx={linkStyles}>
         Modern Jungle
       </Link>
 
       <Link to="/audio-visual" sx={linkStyles}>
         Audio Visual
+      </Link>
+
+      <Link to="/ripples" sx={linkStyles}>
+        Ripples
+      </Link>
+
+      <Link to="/color-grid" sx={linkStyles}>
+        Color Grid
       </Link>
 
       <Link to="/hello-sound" sx={linkStyles}>
