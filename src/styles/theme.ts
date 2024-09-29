@@ -1,6 +1,5 @@
-// TODO: Make background smaller for menu items, rounded corners
-// TODO: Create shared dropdown component if needed
-// TODO: Move box shadow override to paper
+// TODO: Move box shadow override to paper ⭐️
+// TODO: Create shared dropdown component if needed, shouldn't be needed ideally
 
 import { createTheme, Theme } from '@mui/material/styles';
 
@@ -60,12 +59,22 @@ const theme = createTheme({
         list: ({ theme }: ThemeProps) => ({
           borderRadius: 4,
           border: `1px solid #e4e4e7`,
-
+          padding: 4,
           ...theme.applyStyles('dark', {
             backgroundColor: '#0a0a0a',
             borderColor: '#27272a',
           }),
         }),
+      },
+    },
+
+    MuiMenuItem: {
+      styleOverrides: {
+        root: {
+          borderRadius: 4,
+          transition: 'background-color 0.15s cubic-bezier(.4,0,.2,1)',
+          '&:hover': { backgroundColor: '#f4f4f5' },
+        },
       },
     },
   },
