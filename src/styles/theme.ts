@@ -13,6 +13,7 @@ const theme = createTheme({
   typography: {
     fontFamily: 'system-ui',
   },
+
   colorSchemes: {
     dark: {
       palette: {
@@ -21,8 +22,8 @@ const theme = createTheme({
         },
       },
     },
-    light: true,
   },
+
   components: {
     MuiContainer: {
       styleOverrides: {
@@ -35,6 +36,7 @@ const theme = createTheme({
         }),
       },
     },
+
     MuiButton: {
       styleOverrides: {
         root: {
@@ -42,6 +44,7 @@ const theme = createTheme({
         },
       },
     },
+
     MuiMenu: {
       styleOverrides: {
         root: {
