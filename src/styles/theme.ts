@@ -72,6 +72,17 @@ const theme = createTheme({
       },
     },
 
+    MuiIconButton: {
+      styleOverrides: {
+        root: {
+          borderRadius: 7,
+          '& .MuiTouchRipple-root .MuiTouchRipple-child': {
+            borderRadius: 7,
+          },
+        },
+      },
+    },
+
     MuiMenu: {
       styleOverrides: {
         list: ({ theme }: Props) => ({
