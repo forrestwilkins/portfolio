@@ -1,4 +1,4 @@
-import { useIsLightMode } from '@/hooks/shared.hooks';
+import { useIsDarkMode } from '@/hooks/shared.hooks';
 import useAppStore from '@/store/app.store';
 import { getToneJS } from '@/utils/audio.utils';
 import { getRandom } from '@/utils/math.utils';
@@ -32,7 +32,7 @@ const getAudioVisualScript = (now: number) => {
 const AudioVisual = () => {
   const isAudioEnabled = useAppStore((state) => state.isAudioEnabled);
   const visualRef = useRef<HTMLDivElement | null>(null);
-  const isLightMode = useIsLightMode();
+  const isDarkMode = useIsDarkMode();
 
   const btnStles: SxProps = {
     width: '128px',
@@ -40,7 +40,7 @@ const AudioVisual = () => {
     borderRadius: '9999px',
     cursor: 'pointer',
     transition: 'all 0.3s',
-    bgcolor: isLightMode ? 'grey.900' : 'grey.100',
+    bgcolor: isDarkMode ? 'grey.100' : 'grey.900',
     '&:hover': { transform: 'scale(1.1)', bgcolor: '#2e8b57' },
   };
 

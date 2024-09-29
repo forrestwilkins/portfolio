@@ -1,5 +1,5 @@
 import DarkMode from '@/components/shared/icons/dark-mode';
-import { useIsLightMode } from '@/hooks/shared.hooks';
+import { useIsDarkMode } from '@/hooks/shared.hooks';
 import { LightModeOutlined } from '@mui/icons-material';
 import {
   Box,
@@ -22,7 +22,7 @@ export const ModeToggle = ({ sx }: Props) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   const { setMode } = useColorScheme();
-  const isLightMode = useIsLightMode();
+  const isDarkMode = useIsDarkMode();
 
   const handleBtnClick = (e: MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(e.currentTarget);
@@ -34,10 +34,10 @@ export const ModeToggle = ({ sx }: Props) => {
   };
 
   const renderIcon = () => {
-    if (isLightMode) {
-      return <LightModeOutlined sx={{ color: 'black' }} />;
+    if (isDarkMode) {
+      return <DarkMode sx={{ color: 'white', fontSize: '20px' }} />;
     }
-    return <DarkMode sx={{ color: 'white', fontSize: '20px' }} />;
+    return <LightModeOutlined sx={{ color: 'black' }} />;
   };
 
   return (

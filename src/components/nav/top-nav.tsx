@@ -1,11 +1,11 @@
 import { ModeToggle } from '@/components/app/mode-toggle';
 import Link from '@/components/shared/link';
-import { useIsLightMode } from '@/hooks/shared.hooks';
+import { useIsDarkMode } from '@/hooks/shared.hooks';
 import { Button } from '@mui/material';
 import { useLocation } from 'react-router-dom';
 
 const TopNav = () => {
-  const isLightMode = useIsLightMode();
+  const isDarkMode = useIsDarkMode();
   const location = useLocation();
 
   const isHomePage = location.pathname === '/';
@@ -19,14 +19,14 @@ const TopNav = () => {
               position: 'fixed',
               left: '12px',
               top: '12px',
-              color: isLightMode ? 'black' : 'white',
-              backgroundColor: isLightMode
-                ? 'rgb(0, 0, 0, 0.04)'
-                : 'rgb(255, 255, 255, 0.04)',
+              color: isDarkMode ? 'black' : 'white',
+              backgroundColor: isDarkMode
+                ? 'rgb(255, 255, 255, 0.04)'
+                : 'rgb(0, 0, 0, 0.04)',
               '&:hover': {
-                backgroundColor: isLightMode
-                  ? 'rgb(0, 0, 0, 0.07)'
-                  : 'rgb(255, 255, 255, 0.07)',
+                backgroundColor: isDarkMode
+                  ? 'rgb(255, 255, 255, 0.07)'
+                  : 'rgb(0, 0, 0, 0.07)',
               },
             }}
             disableTouchRipple
