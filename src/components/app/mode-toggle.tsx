@@ -1,5 +1,6 @@
 import DarkMode from '@/components/shared/icons/dark-mode';
 import { useIsDarkMode } from '@/hooks/shared.hooks';
+import { sleep } from '@/utils/shared.utils';
 import { LightModeOutlined } from '@mui/icons-material';
 import {
   Box,
@@ -28,9 +29,10 @@ export const ModeToggle = ({ sx }: Props) => {
     setAnchorEl(e.currentTarget);
   };
 
-  const handleSelect = (mode: Mode) => {
-    setMode(mode);
+  const handleSelect = async (mode: Mode) => {
     setAnchorEl(null);
+    await sleep(100);
+    setMode(mode);
   };
 
   const renderIcon = () => {
