@@ -9,7 +9,7 @@ const TopNav = () => {
   const isHomePage = location.pathname === '/';
 
   return (
-    <div>
+    <>
       {!isHomePage && (
         <Link to="/">
           <Button
@@ -23,7 +23,7 @@ const TopNav = () => {
       )}
 
       <ModeToggle sx={{ right: '12px', top: '12px' }} />
-    </div>
+    </>
   );
 };
 

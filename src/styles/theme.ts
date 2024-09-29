@@ -1,6 +1,6 @@
 import { createTheme, Theme } from '@mui/material/styles';
 
-interface ThemeProps<OwnerState = any> {
+interface Props<OwnerState = any> {
   theme: Theme;
   ownerState: OwnerState;
 }
@@ -9,13 +9,18 @@ const theme = createTheme({
   typography: {
     fontFamily: 'system-ui',
   },
-
   colorSchemes: {
+    light: {
+      palette: {
+        divider: '#e4e4e7',
+      },
+    },
     dark: {
       palette: {
         background: {
           default: '#0a0a0a',
         },
+        divider: '#27272a',
       },
     },
   },
@@ -36,7 +41,7 @@ const theme = createTheme({
 
     MuiContainer: {
       styleOverrides: {
-        root: ({ theme }: ThemeProps) => ({
+        root: ({ theme }: Props) => ({
           paddingTop: '70px',
 
           [theme.breakpoints.up('md')]: {
@@ -48,7 +53,7 @@ const theme = createTheme({
 
     MuiButton: {
       styleOverrides: {
-        contained: ({ theme }: ThemeProps) => ({
+        contained: ({ theme }: Props) => ({
           textTransform: 'none',
           backgroundColor: 'rgb(0, 0, 0, 0.04)',
           '&:hover': {
@@ -69,13 +74,13 @@ const theme = createTheme({
 
     MuiMenu: {
       styleOverrides: {
-        list: ({ theme }: ThemeProps) => ({
+        list: ({ theme }: Props) => ({
           borderRadius: 4,
-          border: `1px solid #e4e4e7`,
+          border: `1px solid ${theme.palette.divider}`,
           padding: 4,
           ...theme.applyStyles('dark', {
-            backgroundColor: '#0a0a0a',
-            borderColor: '#27272a',
+            backgroundColor: theme.palette.background.default,
+            borderColor: theme.palette.divider,
           }),
         }),
       },
@@ -83,14 +88,14 @@ const theme = createTheme({
 
     MuiMenuItem: {
       styleOverrides: {
-        root: ({ theme }: ThemeProps) => ({
+        root: ({ theme }: Props) => ({
           borderRadius: 4,
           transition: 'background-color 0.15s cubic-bezier(.4,0,.2,1)',
-          '&:hover': {
-            backgroundColor: '#f4f4f5',
 
+          '&:hover': {
+            backgroundColor: 'rgb(0, 0, 50, 0.04)',
             ...theme.applyStyles('dark', {
-              backgroundColor: '#27272a',
+              backgroundColor: 'rgb(205, 205, 255, 0.1)',
             }),
           },
         }),
