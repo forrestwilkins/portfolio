@@ -1,5 +1,6 @@
+import DarkMode from '@/components/shared/icons/dark-mode';
 import { useIsLightMode } from '@/hooks/shared.hooks';
-import { DarkModeOutlined, LightModeOutlined } from '@mui/icons-material';
+import { LightModeOutlined } from '@mui/icons-material';
 import {
   Box,
   IconButton,
@@ -36,7 +37,7 @@ export const ModeToggle = ({ sx }: Props) => {
     if (isLightMode) {
       return <LightModeOutlined sx={{ color: 'black' }} />;
     }
-    return <DarkModeOutlined sx={{ color: 'white' }} />;
+    return <DarkMode sx={{ color: 'white', fontSize: '20px' }} />;
   };
 
   return (

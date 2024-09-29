@@ -70,11 +70,17 @@ const theme = createTheme({
 
     MuiMenuItem: {
       styleOverrides: {
-        root: {
+        root: ({ theme }: ThemeProps) => ({
           borderRadius: 4,
           transition: 'background-color 0.15s cubic-bezier(.4,0,.2,1)',
-          '&:hover': { backgroundColor: '#f4f4f5' },
-        },
+          '&:hover': {
+            backgroundColor: '#f4f4f5',
+
+            ...theme.applyStyles('dark', {
+              backgroundColor: '#27272a',
+            }),
+          },
+        }),
       },
     },
   },
