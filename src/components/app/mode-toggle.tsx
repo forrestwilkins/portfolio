@@ -47,6 +47,7 @@ export const ModeToggle = ({ sx }: Props) => {
         anchorEl={anchorEl}
         open={!!anchorEl}
         onClose={() => setAnchorEl(null)}
+        elevation={0}
       >
         <MenuItem onClick={() => handleSelect('light')}>Light</MenuItem>
         <MenuItem onClick={() => handleSelect('dark')}>Dark</MenuItem>
