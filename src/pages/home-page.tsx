@@ -1,6 +1,6 @@
 import Link from '@/components/shared/link';
 import { useAboveBreakpoint } from '@/hooks/shared.hooks';
-import { Box, SxProps } from '@mui/material';
+import { Box, Card, SxProps } from '@mui/material';
 
 const HomePage = () => {
   const isAboveMd = useAboveBreakpoint('md');
@@ -35,6 +35,8 @@ const HomePage = () => {
       <Link to="/hello-sound" sx={linkStyles}>
         Hello Sound
       </Link>
+
+      <Card>Test</Card>
     </Box>
   );
 };

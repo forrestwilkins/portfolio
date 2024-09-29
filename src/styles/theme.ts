@@ -1,6 +1,3 @@
-// TODO: Move box shadow override to paper ⭐️
-// TODO: Create shared dropdown component if needed, shouldn't be needed ideally
-
 import { createTheme, Theme } from '@mui/material/styles';
 
 interface ThemeProps<OwnerState = any> {
@@ -24,6 +21,19 @@ const theme = createTheme({
   },
 
   components: {
+    MuiPaper: {
+      styleOverrides: {
+        elevation: {
+          boxShadow: `
+            0 0 #0000,
+            0 0 #0000,
+            0 4px 6px -1px rgba(0,0,0,.1),
+            0 2px 4px -2px rgba(0,0,0,.1)
+          `,
+        },
+      },
+    },
+
     MuiContainer: {
       styleOverrides: {
         root: ({ theme }: ThemeProps) => ({
@@ -46,16 +56,6 @@ const theme = createTheme({
 
     MuiMenu: {
       styleOverrides: {
-        root: {
-          '& .MuiPaper-root': {
-            boxShadow: `
-                0 0 #0000,
-                0 0 #0000,
-                0 4px 6px -1px rgba(0,0,0,.1),
-                0 2px 4px -2px rgba(0,0,0,.1)
-              `,
-          },
-        },
         list: ({ theme }: ThemeProps) => ({
           borderRadius: 4,
           border: `1px solid #e4e4e7`,
