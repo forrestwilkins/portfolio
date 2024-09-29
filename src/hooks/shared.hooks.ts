@@ -7,7 +7,7 @@ import {
 import { useEffect, useState } from 'react';
 
 export const useIsDarkMode = () => {
-  const [prefersDarkMode, setPrefersDarkMode] = useState(true);
+  const [prefersDarkMode, setPrefersDarkMode] = useState(false);
   const { mode } = useColorScheme();
 
   useEffect(() => {
