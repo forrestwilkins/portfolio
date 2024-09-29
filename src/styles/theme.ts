@@ -1,4 +1,3 @@
-// TODO: Combine themes and always pull from theme props
 // TODO: Make background smaller for menu items, rounded corners
 // TODO: Create shared dropdown component if needed
 // TODO: Move box shadow override to paper
@@ -10,7 +9,7 @@ interface ThemeProps<OwnerState = any> {
   ownerState: OwnerState;
 }
 
-const initialTheme = createTheme({
+const theme = createTheme({
   typography: {
     fontFamily: 'system-ui',
   },
@@ -24,22 +23,18 @@ const initialTheme = createTheme({
     },
     light: true,
   },
-});
-
-const theme = createTheme(initialTheme, {
   components: {
     MuiContainer: {
       styleOverrides: {
-        root: {
+        root: ({ theme }: ThemeProps) => ({
           paddingTop: '70px',
 
-          [initialTheme.breakpoints.up('md')]: {
+          [theme.breakpoints.up('md')]: {
             paddingTop: '100px',
           },
-        },
+        }),
       },
     },
-
     MuiButton: {
       styleOverrides: {
         root: {
@@ -47,7 +42,6 @@ const theme = createTheme(initialTheme, {
         },
       },
     },
-
     MuiMenu: {
       styleOverrides: {
         root: {
