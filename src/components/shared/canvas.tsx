@@ -1,40 +1,51 @@
+// TODO: Ensure canvas responds to screen size changes
+
 import { Box, SxProps } from '@mui/material';
 import { MouseEvent, TouchEvent, useEffect, useRef } from 'react';
 
 interface Props {
   width?: number;
   height?: number;
-  onMount?(canvas: HTMLCanvasElement): void;
+  isFullScreen?: boolean;
   onClick?(canvas: HTMLCanvasElement, e: MouseEvent<Element>): void;
+  onFrameRender?(canvas: HTMLCanvasElement, frameCount: number): void;
+  onMount?(canvas: HTMLCanvasElement): void;
   onMouseMove?(canvas: HTMLCanvasElement, e: MouseEvent<Element>): void;
   onTouchMove?(canvas: HTMLCanvasElement, e: TouchEvent<Element>): void;
-  onFrameRender?(canvas: HTMLCanvasElement, frameCount: number): void;
   sx?: SxProps;
 }
 
 const Canvas = ({
   width = 250,
   height = 250,
+  isFullScreen,
   onClick,
   onFrameRender,
-  onTouchMove,
-  onMouseMove,
   onMount,
+  onMouseMove,
+  onTouchMove,
   sx,
 }: Props) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
+  // On mount actions
   useEffect(() => {
     if (canvasRef.current) {
-      canvasRef.current.width = width;
-      canvasRef.current.height = height;
+      if (isFullScreen) {
+        canvasRef.current.width = window.innerWidth;
+        canvasRef.current.height = window.innerHeight;
+      } else {
+        canvasRef.current.width = width;
+        canvasRef.current.height = height;
+      }
 
       if (onMount) {
         onMount(canvasRef.current);
       }
     }
-  }, [onMount, width, height]);
+  }, [onMount, width, height, isFullScreen]);
 
+  // Handle frame rendering
   useEffect(() => {
     let frameCount = 1;
     let animationFrameId: number;
@@ -52,6 +63,18 @@ const Canvas = ({
       window.cancelAnimationFrame(animationFrameId);
     };
   }, [onFrameRender]);
+
+  const getStyles = (): Props['sx'] => {
+    if (isFullScreen) {
+      return {
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        ...sx,
+      };
+    }
+    return sx;
+  };
 
   const handleClick = (e: MouseEvent<Element>) => {
     if (canvasRef.current && onClick) {
@@ -78,7 +101,7 @@ const Canvas = ({
       onMouseMove={handleMouseMove}
       onTouchMove={handleTouchMove}
       ref={canvasRef}
-      sx={sx}
+      sx={getStyles()}
     />
   );
 };

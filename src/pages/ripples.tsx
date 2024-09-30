@@ -150,7 +150,7 @@ const Ripples = () => {
         height={canvasHeight}
         onClick={handleClick}
         onFrameRender={handleRender}
-        sx={{ borderRadius: 8 }}
+        isFullScreen
       />
     </Box>
   );
