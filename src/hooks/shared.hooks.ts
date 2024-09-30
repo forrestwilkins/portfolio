@@ -6,8 +6,8 @@ import {
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 
-export const useIsLightMode = () => {
-  const [prefersDarkMode, setPrefersDarkMode] = useState(true);
+export const useIsDarkMode = () => {
+  const [prefersDarkMode, setPrefersDarkMode] = useState(false);
   const { mode } = useColorScheme();
 
   useEffect(() => {
@@ -22,10 +22,10 @@ export const useIsLightMode = () => {
   }, []);
 
   if (mode === 'system') {
-    return !prefersDarkMode;
+    return prefersDarkMode;
   }
 
-  return mode === 'light';
+  return mode === 'dark';
 };
 
 export const useAboveBreakpoint = (breakpoint: Breakpoint) =>
