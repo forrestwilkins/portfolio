@@ -1,5 +1,4 @@
 // TODO: Ensure canvas responds to screen size changes
-// TODO: Render canvas within an opaque container in full screen mode
 
 import { useIsDarkMode } from '@/hooks/shared.hooks';
 import { Box, SxProps } from '@mui/material';
