@@ -1,6 +1,7 @@
 // TODO: Ensure canvas responds to screen size changes
 // TODO: Render canvas within an opaque container in full screen mode
 
+import { useIsDarkMode } from '@/hooks/shared.hooks';
 import { Box, SxProps } from '@mui/material';
 import { MouseEvent, TouchEvent, useEffect, useRef, useState } from 'react';
 
@@ -29,6 +30,7 @@ const Canvas = ({
 }: Props) => {
   const [isFullScreen, setIsFullScreen] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const isDarkMode = useIsDarkMode();
 
   // On mount actions
   useEffect(() => {
@@ -89,6 +91,9 @@ const Canvas = ({
   const getStyles = (): Props['sx'] => {
     if (isFullScreen) {
       return {
+        backgroundColor: isDarkMode
+          ? 'rgba(0, 0, 0, 0.95)'
+          : 'rgba(255, 255, 255, 0.95)',
         position: 'fixed',
         top: 0,
         left: 0,
