@@ -1,12 +1,12 @@
 // TODO: Ensure canvas responds to screen size changes
+// TODO: Render canvas within an opaque container in full screen mode
 
 import { Box, SxProps } from '@mui/material';
-import { MouseEvent, TouchEvent, useEffect, useRef } from 'react';
+import { MouseEvent, TouchEvent, useEffect, useRef, useState } from 'react';
 
 interface Props {
   width?: number;
   height?: number;
-  isFullScreen?: boolean;
   onClick?(canvas: HTMLCanvasElement, e: MouseEvent<Element>): void;
   onFrameRender?(canvas: HTMLCanvasElement, frameCount: number): void;
   onMount?(canvas: HTMLCanvasElement): void;
@@ -18,7 +18,6 @@ interface Props {
 const Canvas = ({
   width = 250,
   height = 250,
-  isFullScreen,
   onClick,
   onFrameRender,
   onMount,
@@ -26,6 +25,7 @@ const Canvas = ({
   onTouchMove,
   sx,
 }: Props) => {
+  const [isFullScreen, setIsFullScreen] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   // On mount actions
@@ -63,6 +63,23 @@ const Canvas = ({
       window.cancelAnimationFrame(animationFrameId);
     };
   }, [onFrameRender]);
+
+  // Handle full screen toggle
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.code === 'KeyF') {
+        setIsFullScreen(!isFullScreen);
+      }
+      if (e.code === 'Escape') {
+        setIsFullScreen(false);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, []);
 
   const getStyles = (): Props['sx'] => {
     if (isFullScreen) {
