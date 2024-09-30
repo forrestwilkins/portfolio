@@ -7,7 +7,7 @@ import { MouseEvent, TouchEvent, useEffect, useRef, useState } from 'react';
 interface Props {
   width?: number;
   height?: number;
-  disableCanvas?: boolean;
+  disableFullScreen?: boolean;
   onClick?(canvas: HTMLCanvasElement, e: MouseEvent<Element>): void;
   onFrameRender?(canvas: HTMLCanvasElement, frameCount: number): void;
   onMount?(canvas: HTMLCanvasElement): void;
@@ -19,7 +19,7 @@ interface Props {
 const Canvas = ({
   width = 250,
   height = 250,
-  disableCanvas,
+  disableFullScreen,
   onClick,
   onFrameRender,
   onMount,
@@ -68,7 +68,7 @@ const Canvas = ({
 
   // Handle full screen toggle
   useEffect(() => {
-    if (disableCanvas) {
+    if (disableFullScreen) {
       return;
     }
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -84,7 +84,7 @@ const Canvas = ({
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [isFullScreen, disableCanvas]);
+  }, [isFullScreen, disableFullScreen]);
 
   const getStyles = (): Props['sx'] => {
     if (isFullScreen) {

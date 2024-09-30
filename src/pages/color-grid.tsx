@@ -79,7 +79,7 @@ const ColorGrid = () => {
         onMouseMove={handleMouseMove}
         onTouchMove={handleMouseMove}
         sx={{ borderRadius: '8px' }}
-        disableCanvas
+        disableFullScreen
       />
     </Box>
   );
