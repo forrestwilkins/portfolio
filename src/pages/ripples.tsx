@@ -150,6 +150,7 @@ const Ripples = () => {
         height={canvasHeight}
         onClick={handleClick}
         onFrameRender={handleRender}
+        fillViewport
       />
     </Box>
   );

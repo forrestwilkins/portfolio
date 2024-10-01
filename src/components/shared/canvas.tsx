@@ -1,5 +1,3 @@
-// TODO: Ensure canvas responds to screen size changes
-
 import { useIsDarkMode } from '@/hooks/shared.hooks';
 import { Box, SxProps } from '@mui/material';
 import { MouseEvent, TouchEvent, useEffect, useRef, useState } from 'react';
@@ -8,6 +6,7 @@ interface Props {
   width?: number;
   height?: number;
   disableFullScreen?: boolean;
+  fillViewport?: boolean;
   onClick?(canvas: HTMLCanvasElement, e: MouseEvent<Element>): void;
   onFrameRender?(canvas: HTMLCanvasElement, frameCount: number): void;
   onMount?(canvas: HTMLCanvasElement): void;
@@ -20,6 +19,7 @@ const Canvas = ({
   width = 250,
   height = 250,
   disableFullScreen,
+  fillViewport,
   onClick,
   onFrameRender,
   onMount,
@@ -34,7 +34,7 @@ const Canvas = ({
   // On mount actions
   useEffect(() => {
     if (canvasRef.current) {
-      if (isFullScreen) {
+      if (isFullScreen || fillViewport) {
         canvasRef.current.width = window.innerWidth;
         canvasRef.current.height = window.innerHeight;
       } else {
@@ -87,12 +87,21 @@ const Canvas = ({
     };
   }, [isFullScreen, disableFullScreen]);
 
+  const getBackgroundColor = () => {
+    if (fillViewport && !isFullScreen) {
+      return;
+    }
+    if (isDarkMode) {
+      return 'rgba(0, 0, 0, 0.95)';
+    }
+    return 'rgba(255, 255, 255, 0.95)';
+  };
+
   const getStyles = (): Props['sx'] => {
-    if (isFullScreen) {
+    if (isFullScreen || fillViewport) {
       return {
-        backgroundColor: isDarkMode
-          ? 'rgba(0, 0, 0, 0.95)'
-          : 'rgba(255, 255, 255, 0.95)',
+        zIndex: fillViewport && !isFullScreen ? -1 : 1,
+        backgroundColor: getBackgroundColor(),
         position: 'fixed',
         top: 0,
         left: 0,
