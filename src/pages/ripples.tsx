@@ -27,10 +27,7 @@ interface Ripple {
 const Ripples = () => {
   const ripplesRef = useRef<Ripple[]>([]);
 
-  const [screenWidth, screenHeight] = useScreenSize();
-
-  const canvasWidth = constrain(screenWidth * 0.9, 0, 700);
-  const canvasHeight = constrain(screenHeight * 0.95, 0, 500);
+  const [canvasWidth, canvasHeight] = useScreenSize();
 
   const handleClick = (canvas: HTMLCanvasElement, e: MouseEvent<Element>) => {
     const x = e.clientX - canvas.offsetLeft;
