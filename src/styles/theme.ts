@@ -1,6 +1,6 @@
 import { createTheme, Theme } from '@mui/material/styles';
 
-interface Props<OwnerState = any> {
+interface Props<OwnerState = unknown> {
   theme: Theme;
   ownerState: OwnerState;
 }

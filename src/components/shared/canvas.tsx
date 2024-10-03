@@ -46,7 +46,7 @@ const Canvas = ({
         onMount(canvasRef.current);
       }
     }
-  }, [onMount, width, height, isFullScreen]);
+  }, [onMount, width, height, isFullScreen, fillViewport]);
 
   // Handle frame rendering
   useEffect(() => {
@@ -74,7 +74,14 @@ const Canvas = ({
     }
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.code === 'KeyF') {
-        setIsFullScreen(!isFullScreen);
+        setIsFullScreen((prev) => {
+          if (prev) {
+            document.exitFullscreen();
+          } else {
+            canvasRef.current?.requestFullscreen();
+          }
+          return !prev;
+        });
       }
       if (e.code === 'Escape') {
         setIsFullScreen(false);
@@ -85,7 +92,7 @@ const Canvas = ({
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [isFullScreen, disableFullScreen]);
+  }, [disableFullScreen]);
 
   // Handle screen resize for full screen
   useEffect(() => {
