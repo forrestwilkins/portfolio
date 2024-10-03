@@ -87,6 +87,21 @@ const Canvas = ({
     };
   }, [isFullScreen, disableFullScreen]);
 
+  // Handle screen resize for full screen
+  useEffect(() => {
+    const handleScreenResize = () => {
+      if (!canvasRef.current) {
+        return;
+      }
+      if (isFullScreen || fillViewport) {
+        canvasRef.current.width = window.innerWidth;
+        canvasRef.current.height = window.innerHeight;
+      }
+    };
+    window.addEventListener('resize', handleScreenResize);
+    return () => window.removeEventListener('resize', handleScreenResize);
+  }, [isFullScreen, fillViewport]);
+
   const getBackgroundColor = () => {
     if (fillViewport && !isFullScreen) {
       return;
