@@ -129,7 +129,9 @@ const Ripples = () => {
       ctx.beginPath();
       ctx.arc(ripple.x, ripple.y, ripple.radius, 0, 2 * Math.PI);
       ctx.lineWidth = 2;
-      ctx.strokeStyle = `rgba(${ripple.red}, ${ripple.green}, ${ripple.blue}, ${ripple.opacity})`;
+
+      const { red, green, blue, opacity } = ripple;
+      ctx.strokeStyle = `rgba(${red}, ${green}, ${blue}, ${opacity})`;
       ctx.stroke();
     }
   };
