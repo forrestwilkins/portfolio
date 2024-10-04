@@ -122,7 +122,7 @@ const Canvas = ({
   const getStyles = (): Props['sx'] => {
     if (isFullScreen || fillViewport) {
       return {
-        zIndex: fillViewport && !isFullScreen ? -1 : 1,
+        zIndex: fillViewport && !isFullScreen ? 0 : 1,
         backgroundColor: getBackgroundColor(),
         position: 'fixed',
         top: 0,

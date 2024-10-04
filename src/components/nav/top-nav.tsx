@@ -11,18 +11,17 @@ const TopNav = () => {
   return (
     <>
       {!isHomePage && (
-        <Link to="/">
-          <Button
-            sx={{ position: 'fixed', left: '12px', top: '12px' }}
-            variant="contained"
-            disableTouchRipple
-          >
+        <Link
+          to="/"
+          sx={{ position: 'fixed', left: '12px', top: '12px', zIndex: 10 }}
+        >
+          <Button variant="contained" disableTouchRipple>
             Home
           </Button>
         </Link>
       )}
 
-      <ModeToggle sx={{ right: '12px', top: '12px' }} />
+      <ModeToggle sx={{ right: '12px', top: '12px', zIndex: 10 }} />
     </>
   );
 };
