@@ -43,7 +43,7 @@ export const ModeToggle = ({ sx }: Props) => {
   };
 
   return (
-    <Box sx={{ position: 'fixed', ...sx }}>
+    <Box sx={sx}>
       <IconButton onClick={handleBtnClick}>{renderIcon()}</IconButton>
 
       <Menu
