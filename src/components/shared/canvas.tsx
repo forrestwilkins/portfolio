@@ -74,23 +74,23 @@ const Canvas = ({
     }
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.code === 'KeyF') {
-        setIsFullScreen((prev) => {
-          if (prev) {
-            document.exitFullscreen();
-          } else {
-            canvasRef.current?.requestFullscreen();
-          }
-          return !prev;
-        });
+        if (document.fullscreenElement) {
+          document.exitFullscreen();
+        } else {
+          canvasRef.current?.requestFullscreen();
+        }
       }
-      if (e.code === 'Escape') {
-        setIsFullScreen(false);
-      }
+    };
+    const handleFullScreenChange = () => {
+      setIsFullScreen(!!document.fullscreenElement);
     };
 
     window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('fullscreenchange', handleFullScreenChange);
+
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('fullscreenchange', handleFullScreenChange);
     };
   }, [disableFullScreen]);
 
