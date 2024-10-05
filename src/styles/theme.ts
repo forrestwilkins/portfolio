@@ -1,6 +1,6 @@
 import { createTheme, Theme } from '@mui/material/styles';
 
-interface Props<OwnerState = any> {
+interface Props<OwnerState = unknown> {
   theme: Theme;
   ownerState: OwnerState;
 }
@@ -80,6 +80,17 @@ const theme = createTheme({
             borderRadius: 7,
           },
         },
+      },
+    },
+
+    MuiSvgIcon: {
+      styleOverrides: {
+        root: ({ theme }: Props) => ({
+          color: theme.palette.common.black,
+          ...theme.applyStyles('dark', {
+            color: theme.palette.common.white,
+          }),
+        }),
       },
     },
 

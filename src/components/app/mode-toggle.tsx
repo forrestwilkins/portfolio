@@ -37,13 +37,13 @@ export const ModeToggle = ({ sx }: Props) => {
 
   const renderIcon = () => {
     if (isDarkMode) {
-      return <DarkMode sx={{ color: 'white', fontSize: '20px' }} />;
+      return <DarkMode />;
     }
-    return <LightModeOutlined sx={{ color: 'black' }} />;
+    return <LightModeOutlined />;
   };
 
   return (
-    <Box sx={{ position: 'fixed', ...sx }}>
+    <Box sx={sx}>
       <IconButton onClick={handleBtnClick}>{renderIcon()}</IconButton>
 
       <Menu

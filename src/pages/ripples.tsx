@@ -1,4 +1,4 @@
-import Canvas from '@/components/shared/canvas';
+import Canvas from '@/components/shared/canvas/canvas';
 import { useScreenSize } from '@/hooks/shared.hooks';
 import { constrain } from '@/utils/math.utils';
 import { Box } from '@mui/material';
@@ -27,10 +27,7 @@ interface Ripple {
 const Ripples = () => {
   const ripplesRef = useRef<Ripple[]>([]);
 
-  const [screenWidth, screenHeight] = useScreenSize();
-
-  const canvasWidth = constrain(screenWidth * 0.9, 0, 700);
-  const canvasHeight = constrain(screenHeight * 0.95, 0, 500);
+  const [canvasWidth, canvasHeight] = useScreenSize();
 
   const handleClick = (canvas: HTMLCanvasElement, e: MouseEvent<Element>) => {
     const x = e.clientX - canvas.offsetLeft;
@@ -132,13 +129,9 @@ const Ripples = () => {
       ctx.beginPath();
       ctx.arc(ripple.x, ripple.y, ripple.radius, 0, 2 * Math.PI);
       ctx.lineWidth = 2;
-      ctx.strokeStyle = `
-        rgba(
-          ${ripple.red},
-          ${ripple.green},
-          ${ripple.blue},
-          ${ripple.opacity}
-        )`;
+
+      const { red, green, blue, opacity } = ripple;
+      ctx.strokeStyle = `rgba(${red}, ${green}, ${blue}, ${opacity})`;
       ctx.stroke();
     }
   };
@@ -150,7 +143,7 @@ const Ripples = () => {
         height={canvasHeight}
         onClick={handleClick}
         onFrameRender={handleRender}
-        sx={{ borderRadius: 8 }}
+        fillViewport
       />
     </Box>
   );

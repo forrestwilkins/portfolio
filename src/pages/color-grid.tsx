@@ -1,4 +1,4 @@
-import Canvas from '@/components/shared/canvas';
+import Canvas from '@/components/shared/canvas/canvas';
 import { useScreenSize } from '@/hooks/shared.hooks';
 import { constrain, mapRange } from '@/utils/math.utils';
 import { Box } from '@mui/material';
@@ -79,6 +79,7 @@ const ColorGrid = () => {
         onMouseMove={handleMouseMove}
         onTouchMove={handleMouseMove}
         sx={{ borderRadius: '8px' }}
+        disableFullScreen
       />
     </Box>
   );
