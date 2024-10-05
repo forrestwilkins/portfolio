@@ -37,7 +37,7 @@ export const ModeToggle = ({ sx }: Props) => {
 
   const renderIcon = () => {
     if (isDarkMode) {
-      return <DarkMode sx={{ color: 'white', fontSize: '20px' }} />;
+      return <DarkMode sx={{ color: 'white' }} />;
     }
     return <LightModeOutlined sx={{ color: 'black' }} />;
   };

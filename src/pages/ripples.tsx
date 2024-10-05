@@ -1,4 +1,4 @@
-import Canvas from '@/components/shared/canvas';
+import Canvas from '@/components/shared/canvas/canvas';
 import { useScreenSize } from '@/hooks/shared.hooks';
 import { constrain } from '@/utils/math.utils';
 import { Box } from '@mui/material';

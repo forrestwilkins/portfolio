@@ -1,6 +1,7 @@
+import { canvasRef } from '@/components/shared/canvas/canvas-ref';
 import { useIsDarkMode } from '@/hooks/shared.hooks';
 import { Box, SxProps } from '@mui/material';
-import { MouseEvent, TouchEvent, useEffect, useRef, useState } from 'react';
+import { MouseEvent, TouchEvent, useEffect, useState } from 'react';
 
 interface Props {
   width?: number;
@@ -28,7 +29,7 @@ const Canvas = ({
   sx,
 }: Props) => {
   const [isFullScreen, setIsFullScreen] = useState(false);
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+
   const isDarkMode = useIsDarkMode();
 
   // On mount actions
