@@ -83,6 +83,17 @@ const theme = createTheme({
       },
     },
 
+    MuiSvgIcon: {
+      styleOverrides: {
+        root: ({ theme }: Props) => ({
+          color: theme.palette.common.black,
+          ...theme.applyStyles('dark', {
+            color: theme.palette.common.white,
+          }),
+        }),
+      },
+    },
+
     MuiMenu: {
       styleOverrides: {
         list: ({ theme }: Props) => ({
