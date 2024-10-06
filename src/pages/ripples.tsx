@@ -1,8 +1,9 @@
 import Canvas from '@/components/shared/canvas/canvas';
 import { useScreenSize } from '@/hooks/shared.hooks';
 import { constrain } from '@/utils/math.utils';
+import { getIsTouchDevice } from '@/utils/shared.utils';
 import { Box } from '@mui/material';
-import { MouseEvent, useRef } from 'react';
+import { MouseEvent, TouchEvent, useRef } from 'react';
 
 const RIPPLES_MAX_COUNT = 200;
 
@@ -26,13 +27,9 @@ interface Ripple {
 
 const Ripples = () => {
   const ripplesRef = useRef<Ripple[]>([]);
-
   const [canvasWidth, canvasHeight] = useScreenSize();
 
-  const handleClick = (canvas: HTMLCanvasElement, e: MouseEvent<Element>) => {
-    const x = e.clientX - canvas.offsetLeft;
-    const y = e.clientY - canvas.offsetTop;
-
+  const addRipple = (x: number, y: number) => {
     const red = Math.random() * 255;
     const isHighRed = red >= 255;
 
@@ -63,6 +60,24 @@ const Ripples = () => {
       isHighOpacity,
       radius: 0,
     });
+  };
+
+  const handleClick = (canvas: HTMLCanvasElement, e: MouseEvent<Element>) => {
+    const isTouchDevice = getIsTouchDevice();
+    if (isTouchDevice) {
+      return;
+    }
+    const x = e.clientX - canvas.offsetLeft;
+    const y = e.clientY - canvas.offsetTop;
+    addRipple(x, y);
+  };
+
+  const handleTouch = (canvas: HTMLCanvasElement, e: TouchEvent<Element>) => {
+    for (let i = 0; i < e.touches.length; i++) {
+      const x = e.touches[i].clientX - canvas.offsetLeft;
+      const y = e.touches[i].clientY - canvas.offsetTop;
+      addRipple(x, y);
+    }
   };
 
   const handleRender = (canvas: HTMLCanvasElement, frameCount: number) => {
@@ -142,6 +157,7 @@ const Ripples = () => {
         width={canvasWidth}
         height={canvasHeight}
         onClick={handleClick}
+        onTouchStart={handleTouch}
         onFrameRender={handleRender}
         fillViewport
       />

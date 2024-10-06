@@ -13,6 +13,7 @@ interface Props {
   onMount?(canvas: HTMLCanvasElement): void;
   onMouseMove?(canvas: HTMLCanvasElement, e: MouseEvent<Element>): void;
   onTouchMove?(canvas: HTMLCanvasElement, e: TouchEvent<Element>): void;
+  onTouchStart?(canvas: HTMLCanvasElement, e: TouchEvent<Element>): void;
   sx?: SxProps;
 }
 
@@ -26,10 +27,10 @@ const Canvas = ({
   onMount,
   onMouseMove,
   onTouchMove,
+  onTouchStart,
   sx,
 }: Props) => {
   const [isFullScreen, setIsFullScreen] = useState(false);
-
   const isDarkMode = useIsDarkMode();
 
   // On mount actions
@@ -139,6 +140,12 @@ const Canvas = ({
     }
   };
 
+  const handleTouchStart = (e: TouchEvent<Element>) => {
+    if (canvasRef.current && onTouchStart) {
+      onTouchStart(canvasRef.current, e);
+    }
+  };
+
   const handleMouseMove = (e: MouseEvent<Element>) => {
     if (canvasRef.current && onMouseMove) {
       onMouseMove(canvasRef.current, e);
@@ -155,6 +162,7 @@ const Canvas = ({
     <Box
       component="canvas"
       onClick={handleClick}
+      onTouchStart={handleTouchStart}
       onMouseMove={handleMouseMove}
       onTouchMove={handleTouchMove}
       ref={canvasRef}
