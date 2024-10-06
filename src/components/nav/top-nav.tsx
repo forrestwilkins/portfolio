@@ -1,8 +1,8 @@
 import { canvasRef } from '@/components/shared/canvas/canvas-ref';
-import DarkMode from '@/components/shared/icons/dark-mode';
 import { useIsDarkMode } from '@/hooks/shared.hooks';
 import { sleep } from '@/utils/shared.utils';
 import {
+  DarkMode,
   Fullscreen,
   HomeRounded,
   LightModeOutlined,
@@ -40,10 +40,7 @@ const TopNav = () => {
     }
     return (
       <>
-        <DarkMode
-          fontSize="small"
-          sx={{ marginRight: '1.25ch', transform: 'rotateY(180deg)' }}
-        />
+        <DarkMode fontSize="small" sx={{ marginRight: '1.25ch' }} />
         Dark mode
       </>
     );
