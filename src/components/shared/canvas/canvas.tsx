@@ -164,21 +164,17 @@ const Canvas = ({
         const y = e.touches[i].clientY - canvasRef.current.offsetTop;
 
         // Check if the point is too close to any processed point
-        let isTooClose = false;
-        for (let point of processedPointsRef.current) {
-          if (
+        const isTooClose = processedPointsRef.current.some(
+          (point) =>
             Math.abs(point.x - x) < PROCESSED_POINT_RADIUS &&
-            Math.abs(point.y - y) < PROCESSED_POINT_RADIUS
-          ) {
-            isTooClose = true;
-            break;
-          }
+            Math.abs(point.y - y) < PROCESSED_POINT_RADIUS,
+        );
+        if (isTooClose) {
+          continue;
         }
 
-        if (!isTooClose) {
-          onTouch(x, y);
-          processedPointsRef.current.push({ x, y, timestamp: now });
-        }
+        onTouch(x, y);
+        processedPointsRef.current.push({ x, y, timestamp: now });
       }
     }
   };
