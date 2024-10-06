@@ -1,11 +1,11 @@
 import Canvas from '@/components/shared/canvas/canvas';
 import { useScreenSize } from '@/hooks/shared.hooks';
 import { constrain } from '@/utils/math.utils';
+import { isMobileAgent } from '@/utils/shared.utils';
 import { Box } from '@mui/material';
 import { MouseEvent, useRef } from 'react';
 
 const RIPPLES_MAX_COUNT = 200;
-
 const COLOR_CHANGE_RATE = 2;
 const OPACITY_CHANGE_RATE = 0.01;
 const OPACITY_MIN = 0.4;
@@ -26,13 +26,9 @@ interface Ripple {
 
 const Ripples = () => {
   const ripplesRef = useRef<Ripple[]>([]);
-
   const [canvasWidth, canvasHeight] = useScreenSize();
 
-  const handleClick = (canvas: HTMLCanvasElement, e: MouseEvent<Element>) => {
-    const x = e.clientX - canvas.offsetLeft;
-    const y = e.clientY - canvas.offsetTop;
-
+  const addRipple = (x: number, y: number) => {
     const red = Math.random() * 255;
     const isHighRed = red >= 255;
 
@@ -65,6 +61,16 @@ const Ripples = () => {
     });
   };
 
+  const handleClick = (canvas: HTMLCanvasElement, e: MouseEvent<Element>) => {
+    const isMobile = isMobileAgent();
+    if (isMobile) {
+      return;
+    }
+    const x = e.clientX - canvas.offsetLeft;
+    const y = e.clientY - canvas.offsetTop;
+    addRipple(x, y);
+  };
+
   const handleRender = (canvas: HTMLCanvasElement, frameCount: number) => {
     const ctx = canvas.getContext('2d');
     if (!ctx) {
@@ -77,6 +83,7 @@ const Ripples = () => {
       // Remove ripples that exceed the canvas width
       if (ripple.radius / 2 >= canvasWidth) {
         ripplesRef.current.splice(i, 1);
+        i--; // Decrement after removal
         continue;
       }
 
@@ -143,6 +150,7 @@ const Ripples = () => {
         height={canvasHeight}
         onClick={handleClick}
         onFrameRender={handleRender}
+        onTouch={addRipple}
         fillViewport
       />
     </Box>

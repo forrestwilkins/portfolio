@@ -1,7 +1,16 @@
 import { canvasRef } from '@/components/shared/canvas/canvas-ref';
 import { useIsDarkMode } from '@/hooks/shared.hooks';
 import { Box, SxProps } from '@mui/material';
-import { MouseEvent, TouchEvent, useEffect, useState } from 'react';
+import { MouseEvent, TouchEvent, useEffect, useRef, useState } from 'react';
+
+const PROCESSED_POINT_TTL = 1000;
+const PROCESSED_POINT_RADIUS = 20;
+
+interface ProcessedPoint {
+  x: number;
+  y: number;
+  timestamp: number;
+}
 
 interface Props {
   width?: number;
@@ -13,6 +22,7 @@ interface Props {
   onMount?(canvas: HTMLCanvasElement): void;
   onMouseMove?(canvas: HTMLCanvasElement, e: MouseEvent<Element>): void;
   onTouchMove?(canvas: HTMLCanvasElement, e: TouchEvent<Element>): void;
+  onTouch?(x: number, y: number): void;
   sx?: SxProps;
 }
 
@@ -26,10 +36,11 @@ const Canvas = ({
   onMount,
   onMouseMove,
   onTouchMove,
+  onTouch,
   sx,
 }: Props) => {
+  const processedPointsRef = useRef<ProcessedPoint[]>([]);
   const [isFullScreen, setIsFullScreen] = useState(false);
-
   const isDarkMode = useIsDarkMode();
 
   // On mount actions
@@ -139,6 +150,35 @@ const Canvas = ({
     }
   };
 
+  const handleTouch = (e: TouchEvent<Element>) => {
+    if (canvasRef.current && onTouch) {
+      const now = Date.now();
+
+      // Clean up old processed points
+      processedPointsRef.current = processedPointsRef.current.filter(
+        (point) => now - point.timestamp < PROCESSED_POINT_TTL,
+      );
+
+      for (let i = 0; i < e.touches.length; i++) {
+        const x = e.touches[i].clientX - canvasRef.current.offsetLeft;
+        const y = e.touches[i].clientY - canvasRef.current.offsetTop;
+
+        // Check if the point is too close to any processed point
+        const isTooClose = processedPointsRef.current.some(
+          (point) =>
+            Math.abs(point.x - x) < PROCESSED_POINT_RADIUS &&
+            Math.abs(point.y - y) < PROCESSED_POINT_RADIUS,
+        );
+        if (isTooClose) {
+          continue;
+        }
+
+        onTouch(x, y);
+        processedPointsRef.current.push({ x, y, timestamp: now });
+      }
+    }
+  };
+
   const handleMouseMove = (e: MouseEvent<Element>) => {
     if (canvasRef.current && onMouseMove) {
       onMouseMove(canvasRef.current, e);
@@ -155,6 +195,7 @@ const Canvas = ({
     <Box
       component="canvas"
       onClick={handleClick}
+      onTouchStart={handleTouch}
       onMouseMove={handleMouseMove}
       onTouchMove={handleTouchMove}
       ref={canvasRef}
