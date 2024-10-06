@@ -3,21 +3,12 @@ import { useScreenSize } from '@/hooks/shared.hooks';
 import { constrain } from '@/utils/math.utils';
 import { isMobileAgent } from '@/utils/shared.utils';
 import { Box } from '@mui/material';
-import { MouseEvent, TouchEvent, useRef } from 'react';
+import { MouseEvent, useRef } from 'react';
 
 const RIPPLES_MAX_COUNT = 200;
 const COLOR_CHANGE_RATE = 2;
 const OPACITY_CHANGE_RATE = 0.01;
 const OPACITY_MIN = 0.4;
-
-const PROCESSED_POINT_TTL = 1000;
-const PROCESSED_POINT_RADIUS = 20;
-
-interface ProcessedPoint {
-  x: number;
-  y: number;
-  timestamp: number;
-}
 
 interface Ripple {
   x: number;
@@ -35,7 +26,6 @@ interface Ripple {
 
 const Ripples = () => {
   const ripplesRef = useRef<Ripple[]>([]);
-  const processedPointsRef = useRef<ProcessedPoint[]>([]);
   const [canvasWidth, canvasHeight] = useScreenSize();
 
   const addRipple = (x: number, y: number) => {
@@ -79,37 +69,6 @@ const Ripples = () => {
     const x = e.clientX - canvas.offsetLeft;
     const y = e.clientY - canvas.offsetTop;
     addRipple(x, y);
-  };
-
-  const handleTouch = (canvas: HTMLCanvasElement, e: TouchEvent<Element>) => {
-    const now = Date.now();
-
-    // Clean up old processed points
-    processedPointsRef.current = processedPointsRef.current.filter(
-      (point) => now - point.timestamp < PROCESSED_POINT_TTL,
-    );
-
-    for (let i = 0; i < e.touches.length; i++) {
-      const x = e.touches[i].clientX - canvas.offsetLeft;
-      const y = e.touches[i].clientY - canvas.offsetTop;
-
-      // Check if the point is too close to any processed point
-      let isTooClose = false;
-      for (let point of processedPointsRef.current) {
-        if (
-          Math.abs(point.x - x) < PROCESSED_POINT_RADIUS &&
-          Math.abs(point.y - y) < PROCESSED_POINT_RADIUS
-        ) {
-          isTooClose = true;
-          break;
-        }
-      }
-
-      if (!isTooClose) {
-        addRipple(x, y);
-        processedPointsRef.current.push({ x, y, timestamp: now });
-      }
-    }
   };
 
   const handleRender = (canvas: HTMLCanvasElement, frameCount: number) => {
@@ -190,8 +149,8 @@ const Ripples = () => {
         width={canvasWidth}
         height={canvasHeight}
         onClick={handleClick}
-        onTouchStart={handleTouch}
         onFrameRender={handleRender}
+        onTouch={addRipple}
         fillViewport
       />
     </Box>
