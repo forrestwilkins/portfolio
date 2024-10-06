@@ -6,7 +6,7 @@ import {
   Fullscreen,
   HomeRounded,
   LightModeOutlined,
-  Menu as MenuIcon,
+  MenuRounded,
 } from '@mui/icons-material';
 import { Box, IconButton, Menu, MenuItem, useColorScheme } from '@mui/material';
 import { MouseEvent, useState } from 'react';
@@ -56,7 +56,7 @@ const TopNav = () => {
           setAnchorEl(e.currentTarget)
         }
       >
-        <MenuIcon />
+        <MenuRounded />
       </IconButton>
 
       <Menu
