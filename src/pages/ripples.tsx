@@ -1,12 +1,11 @@
 import Canvas from '@/components/shared/canvas/canvas';
 import { useScreenSize } from '@/hooks/shared.hooks';
 import { constrain } from '@/utils/math.utils';
-import { getIsTouchDevice } from '@/utils/shared.utils';
+import { isMobileAgent } from '@/utils/shared.utils';
 import { Box } from '@mui/material';
 import { MouseEvent, TouchEvent, useRef } from 'react';
 
 const RIPPLES_MAX_COUNT = 200;
-
 const COLOR_CHANGE_RATE = 2;
 const OPACITY_CHANGE_RATE = 0.01;
 const OPACITY_MIN = 0.4;
@@ -63,8 +62,8 @@ const Ripples = () => {
   };
 
   const handleClick = (canvas: HTMLCanvasElement, e: MouseEvent<Element>) => {
-    const isTouchDevice = getIsTouchDevice();
-    if (isTouchDevice) {
+    const isMobile = isMobileAgent();
+    if (isMobile) {
       return;
     }
     const x = e.clientX - canvas.offsetLeft;
