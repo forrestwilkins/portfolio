@@ -8,7 +8,7 @@ import { MouseEvent, TouchEvent, useEffect, useRef, useState } from 'react';
 const PROCESSED_POINT_TTL = 1000;
 const PROCESSED_POINT_RADIUS = 20;
 
-type LongPressMap = Record<
+type TouchPointMap = Record<
   number,
   {
     x: number;
@@ -16,12 +16,6 @@ type LongPressMap = Record<
     timestamp: number;
   }
 >;
-
-interface ProcessedPoint {
-  x: number;
-  y: number;
-  timestamp: number;
-}
 
 interface Props {
   width?: number;
@@ -55,9 +49,8 @@ const Canvas = ({
   const isCanvasPaused = useAppStore((state) => state.isCanvasPaused);
   const setIsCanvasPaused = useAppStore((state) => state.setIsCanvasPaused);
 
-  const longPressesRef = useRef<LongPressMap>({});
-  const processedPointsRef = useRef<ProcessedPoint[]>([]);
   const [isFullScreen, setIsFullScreen] = useState(false);
+  const touchPointsRef = useRef<TouchPointMap>({});
 
   const isDarkMode = useIsDarkMode();
 
@@ -194,31 +187,29 @@ const Canvas = ({
       const now = Date.now();
 
       // Clean up old processed points
-      processedPointsRef.current = processedPointsRef.current.filter(
-        (point) => now - point.timestamp < PROCESSED_POINT_TTL,
-      );
+      for (const touchPoint of Object.values(touchPointsRef.current)) {
+        if (now - touchPoint.timestamp > PROCESSED_POINT_TTL) {
+          delete touchPointsRef.current[touchPoint.timestamp];
+        }
+      }
 
       for (let i = 0; i < e.touches.length; i++) {
         const x = e.touches[i].clientX - canvasRef.current.offsetLeft;
         const y = e.touches[i].clientY - canvasRef.current.offsetTop;
 
-        // Check if the point is too close to any processed point
-        const isTooClose = processedPointsRef.current.some(
-          (point) =>
-            Math.abs(point.x - x) < PROCESSED_POINT_RADIUS &&
-            Math.abs(point.y - y) < PROCESSED_POINT_RADIUS,
+        // Check if the point is too close to any existing point
+        const isTooClose = Object.values(touchPointsRef.current).some(
+          (touchPoint) =>
+            Math.abs(touchPoint.x - x) < PROCESSED_POINT_RADIUS &&
+            Math.abs(touchPoint.y - y) < PROCESSED_POINT_RADIUS,
         );
         if (isTooClose) {
           continue;
         }
 
         onTouch(x, y);
-        processedPointsRef.current.push({ x, y, timestamp: now });
-        longPressesRef.current[e.touches[i].identifier] = {
-          x,
-          y,
-          timestamp: now,
-        };
+        const touchPoint = { x, y, timestamp: now };
+        touchPointsRef.current[e.touches[i].identifier] = touchPoint;
       }
     }
   };
@@ -228,12 +219,12 @@ const Canvas = ({
       return;
     }
     for (const touch of Array.from(e.changedTouches)) {
-      const longPress = longPressesRef.current[touch.identifier];
-      const duration = Date.now() - longPress.timestamp;
+      const touchPoint = touchPointsRef.current[touch.identifier];
+      const duration = Date.now() - touchPoint.timestamp;
       if (duration > 500) {
-        onLongTouchEnd(longPress.x, longPress.y, duration);
+        onLongTouchEnd(touchPoint.x, touchPoint.y, duration);
       }
-      delete longPressesRef.current[touch.identifier];
+      delete touchPointsRef.current[touch.identifier];
     }
   };
 
