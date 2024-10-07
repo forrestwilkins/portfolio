@@ -1,5 +1,6 @@
 import { canvasRef } from '@/components/shared/canvas/canvas-ref';
 import { useIsDarkMode } from '@/hooks/shared.hooks';
+import useAppStore from '@/store/app.store';
 import { Box, SxProps } from '@mui/material';
 import { MouseEvent, TouchEvent, useEffect, useRef, useState } from 'react';
 
@@ -39,8 +40,10 @@ const Canvas = ({
   onTouch,
   sx,
 }: Props) => {
-  const processedPointsRef = useRef<ProcessedPoint[]>([]);
+  const isCanvasPaused = useAppStore((state) => state.isCanvasPaused);
   const [isFullScreen, setIsFullScreen] = useState(false);
+  const processedPointsRef = useRef<ProcessedPoint[]>([]);
+
   const isDarkMode = useIsDarkMode();
 
   // On mount actions
@@ -68,7 +71,9 @@ const Canvas = ({
     if (canvasRef.current && onFrameRender) {
       const canvas = canvasRef.current;
       const render = () => {
-        onFrameRender(canvas, frameCount);
+        if (!isCanvasPaused) {
+          onFrameRender(canvas, frameCount);
+        }
         animationFrameId = window.requestAnimationFrame(render);
         frameCount++;
       };
@@ -77,7 +82,7 @@ const Canvas = ({
     return () => {
       window.cancelAnimationFrame(animationFrameId);
     };
-  }, [onFrameRender]);
+  }, [onFrameRender, isCanvasPaused]);
 
   // Handle full screen toggle
   useEffect(() => {
