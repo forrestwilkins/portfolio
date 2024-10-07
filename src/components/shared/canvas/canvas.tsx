@@ -41,6 +41,8 @@ const Canvas = ({
   sx,
 }: Props) => {
   const isCanvasPaused = useAppStore((state) => state.isCanvasPaused);
+  const setIsCanvasPaused = useAppStore((state) => state.setIsCanvasPaused);
+
   const [isFullScreen, setIsFullScreen] = useState(false);
   const processedPointsRef = useRef<ProcessedPoint[]>([]);
 
@@ -110,6 +112,19 @@ const Canvas = ({
       window.removeEventListener('fullscreenchange', handleFullScreenChange);
     };
   }, [disableFullScreen]);
+
+  // Handle pause toggle
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.code === 'KeyP') {
+        setIsCanvasPaused(!isCanvasPaused);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isCanvasPaused, setIsCanvasPaused]);
 
   // Handle screen resize for full screen
   useEffect(() => {
