@@ -7,6 +7,8 @@ import { Box } from '@mui/material';
 import { MouseEvent, useEffect } from 'react';
 
 const RIPPLES_MAX_COUNT = 200;
+const LONG_PRESS_DURATION = 500;
+
 const COLOR_CHANGE_RATE = 2;
 const OPACITY_CHANGE_RATE = 0.01;
 const OPACITY_MIN = 0.4;
@@ -76,12 +78,16 @@ const Ripples = () => {
     addRipple(x, y);
   };
 
-  const handleLongPress = (x: number, y: number, duration: number) => {
-    const xRounded = Math.round(x);
-    const yRounded = Math.round(y);
-    console.log(
-      `Long press at point (${xRounded}, ${yRounded}) for ${duration}ms`,
-    );
+  const handleTouchEnd = (x: number, y: number, duration: number) => {
+    addRipple(x, y);
+
+    if (duration >= LONG_PRESS_DURATION) {
+      const xRounded = Math.round(x);
+      const yRounded = Math.round(y);
+      console.log(
+        `Long press at point (${xRounded}, ${yRounded}) for ${duration}ms`,
+      );
+    }
   };
 
   const handleRender = (canvas: HTMLCanvasElement, frameCount: number) => {
@@ -163,8 +169,7 @@ const Ripples = () => {
         height={canvasHeight}
         onClick={handleClick}
         onFrameRender={handleRender}
-        onLongTouchEnd={handleLongPress}
-        onTouchEnd={addRipple}
+        onTouchEnd={handleTouchEnd}
         fillViewport
       />
     </Box>

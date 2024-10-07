@@ -5,9 +5,9 @@ import useAppStore from '@/store/app.store';
 import { Box, SxProps } from '@mui/material';
 import { MouseEvent, TouchEvent, useEffect, useRef, useState } from 'react';
 
+// TODO: Rename constants to match the context of the component
 const PROCESSED_POINT_TTL = 1000;
 const PROCESSED_POINT_RADIUS = 20;
-const LONG_PRESS_DURATION = 500;
 
 type TouchPointMap = Record<
   number,
@@ -28,8 +28,7 @@ interface Props {
   onMount?(canvas: HTMLCanvasElement): void;
   onMouseMove?(canvas: HTMLCanvasElement, e: MouseEvent<Element>): void;
   onTouchMove?(canvas: HTMLCanvasElement, e: TouchEvent<Element>): void;
-  onLongTouchEnd?(x: number, y: number, duration: number): void;
-  onTouchEnd?(x: number, y: number): void;
+  onTouchEnd?(x: number, y: number, duration: number): void;
   onTouch?(x: number, y: number): void;
   sx?: SxProps;
 }
@@ -40,7 +39,6 @@ const Canvas = ({
   disableFullScreen,
   fillViewport,
   onClick,
-  onLongTouchEnd,
   onFrameRender,
   onMount,
   onTouchEnd,
@@ -223,16 +221,10 @@ const Canvas = ({
       return;
     }
     for (const touch of Array.from(e.changedTouches)) {
-      if (onTouchEnd) {
-        onTouchEnd(touch.clientX, touch.clientY);
-      }
       const touchPoint = touchPointsRef.current[touch.identifier];
-      if (!touchPoint) {
-        continue;
-      }
       const duration = Date.now() - touchPoint.timestamp;
-      if (onLongTouchEnd && duration > LONG_PRESS_DURATION) {
-        onLongTouchEnd(touchPoint.x, touchPoint.y, duration);
+      if (onTouchEnd) {
+        onTouchEnd(touch.clientX, touch.clientY, duration);
       }
       delete touchPointsRef.current[touch.identifier];
     }
