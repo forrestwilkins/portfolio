@@ -7,6 +7,7 @@ import { MouseEvent, TouchEvent, useEffect, useRef, useState } from 'react';
 
 const PROCESSED_POINT_TTL = 1000;
 const PROCESSED_POINT_RADIUS = 20;
+const LONG_PRESS_DURATION = 500;
 
 type TouchPointMap = Record<
   number,
@@ -28,6 +29,7 @@ interface Props {
   onMouseMove?(canvas: HTMLCanvasElement, e: MouseEvent<Element>): void;
   onTouchMove?(canvas: HTMLCanvasElement, e: TouchEvent<Element>): void;
   onLongTouchEnd?(x: number, y: number, duration: number): void;
+  onTouchEnd?(x: number, y: number): void;
   onTouch?(x: number, y: number): void;
   sx?: SxProps;
 }
@@ -41,6 +43,7 @@ const Canvas = ({
   onLongTouchEnd,
   onFrameRender,
   onMount,
+  onTouchEnd,
   onMouseMove,
   onTouchMove,
   onTouch,
@@ -215,13 +218,19 @@ const Canvas = ({
   };
 
   const handleTouchEnd = (e: TouchEvent<Element>) => {
-    if (!canvasRef.current || !onLongTouchEnd) {
+    if (!canvasRef.current) {
       return;
     }
     for (const touch of Array.from(e.changedTouches)) {
+      if (onTouchEnd) {
+        onTouchEnd(touch.clientX, touch.clientY);
+      }
       const touchPoint = touchPointsRef.current[touch.identifier];
+      if (!touchPoint) {
+        continue;
+      }
       const duration = Date.now() - touchPoint.timestamp;
-      if (duration > 500) {
+      if (onLongTouchEnd && duration > LONG_PRESS_DURATION) {
         onLongTouchEnd(touchPoint.x, touchPoint.y, duration);
       }
       delete touchPointsRef.current[touch.identifier];

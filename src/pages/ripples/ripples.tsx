@@ -160,7 +160,7 @@ const Ripples = () => {
         onClick={handleClick}
         onFrameRender={handleRender}
         onLongTouchEnd={handleLongPress}
-        onTouch={addRipple}
+        onTouchEnd={addRipple}
         fillViewport
       />
     </Box>
