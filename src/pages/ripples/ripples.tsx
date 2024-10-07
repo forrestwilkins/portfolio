@@ -9,8 +9,8 @@ import { MouseEvent, useEffect } from 'react';
 const RIPPLES_MAX_COUNT = 200;
 const LONG_PRESS_DURATION = 500;
 
-const COLOR_CHANGE_RATE = 0.8;
-const OPACITY_CHANGE_RATE = 0.01;
+const COLOR_CHANGE_RATE = 0.6;
+const OPACITY_CHANGE_RATE = 0.0025;
 const OPACITY_MIN = 0.4;
 
 const Ripples = () => {
