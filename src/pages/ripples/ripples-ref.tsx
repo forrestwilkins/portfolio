@@ -1,4 +1,4 @@
-export interface Ripple {
+interface Ripple {
   x: number;
   y: number;
   red: number;
@@ -9,6 +9,7 @@ export interface Ripple {
   isHighGreen: boolean;
   isHighBlue: boolean;
   isHighOpacity: boolean;
+  growthRate: number;
   radius: number;
 }
 

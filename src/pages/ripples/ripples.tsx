@@ -64,6 +64,7 @@ const Ripples = () => {
       isHighGreen,
       isHighBlue,
       isHighOpacity,
+      growthRate: 1,
       radius: 0,
     });
   };
@@ -107,7 +108,7 @@ const Ripples = () => {
       }
 
       if (frameCount % 4 === 0) {
-        ripple.radius += 1;
+        ripple.radius += ripple.growthRate;
 
         // Sync high flags for color
         if (ripple.red >= 255) {
