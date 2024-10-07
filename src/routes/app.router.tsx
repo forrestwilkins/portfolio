@@ -1,6 +1,6 @@
 import App from '@/components/app/app';
 import AudioVisual from '@/pages/audio-visual';
-import Ripples from '@/pages/ripples';
+import Ripples from '@/pages/ripples/ripples';
 import ColorGrid from '@/pages/color-grid';
 import ErrorPage from '@/pages/error-page';
 import HelloSound from '@/pages/hello-sound';

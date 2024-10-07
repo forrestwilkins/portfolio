@@ -1,34 +1,27 @@
 import Canvas from '@/components/shared/canvas/canvas';
 import { useScreenSize } from '@/hooks/shared.hooks';
+import { ripplesRef } from '@/pages/ripples/ripples-ref';
 import { constrain } from '@/utils/math.utils';
 import { isMobileAgent } from '@/utils/shared.utils';
 import { Box } from '@mui/material';
-import { MouseEvent, useRef } from 'react';
+import { MouseEvent, useEffect } from 'react';
 
 const RIPPLES_MAX_COUNT = 200;
 const COLOR_CHANGE_RATE = 2;
 const OPACITY_CHANGE_RATE = 0.01;
 const OPACITY_MIN = 0.4;
 
-interface Ripple {
-  x: number;
-  y: number;
-  red: number;
-  green: number;
-  blue: number;
-  opacity: number;
-  isHighRed: boolean;
-  isHighGreen: boolean;
-  isHighBlue: boolean;
-  isHighOpacity: boolean;
-  radius: number;
-}
-
 const Ripples = () => {
-  const ripplesRef = useRef<Ripple[]>([]);
   const [canvasWidth, canvasHeight] = useScreenSize();
 
+  useEffect(() => {
+    ripplesRef.current = [];
+  }, []);
+
   const addRipple = (x: number, y: number) => {
+    if (!ripplesRef.current) {
+      return;
+    }
     const red = Math.random() * 255;
     const isHighRed = red >= 255;
 
@@ -73,7 +66,7 @@ const Ripples = () => {
 
   const handleRender = (canvas: HTMLCanvasElement, frameCount: number) => {
     const ctx = canvas.getContext('2d');
-    if (!ctx) {
+    if (!ctx || !ripplesRef.current) {
       return;
     }
 

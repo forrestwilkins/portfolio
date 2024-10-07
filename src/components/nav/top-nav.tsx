@@ -1,7 +1,9 @@
 import { canvasRef } from '@/components/shared/canvas/canvas-ref';
 import { useIsDarkMode } from '@/hooks/shared.hooks';
+import { ripplesRef } from '@/pages/ripples/ripples-ref';
 import { sleep } from '@/utils/shared.utils';
 import {
+  Clear,
   DarkMode,
   Fullscreen,
   HomeRounded,
@@ -36,6 +38,19 @@ const TopNav = () => {
     setAnchorEl(null);
     await sleep(100);
     setMode(isDarkMode ? 'light' : 'dark');
+  };
+
+  const handleClearCanvasClick = () => {
+    if (!canvasRef.current) {
+      return;
+    }
+    const ctx = canvasRef.current.getContext('2d');
+    if (ctx) {
+      const { width, height } = canvasRef.current;
+      ctx.clearRect(0, 0, width, height);
+      ripplesRef.current = [];
+    }
+    setAnchorEl(null);
   };
 
   const renderModeToggle = () => {
@@ -93,6 +108,13 @@ const TopNav = () => {
             <MenuItem onClick={() => canvasRef.current?.requestFullscreen()}>
               <Fullscreen fontSize="small" sx={{ marginRight: '1.25ch' }} />
               Fullscreen
+            </MenuItem>
+          )}
+
+          {isRipples && (
+            <MenuItem onClick={handleClearCanvasClick}>
+              <Clear fontSize="small" sx={{ marginRight: '1.25ch' }} />
+              Clear canvas
             </MenuItem>
           )}
 
