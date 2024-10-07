@@ -28,6 +28,8 @@ const TopNav = () => {
   const navigate = useNavigate();
 
   const iOS = /(iPad|iPhone|iPod)/g.test(navigator.userAgent);
+
+  const isHome = location.pathname === '/';
   const isRipples = location.pathname === '/ripples';
 
   const handleModeToggleClick = async () => {
@@ -55,11 +57,13 @@ const TopNav = () => {
 
   return (
     <>
-      <Box position="fixed" left="12px" top="12px" zIndex={10} display="flex">
-        <Button variant="contained" onClick={() => navigate('/')}>
-          Home
-        </Button>
-      </Box>
+      {!isHome && (
+        <Box position="fixed" left="12px" top="12px" zIndex={10} display="flex">
+          <Button variant="contained" onClick={() => navigate('/')}>
+            Home
+          </Button>
+        </Box>
+      )}
 
       <Box position="fixed" right="12px" top="12px" zIndex={10} display="flex">
         <IconButton
