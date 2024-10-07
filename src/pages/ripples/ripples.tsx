@@ -18,6 +18,18 @@ const Ripples = () => {
     ripplesRef.current = [];
   }, []);
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.code === 'KeyC') {
+        ripplesRef.current = [];
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, []);
+
   const addRipple = (x: number, y: number) => {
     if (!ripplesRef.current) {
       return;

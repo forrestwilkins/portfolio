@@ -1,4 +1,5 @@
 import { canvasRef } from '@/components/shared/canvas/canvas-ref';
+import { clearCanvas } from '@/components/shared/canvas/canvas.utils';
 import { useIsDarkMode } from '@/hooks/shared.hooks';
 import { ripplesRef } from '@/pages/ripples/ripples-ref';
 import useAppStore from '@/store/app.store';
@@ -52,15 +53,8 @@ const TopNav = () => {
   };
 
   const handleClearCanvasClick = () => {
-    if (!canvasRef.current) {
-      return;
-    }
-    const ctx = canvasRef.current.getContext('2d');
-    if (ctx) {
-      const { width, height } = canvasRef.current;
-      ctx.clearRect(0, 0, width, height);
-      ripplesRef.current = [];
-    }
+    ripplesRef.current = [];
+    clearCanvas();
     setAnchorEl(null);
   };
 

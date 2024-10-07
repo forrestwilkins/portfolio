@@ -1,4 +1,5 @@
 import { canvasRef } from '@/components/shared/canvas/canvas-ref';
+import { clearCanvas } from '@/components/shared/canvas/canvas.utils';
 import { useIsDarkMode } from '@/hooks/shared.hooks';
 import useAppStore from '@/store/app.store';
 import { Box, SxProps } from '@mui/material';
@@ -113,11 +114,17 @@ const Canvas = ({
     };
   }, [disableFullScreen]);
 
-  // Handle pause toggle
+  // Handle pause toggle and canvas clear
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      if (!canvasRef.current) {
+        return;
+      }
       if (e.code === 'KeyP') {
         setIsCanvasPaused(!isCanvasPaused);
+      }
+      if (e.code === 'KeyC') {
+        clearCanvas();
       }
     };
     window.addEventListener('keydown', handleKeyDown);
