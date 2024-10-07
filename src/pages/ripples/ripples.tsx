@@ -9,7 +9,7 @@ import { MouseEvent, useEffect } from 'react';
 const RIPPLES_MAX_COUNT = 200;
 const LONG_PRESS_DURATION = 500;
 
-const COLOR_CHANGE_RATE = 2;
+const COLOR_CHANGE_RATE = 0.8;
 const OPACITY_CHANGE_RATE = 0.01;
 const OPACITY_MIN = 0.4;
 
@@ -64,7 +64,7 @@ const Ripples = () => {
       isHighGreen,
       isHighBlue,
       isHighOpacity,
-      growthRate: 1,
+      growthRate: 0.25,
       radius: 0,
     });
   };
@@ -91,7 +91,7 @@ const Ripples = () => {
     }
   };
 
-  const handleRender = (canvas: HTMLCanvasElement, frameCount: number) => {
+  const handleRender = (canvas: HTMLCanvasElement) => {
     const ctx = canvas.getContext('2d');
     if (!ctx || !ripplesRef.current) {
       return;
@@ -107,51 +107,49 @@ const Ripples = () => {
         continue;
       }
 
-      if (frameCount % 4 === 0) {
-        ripple.radius += ripple.growthRate;
+      ripple.radius += ripple.growthRate;
 
-        // Sync high flags for color
-        if (ripple.red >= 255) {
-          ripple.isHighRed = true;
-        } else if (ripple.red <= 0) {
-          ripple.isHighRed = false;
-        }
-        if (ripple.green >= 255) {
-          ripple.isHighGreen = true;
-        } else if (ripple.green <= 0) {
-          ripple.isHighGreen = false;
-        }
-        if (ripple.blue >= 255) {
-          ripple.isHighBlue = true;
-        } else if (ripple.blue <= 0) {
-          ripple.isHighBlue = false;
-        }
-        if (ripple.opacity >= 1) {
-          ripple.isHighOpacity = true;
-        } else if (ripple.opacity <= OPACITY_MIN) {
-          ripple.isHighOpacity = false;
-        }
-
-        const redDelta = ripple.isHighRed
-          ? ripple.red - COLOR_CHANGE_RATE
-          : ripple.red + COLOR_CHANGE_RATE;
-        ripple.red = constrain(redDelta, 0, 255);
-
-        const greenDelta = ripple.isHighGreen
-          ? ripple.green - COLOR_CHANGE_RATE
-          : ripple.green + COLOR_CHANGE_RATE;
-        ripple.green = constrain(greenDelta, 0, 255);
-
-        const blueDelta = ripple.isHighBlue
-          ? ripple.blue - COLOR_CHANGE_RATE
-          : ripple.blue + COLOR_CHANGE_RATE;
-        ripple.blue = constrain(blueDelta, 0, 255);
-
-        const opacityDelta = ripple.isHighOpacity
-          ? ripple.opacity - OPACITY_CHANGE_RATE
-          : ripple.opacity + OPACITY_CHANGE_RATE;
-        ripple.opacity = constrain(opacityDelta, OPACITY_MIN, 1);
+      // Sync high flags for color
+      if (ripple.red >= 255) {
+        ripple.isHighRed = true;
+      } else if (ripple.red <= 0) {
+        ripple.isHighRed = false;
       }
+      if (ripple.green >= 255) {
+        ripple.isHighGreen = true;
+      } else if (ripple.green <= 0) {
+        ripple.isHighGreen = false;
+      }
+      if (ripple.blue >= 255) {
+        ripple.isHighBlue = true;
+      } else if (ripple.blue <= 0) {
+        ripple.isHighBlue = false;
+      }
+      if (ripple.opacity >= 1) {
+        ripple.isHighOpacity = true;
+      } else if (ripple.opacity <= OPACITY_MIN) {
+        ripple.isHighOpacity = false;
+      }
+
+      const redDelta = ripple.isHighRed
+        ? ripple.red - COLOR_CHANGE_RATE
+        : ripple.red + COLOR_CHANGE_RATE;
+      ripple.red = constrain(redDelta, 0, 255);
+
+      const greenDelta = ripple.isHighGreen
+        ? ripple.green - COLOR_CHANGE_RATE
+        : ripple.green + COLOR_CHANGE_RATE;
+      ripple.green = constrain(greenDelta, 0, 255);
+
+      const blueDelta = ripple.isHighBlue
+        ? ripple.blue - COLOR_CHANGE_RATE
+        : ripple.blue + COLOR_CHANGE_RATE;
+      ripple.blue = constrain(blueDelta, 0, 255);
+
+      const opacityDelta = ripple.isHighOpacity
+        ? ripple.opacity - OPACITY_CHANGE_RATE
+        : ripple.opacity + OPACITY_CHANGE_RATE;
+      ripple.opacity = constrain(opacityDelta, OPACITY_MIN, 1);
 
       ctx.beginPath();
       ctx.arc(ripple.x, ripple.y, ripple.radius, 0, 2 * Math.PI);
