@@ -8,7 +8,14 @@ import {
   LightModeOutlined,
   MenuRounded,
 } from '@mui/icons-material';
-import { Box, IconButton, Menu, MenuItem, useColorScheme } from '@mui/material';
+import {
+  Box,
+  Button,
+  IconButton,
+  Menu,
+  MenuItem,
+  useColorScheme,
+} from '@mui/material';
 import { MouseEvent, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
@@ -47,36 +54,50 @@ const TopNav = () => {
   };
 
   return (
-    <Box position="fixed" right="12px" top="12px" zIndex={10} display="flex">
-      <IconButton
-        onClick={(e: MouseEvent<HTMLButtonElement>) =>
-          setAnchorEl(e.currentTarget)
-        }
-      >
-        <MenuRounded />
-      </IconButton>
+    <>
+      <Box position="fixed" left="12px" top="12px" zIndex={10} display="flex">
+        <Button variant="contained" onClick={() => navigate('/')}>
+          Home
+        </Button>
+      </Box>
 
-      <Menu
-        anchorEl={anchorEl}
-        open={!!anchorEl}
-        onClose={() => setAnchorEl(null)}
-      >
-        <MenuItem onClick={() => navigate('/')}>
-          <HomeRounded fontSize="small" sx={{ marginRight: '1.25ch' }} /> Home
-        </MenuItem>
+      <Box position="fixed" right="12px" top="12px" zIndex={10} display="flex">
+        <IconButton
+          onClick={(e: MouseEvent<HTMLButtonElement>) =>
+            setAnchorEl(e.currentTarget)
+          }
+        >
+          <MenuRounded />
+        </IconButton>
 
-        {isRipples && !iOS && (
-          <MenuItem onClick={() => canvasRef.current?.requestFullscreen()}>
-            <Fullscreen fontSize="small" sx={{ marginRight: '1.25ch' }} />
-            Fullscreen
+        <Menu
+          anchorEl={anchorEl}
+          open={!!anchorEl}
+          onClose={() => setAnchorEl(null)}
+        >
+          <MenuItem
+            onClick={() => {
+              setAnchorEl(null);
+              navigate('/');
+            }}
+          >
+            <HomeRounded fontSize="small" sx={{ marginRight: '1.25ch' }} />
+            Home
           </MenuItem>
-        )}
 
-        <MenuItem onClick={handleModeToggleClick}>
-          {renderModeToggle()}
-        </MenuItem>
-      </Menu>
-    </Box>
+          {isRipples && !iOS && (
+            <MenuItem onClick={() => canvasRef.current?.requestFullscreen()}>
+              <Fullscreen fontSize="small" sx={{ marginRight: '1.25ch' }} />
+              Fullscreen
+            </MenuItem>
+          )}
+
+          <MenuItem onClick={handleModeToggleClick}>
+            {renderModeToggle()}
+          </MenuItem>
+        </Menu>
+      </Box>
+    </>
   );
 };
 
