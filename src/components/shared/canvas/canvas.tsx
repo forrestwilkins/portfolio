@@ -5,18 +5,16 @@ import useAppStore from '@/store/app.store';
 import { Box, SxProps } from '@mui/material';
 import { MouseEvent, TouchEvent, useEffect, useRef, useState } from 'react';
 
-// TODO: Rename constants to match the context of the component
-const PROCESSED_POINT_TTL = 1000;
-const PROCESSED_POINT_RADIUS = 20;
+const TOUCH_POINT_TTL = 1000;
+const TOUCH_POINT_RADIUS = 20;
 
-type TouchPointMap = Record<
-  number,
-  {
-    x: number;
-    y: number;
-    timestamp: number;
-  }
->;
+interface TouchPoint {
+  x: number;
+  y: number;
+  timestamp: number;
+}
+
+type TouchPointMap = Record<number, TouchPoint>;
 
 interface Props {
   width?: number;
@@ -189,7 +187,7 @@ const Canvas = ({
 
       // Clean up old processed points
       for (const touchPoint of Object.values(touchPointsRef.current)) {
-        if (now - touchPoint.timestamp > PROCESSED_POINT_TTL) {
+        if (now - touchPoint.timestamp > TOUCH_POINT_TTL) {
           delete touchPointsRef.current[touchPoint.timestamp];
         }
       }
@@ -201,8 +199,8 @@ const Canvas = ({
         // Check if the point is too close to any existing point
         const isTooClose = Object.values(touchPointsRef.current).some(
           (touchPoint) =>
-            Math.abs(touchPoint.x - x) < PROCESSED_POINT_RADIUS &&
-            Math.abs(touchPoint.y - y) < PROCESSED_POINT_RADIUS,
+            Math.abs(touchPoint.x - x) < TOUCH_POINT_RADIUS &&
+            Math.abs(touchPoint.y - y) < TOUCH_POINT_RADIUS,
         );
         if (isTooClose) {
           continue;
