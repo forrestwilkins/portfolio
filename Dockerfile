@@ -11,7 +11,7 @@ COPY package-lock.json /app
 COPY tsconfig.json /app
 COPY tsconfig.app.json /app
 COPY tsconfig.node.json /app
-COPY eslintrc.cjs /app
+COPY .eslintrc.cjs /app
 COPY vite.config.ts /app
 
 WORKDIR /app
