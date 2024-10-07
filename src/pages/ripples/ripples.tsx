@@ -1,7 +1,7 @@
 import Canvas from '@/components/shared/canvas/canvas';
 import { useScreenSize } from '@/hooks/shared.hooks';
 import { ripplesRef } from '@/pages/ripples/ripples-ref';
-import { constrain } from '@/utils/math.utils';
+import { constrain, mapRange } from '@/utils/math.utils';
 import { isMobileAgent } from '@/utils/shared.utils';
 import { Box } from '@mui/material';
 import { MouseEvent, useEffect } from 'react';
@@ -32,7 +32,7 @@ const Ripples = () => {
     };
   }, []);
 
-  const addRipple = (x: number, y: number) => {
+  const addRipple = (x: number, y: number, growthRate = 0.25) => {
     if (!ripplesRef.current) {
       return;
     }
@@ -64,7 +64,7 @@ const Ripples = () => {
       isHighGreen,
       isHighBlue,
       isHighOpacity,
-      growthRate: 0.25,
+      growthRate,
       radius: 0,
     });
   };
@@ -80,15 +80,8 @@ const Ripples = () => {
   };
 
   const handleTouchEnd = (x: number, y: number, duration: number) => {
-    addRipple(x, y);
-
-    if (duration >= LONG_PRESS_DURATION) {
-      const xRounded = Math.round(x);
-      const yRounded = Math.round(y);
-      console.log(
-        `Long press at point (${xRounded}, ${yRounded}) for ${duration}ms`,
-      );
-    }
+    const growthRate = mapRange(duration, 0, LONG_PRESS_DURATION * 3, 0.25, 1);
+    addRipple(x, y, growthRate);
   };
 
   const handleRender = (canvas: HTMLCanvasElement) => {
