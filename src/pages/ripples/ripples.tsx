@@ -76,6 +76,10 @@ const Ripples = () => {
     addRipple(x, y);
   };
 
+  const handleLongPress = (x: number, y: number, duration: number) => {
+    console.log('Long press detected at:', x, y, 'for', duration, 'ms');
+  };
+
   const handleRender = (canvas: HTMLCanvasElement, frameCount: number) => {
     const ctx = canvas.getContext('2d');
     if (!ctx || !ripplesRef.current) {
@@ -155,6 +159,7 @@ const Ripples = () => {
         height={canvasHeight}
         onClick={handleClick}
         onFrameRender={handleRender}
+        onLongTouchEnd={handleLongPress}
         onTouch={addRipple}
         fillViewport
       />

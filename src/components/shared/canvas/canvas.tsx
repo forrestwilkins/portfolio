@@ -8,6 +8,15 @@ import { MouseEvent, TouchEvent, useEffect, useRef, useState } from 'react';
 const PROCESSED_POINT_TTL = 1000;
 const PROCESSED_POINT_RADIUS = 20;
 
+type LongPressMap = Record<
+  number,
+  {
+    x: number;
+    y: number;
+    timestamp: number;
+  }
+>;
+
 interface ProcessedPoint {
   x: number;
   y: number;
@@ -24,6 +33,7 @@ interface Props {
   onMount?(canvas: HTMLCanvasElement): void;
   onMouseMove?(canvas: HTMLCanvasElement, e: MouseEvent<Element>): void;
   onTouchMove?(canvas: HTMLCanvasElement, e: TouchEvent<Element>): void;
+  onLongTouchEnd?(x: number, y: number, duration: number): void;
   onTouch?(x: number, y: number): void;
   sx?: SxProps;
 }
@@ -34,6 +44,7 @@ const Canvas = ({
   disableFullScreen,
   fillViewport,
   onClick,
+  onLongTouchEnd,
   onFrameRender,
   onMount,
   onMouseMove,
@@ -44,8 +55,9 @@ const Canvas = ({
   const isCanvasPaused = useAppStore((state) => state.isCanvasPaused);
   const setIsCanvasPaused = useAppStore((state) => state.setIsCanvasPaused);
 
-  const [isFullScreen, setIsFullScreen] = useState(false);
+  const longPressesRef = useRef<LongPressMap>({});
   const processedPointsRef = useRef<ProcessedPoint[]>([]);
+  const [isFullScreen, setIsFullScreen] = useState(false);
 
   const isDarkMode = useIsDarkMode();
 
@@ -177,7 +189,7 @@ const Canvas = ({
     }
   };
 
-  const handleTouch = (e: TouchEvent<Element>) => {
+  const handleTouchStart = (e: TouchEvent<Element>) => {
     if (canvasRef.current && onTouch) {
       const now = Date.now();
 
@@ -202,7 +214,26 @@ const Canvas = ({
 
         onTouch(x, y);
         processedPointsRef.current.push({ x, y, timestamp: now });
+        longPressesRef.current[e.touches[i].identifier] = {
+          x,
+          y,
+          timestamp: now,
+        };
       }
+    }
+  };
+
+  const handleTouchEnd = (e: TouchEvent<Element>) => {
+    if (!canvasRef.current || !onLongTouchEnd) {
+      return;
+    }
+    for (const touch of Array.from(e.changedTouches)) {
+      const longPress = longPressesRef.current[touch.identifier];
+      const duration = Date.now() - longPress.timestamp;
+      if (duration > 500) {
+        onLongTouchEnd(longPress.x, longPress.y, duration);
+      }
+      delete longPressesRef.current[touch.identifier];
     }
   };
 
@@ -222,9 +253,10 @@ const Canvas = ({
     <Box
       component="canvas"
       onClick={handleClick}
-      onTouchStart={handleTouch}
       onMouseMove={handleMouseMove}
+      onTouchEnd={handleTouchEnd}
       onTouchMove={handleTouchMove}
+      onTouchStart={handleTouchStart}
       ref={canvasRef}
       sx={getStyles()}
     />
