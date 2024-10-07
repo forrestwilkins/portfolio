@@ -77,7 +77,11 @@ const Ripples = () => {
   };
 
   const handleLongPress = (x: number, y: number, duration: number) => {
-    console.log('Long press detected at:', x, y, 'for', duration, 'ms');
+    const xRounded = Math.round(x);
+    const yRounded = Math.round(y);
+    console.log(
+      `Long press at point (${xRounded}, ${yRounded}) for ${duration}ms`,
+    );
   };
 
   const handleRender = (canvas: HTMLCanvasElement, frameCount: number) => {

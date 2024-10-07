@@ -186,7 +186,7 @@ const Canvas = ({
   };
 
   const handleTouchStart = (e: TouchEvent<Element>) => {
-    if (canvasRef.current && onTouch) {
+    if (canvasRef.current) {
       const now = Date.now();
 
       // Clean up old processed points
@@ -209,8 +209,9 @@ const Canvas = ({
         if (isTooClose) {
           continue;
         }
-
-        onTouch(x, y);
+        if (onTouch) {
+          onTouch(x, y);
+        }
         const touchPoint = { x, y, timestamp: now };
         touchPointsRef.current[e.touches[i].identifier] = touchPoint;
       }
