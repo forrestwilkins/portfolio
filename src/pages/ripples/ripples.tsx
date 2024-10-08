@@ -4,7 +4,7 @@ import { ripplesRef } from '@/pages/ripples/ripples-ref';
 import { constrain, mapRange } from '@/utils/math.utils';
 import { isMobileAgent } from '@/utils/shared.utils';
 import { Box } from '@mui/material';
-import { MouseEvent, useEffect } from 'react';
+import { useEffect } from 'react';
 
 const RIPPLES_MAX_COUNT = 200;
 const LONG_PRESS_DURATION = 500;
@@ -69,14 +69,13 @@ const Ripples = () => {
     });
   };
 
-  const handleClick = (canvas: HTMLCanvasElement, e: MouseEvent<Element>) => {
+  const handleMouseUp = (x: number, y: number, duration: number) => {
     const isMobile = isMobileAgent();
     if (isMobile) {
       return;
     }
-    const x = e.clientX - canvas.offsetLeft;
-    const y = e.clientY - canvas.offsetTop;
-    addRipple(x, y);
+    const growthRate = mapRange(duration, 0, LONG_PRESS_DURATION * 4, 0.25, 1);
+    addRipple(x, y, growthRate);
   };
 
   const handleTouchEnd = (x: number, y: number, duration: number) => {
@@ -159,8 +158,8 @@ const Ripples = () => {
       <Canvas
         width={canvasWidth}
         height={canvasHeight}
-        onClick={handleClick}
         onFrameRender={handleRender}
+        onMouseUp={handleMouseUp}
         onTouchEnd={handleTouchEnd}
         fillViewport
       />

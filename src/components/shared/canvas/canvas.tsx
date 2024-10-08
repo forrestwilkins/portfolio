@@ -14,20 +14,21 @@ interface TouchPoint {
   timestamp: number;
 }
 
-type TouchPointMap = Record<number, TouchPoint>;
+type TouchPointMap = Record<string, TouchPoint>;
 
 interface Props {
   width?: number;
   height?: number;
   disableFullScreen?: boolean;
   fillViewport?: boolean;
-  onClick?(canvas: HTMLCanvasElement, e: MouseEvent<Element>): void;
   onFrameRender?(canvas: HTMLCanvasElement, frameCount: number): void;
   onMount?(canvas: HTMLCanvasElement): void;
+  onMouseDown?(canvas: HTMLCanvasElement, e: MouseEvent<Element>): void;
   onMouseMove?(canvas: HTMLCanvasElement, e: MouseEvent<Element>): void;
-  onTouchMove?(canvas: HTMLCanvasElement, e: TouchEvent<Element>): void;
-  onTouchEnd?(x: number, y: number, duration: number): void;
+  onMouseUp?(x: number, y: number, duration: number): void;
   onTouch?(x: number, y: number): void;
+  onTouchEnd?(x: number, y: number, duration: number): void;
+  onTouchMove?(canvas: HTMLCanvasElement, e: TouchEvent<Element>): void;
   sx?: SxProps;
 }
 
@@ -36,13 +37,14 @@ const Canvas = ({
   height = 250,
   disableFullScreen,
   fillViewport,
-  onClick,
   onFrameRender,
   onMount,
-  onTouchEnd,
+  onMouseDown,
   onMouseMove,
-  onTouchMove,
+  onMouseUp,
   onTouch,
+  onTouchEnd,
+  onTouchMove,
   sx,
 }: Props) => {
   const isCanvasPaused = useAppStore((state) => state.isCanvasPaused);
@@ -175,42 +177,61 @@ const Canvas = ({
     return sx;
   };
 
-  const handleClick = (e: MouseEvent<Element>) => {
-    if (canvasRef.current && onClick) {
-      onClick(canvasRef.current, e);
+  const handleMouseDown = (e: MouseEvent<Element>) => {
+    if (!canvasRef.current) {
+      return;
     }
+    if (onMouseDown) {
+      onMouseDown(canvasRef.current, e);
+    }
+    touchPointsRef.current['click'] = {
+      x: e.clientX - canvasRef.current.offsetLeft,
+      y: e.clientY - canvasRef.current.offsetTop,
+      timestamp: Date.now(),
+    };
+  };
+
+  const handleMouseUp = (e: MouseEvent<Element>) => {
+    const touchPoint = touchPointsRef.current['click'];
+    const duration = Date.now() - touchPoint.timestamp;
+
+    if (onMouseUp) {
+      onMouseUp(e.clientX, e.clientY, duration);
+    }
+    delete touchPointsRef.current['click'];
   };
 
   const handleTouchStart = (e: TouchEvent<Element>) => {
-    if (canvasRef.current) {
-      const now = Date.now();
+    if (!canvasRef.current) {
+      return;
+    }
+    const now = Date.now();
 
-      // Clean up old processed points
-      for (const touchPoint of Object.values(touchPointsRef.current)) {
-        if (now - touchPoint.timestamp > TOUCH_POINT_TTL) {
-          delete touchPointsRef.current[touchPoint.timestamp];
-        }
+    // Clean up old processed points
+    for (const touchPoint of Object.values(touchPointsRef.current)) {
+      if (now - touchPoint.timestamp > TOUCH_POINT_TTL) {
+        delete touchPointsRef.current[touchPoint.timestamp];
       }
+    }
 
-      for (let i = 0; i < e.touches.length; i++) {
-        const x = e.touches[i].clientX - canvasRef.current.offsetLeft;
-        const y = e.touches[i].clientY - canvasRef.current.offsetTop;
+    for (let i = 0; i < e.touches.length; i++) {
+      const x = e.touches[i].clientX - canvasRef.current.offsetLeft;
+      const y = e.touches[i].clientY - canvasRef.current.offsetTop;
 
-        // Check if the point is too close to any existing point
-        const isTooClose = Object.values(touchPointsRef.current).some(
-          (touchPoint) =>
-            Math.abs(touchPoint.x - x) < TOUCH_POINT_RADIUS &&
-            Math.abs(touchPoint.y - y) < TOUCH_POINT_RADIUS,
-        );
-        if (isTooClose) {
-          continue;
-        }
-        if (onTouch) {
-          onTouch(x, y);
-        }
-        const touchPoint = { x, y, timestamp: now };
-        touchPointsRef.current[e.touches[i].identifier] = touchPoint;
+      // Check if the point is too close to any existing point
+      const isTooClose = Object.values(touchPointsRef.current).some(
+        (touchPoint) =>
+          Math.abs(touchPoint.x - x) < TOUCH_POINT_RADIUS &&
+          Math.abs(touchPoint.y - y) < TOUCH_POINT_RADIUS,
+      );
+      if (isTooClose) {
+        continue;
       }
+      if (onTouch) {
+        onTouch(x, y);
+      }
+      const touchPoint = { x, y, timestamp: now };
+      touchPointsRef.current[e.touches[i].identifier] = touchPoint;
     }
   };
 
@@ -243,8 +264,9 @@ const Canvas = ({
   return (
     <Box
       component="canvas"
-      onClick={handleClick}
+      onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
+      onMouseUp={handleMouseUp}
       onTouchEnd={handleTouchEnd}
       onTouchMove={handleTouchMove}
       onTouchStart={handleTouchStart}
