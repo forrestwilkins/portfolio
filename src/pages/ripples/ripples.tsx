@@ -9,7 +9,7 @@ import { useEffect } from 'react';
 const RIPPLES_MAX_COUNT = 200;
 const LONG_PRESS_DURATION = 500;
 
-const COLOR_CHANGE_RATE = 0.6;
+const INITIAL_COLOR_CHANGE_RATE = 0.6;
 const OPACITY_CHANGE_RATE = 0.0025;
 const OPACITY_MIN = 0.4;
 
@@ -65,6 +65,7 @@ const Ripples = () => {
       isHighBlue,
       isHighOpacity,
       growthRate,
+      colorChangeRate: INITIAL_COLOR_CHANGE_RATE,
       radius: 0,
     });
   };
@@ -124,18 +125,18 @@ const Ripples = () => {
       }
 
       const redDelta = ripple.isHighRed
-        ? ripple.red - COLOR_CHANGE_RATE
-        : ripple.red + COLOR_CHANGE_RATE;
+        ? ripple.red - ripple.colorChangeRate
+        : ripple.red + ripple.colorChangeRate;
       ripple.red = constrain(redDelta, 0, 255);
 
       const greenDelta = ripple.isHighGreen
-        ? ripple.green - COLOR_CHANGE_RATE
-        : ripple.green + COLOR_CHANGE_RATE;
+        ? ripple.green - ripple.colorChangeRate
+        : ripple.green + ripple.colorChangeRate;
       ripple.green = constrain(greenDelta, 0, 255);
 
       const blueDelta = ripple.isHighBlue
-        ? ripple.blue - COLOR_CHANGE_RATE
-        : ripple.blue + COLOR_CHANGE_RATE;
+        ? ripple.blue - ripple.colorChangeRate
+        : ripple.blue + ripple.colorChangeRate;
       ripple.blue = constrain(blueDelta, 0, 255);
 
       const opacityDelta = ripple.isHighOpacity
