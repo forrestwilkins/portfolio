@@ -94,7 +94,7 @@ const Ripples = () => {
       const ripple = ripplesRef.current[i];
 
       // Remove ripples that exceed the canvas width
-      if (ripple.radius / 2 >= canvasWidth) {
+      if (ripple.radius >= canvasWidth * 2) {
         ripplesRef.current.splice(i, 1);
         i--; // Decrement after removal
         continue;
