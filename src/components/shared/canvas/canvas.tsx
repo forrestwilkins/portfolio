@@ -20,7 +20,7 @@ interface Props {
   height?: number;
   disableFullScreen?: boolean;
   fillViewport?: boolean;
-  onFrameRender?(canvas: HTMLCanvasElement): void;
+  onFrameRender?(canvas: HTMLCanvasElement, frameCount: number): void;
   onMount?(canvas: HTMLCanvasElement): void;
   onMouseDown?(canvas: HTMLCanvasElement, e: MouseEvent<Element>): void;
   onMouseMove?(canvas: HTMLCanvasElement, e: MouseEvent<Element>): void;
@@ -80,7 +80,7 @@ const Canvas = ({
       const canvas = canvasRef.current;
       const render = () => {
         if (!isCanvasPaused) {
-          onFrameRender(canvas);
+          onFrameRender(canvas, frameCount);
         }
         animationFrameId = window.requestAnimationFrame(render);
         frameCount++;
