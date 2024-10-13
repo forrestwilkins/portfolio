@@ -32,7 +32,12 @@ const Ripples = () => {
     };
   }, []);
 
-  const addRipple = (x: number, y: number, growthRate = 0.25) => {
+  const addRipple = (
+    x: number,
+    y: number,
+    growthRate: number,
+    touchId?: number,
+  ) => {
     if (!ripplesRef.current) {
       return;
     }
@@ -64,9 +69,12 @@ const Ripples = () => {
       isHighGreen,
       isHighBlue,
       isHighOpacity,
+      isHighChargingRadius: false,
       growthRate,
       colorChangeRate: INITIAL_COLOR_CHANGE_RATE,
+      isCharging: true,
       radius: 0,
+      touchId,
     });
   };
 
@@ -79,9 +87,28 @@ const Ripples = () => {
     addRipple(x, y, growthRate);
   };
 
-  const handleTouchEnd = (x: number, y: number, duration: number) => {
+  const handleTouchStart = (x: number, y: number, touchId: number) => {
+    addRipple(x, y, 0.5, touchId);
+  };
+
+  const handleTouchEnd = (
+    x: number,
+    y: number,
+    touchId: number,
+    duration: number,
+  ) => {
     const growthRate = mapRange(duration, 0, LONG_PRESS_DURATION * 3, 0.25, 1);
-    addRipple(x, y, growthRate);
+
+    ripplesRef.current = ripplesRef.current.map((ripple) => {
+      if (ripple.touchId !== touchId) {
+        return ripple;
+      }
+      // Account for emulated touch events
+      if (ripple.touchId === 0) {
+        return { ...ripple, isCharging: false };
+      }
+      return { ...ripple, x, y, growthRate, isCharging: false };
+    });
   };
 
   const handleRender = (canvas: HTMLCanvasElement) => {
@@ -93,14 +120,28 @@ const Ripples = () => {
     for (let i = 0; i < ripplesRef.current.length; i++) {
       const ripple = ripplesRef.current[i];
 
-      // Remove ripples that exceed the canvas width
+      // Remove ripples that go out of bounds
       if (ripple.radius >= canvasWidth * 2) {
         ripplesRef.current.splice(i, 1);
         i--; // Decrement after removal
         continue;
       }
 
-      ripple.radius += ripple.growthRate;
+      // Apply growth rate
+      if (ripple.isCharging) {
+        if (ripple.radius >= 30) {
+          ripple.isHighChargingRadius = true;
+        } else if (ripple.radius <= 0) {
+          ripple.isHighChargingRadius = false;
+        }
+        if (ripple.isHighChargingRadius) {
+          ripple.radius -= ripple.growthRate;
+        } else {
+          ripple.radius += ripple.growthRate;
+        }
+      } else {
+        ripple.radius += ripple.growthRate;
+      }
 
       // Sync high flags for color
       if (ripple.red >= 255) {
@@ -162,6 +203,7 @@ const Ripples = () => {
         onFrameRender={handleRender}
         onMouseUp={handleMouseUp}
         onTouchEnd={handleTouchEnd}
+        onTouchStart={handleTouchStart}
         fillViewport
       />
     </Box>

@@ -9,8 +9,11 @@ interface Ripple {
   isHighGreen: boolean;
   isHighBlue: boolean;
   isHighOpacity: boolean;
+  isHighChargingRadius: boolean;
   growthRate: number;
   colorChangeRate: number;
+  isCharging: boolean;
+  touchId?: number;
   radius: number;
 }
 
