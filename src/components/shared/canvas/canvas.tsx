@@ -5,7 +5,6 @@ import useAppStore from '@/store/app.store';
 import { Box, SxProps } from '@mui/material';
 import { MouseEvent, TouchEvent, useEffect, useRef, useState } from 'react';
 
-const TOUCH_POINT_TTL = 1000;
 const TOUCH_POINT_RADIUS = 20;
 
 interface TouchPoint {
@@ -207,13 +206,6 @@ const Canvas = ({
     }
     const now = Date.now();
 
-    // Clean up old processed points
-    for (const touchPoint of Object.values(touchPointsRef.current)) {
-      if (now - touchPoint.timestamp > TOUCH_POINT_TTL) {
-        delete touchPointsRef.current[touchPoint.timestamp];
-      }
-    }
-
     for (let i = 0; i < e.touches.length; i++) {
       const x = e.touches[i].clientX - canvasRef.current.offsetLeft;
       const y = e.touches[i].clientY - canvasRef.current.offsetTop;
@@ -233,6 +225,8 @@ const Canvas = ({
       const touchPoint = { x, y, timestamp: now };
       touchPointsRef.current[e.touches[i].identifier] = touchPoint;
     }
+
+    console.log(Object.keys(touchPointsRef.current).length);
   };
 
   const handleTouchEnd = (e: TouchEvent<Element>) => {
