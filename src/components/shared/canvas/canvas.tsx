@@ -1,4 +1,8 @@
 import { canvasRef } from '@/components/shared/canvas/canvas-ref';
+import {
+  RenderData,
+  TouchPointMap,
+} from '@/components/shared/canvas/canvas.types';
 import { clearCanvas } from '@/components/shared/canvas/canvas.utils';
 import { useIsDarkMode } from '@/hooks/shared.hooks';
 import useAppStore from '@/store/app.store';
@@ -7,20 +11,12 @@ import { MouseEvent, TouchEvent, useEffect, useRef, useState } from 'react';
 
 const TOUCH_POINT_RADIUS = 20;
 
-interface TouchPoint {
-  x: number;
-  y: number;
-  timestamp: number;
-}
-
-type TouchPointMap = Record<string, TouchPoint>;
-
 interface Props {
   width?: number;
   height?: number;
   disableFullScreen?: boolean;
   fillViewport?: boolean;
-  onFrameRender?(canvas: HTMLCanvasElement, frameCount: number): void;
+  onFrameRender?(canvas: HTMLCanvasElement, renderData: RenderData): void;
   onMount?(canvas: HTMLCanvasElement): void;
   onMouseDown?(canvas: HTMLCanvasElement, e: MouseEvent<Element>): void;
   onMouseMove?(canvas: HTMLCanvasElement, e: MouseEvent<Element>): void;
@@ -80,7 +76,10 @@ const Canvas = ({
       const canvas = canvasRef.current;
       const render = () => {
         if (!isCanvasPaused) {
-          onFrameRender(canvas, frameCount);
+          onFrameRender(canvas, {
+            touchPoints: touchPointsRef.current,
+            frameCount,
+          });
         }
         animationFrameId = window.requestAnimationFrame(render);
         frameCount++;
@@ -250,8 +249,18 @@ const Canvas = ({
   };
 
   const handleTouchMove = (e: TouchEvent<Element>) => {
-    if (canvasRef.current && onTouchMove) {
+    if (!canvasRef.current) {
+      return;
+    }
+    if (onTouchMove) {
       onTouchMove(canvasRef.current, e);
+    }
+
+    // Update touch points on move
+    for (const touch of Array.from(e.touches)) {
+      const touchPoint = touchPointsRef.current[touch.identifier];
+      touchPoint.x = touch.clientX - canvasRef.current.offsetLeft;
+      touchPoint.y = touch.clientY - canvasRef.current.offsetTop;
     }
   };
 
