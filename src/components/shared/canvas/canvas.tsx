@@ -1,8 +1,4 @@
 import { canvasRef } from '@/components/shared/canvas/canvas.refs';
-import {
-  RenderData,
-  TouchPointMap,
-} from '@/components/shared/canvas/canvas.types';
 import { clearCanvas } from '@/components/shared/canvas/canvas.utils';
 import { useIsDarkMode } from '@/hooks/shared.hooks';
 import useAppStore from '@/store/app.store';
@@ -11,12 +7,20 @@ import { MouseEvent, TouchEvent, useEffect, useRef, useState } from 'react';
 
 const TOUCH_POINT_RADIUS = 20;
 
+interface TouchPoint {
+  x: number;
+  y: number;
+  timestamp: number;
+}
+
+type TouchPointMap = Record<string, TouchPoint>;
+
 interface Props {
   width?: number;
   height?: number;
   disableFullScreen?: boolean;
   fillViewport?: boolean;
-  onFrameRender?(canvas: HTMLCanvasElement, renderData: RenderData): void;
+  onFrameRender?(canvas: HTMLCanvasElement): void;
   onMount?(canvas: HTMLCanvasElement): void;
   onMouseDown?(canvas: HTMLCanvasElement, e: MouseEvent<Element>): void;
   onMouseMove?(canvas: HTMLCanvasElement, e: MouseEvent<Element>): void;
@@ -76,10 +80,7 @@ const Canvas = ({
       const canvas = canvasRef.current;
       const render = () => {
         if (!isCanvasPaused) {
-          onFrameRender(canvas, {
-            touchPoints: touchPointsRef.current,
-            frameCount,
-          });
+          onFrameRender(canvas);
         }
         animationFrameId = window.requestAnimationFrame(render);
         frameCount++;
