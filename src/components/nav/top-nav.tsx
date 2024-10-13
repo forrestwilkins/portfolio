@@ -1,12 +1,18 @@
-import { canvasRef } from '@/components/shared/canvas/canvas-ref';
+import { canvasRef } from '@/components/shared/canvas/canvas.refs';
+import { clearCanvas } from '@/components/shared/canvas/canvas.utils';
 import { useIsDarkMode } from '@/hooks/shared.hooks';
+import { ripplesRef } from '@/pages/ripples/ripples.refs';
+import useAppStore from '@/store/app.store';
 import { sleep } from '@/utils/shared.utils';
 import {
+  Clear,
   DarkMode,
   Fullscreen,
   HomeRounded,
   LightModeOutlined,
   MenuRounded,
+  Pause,
+  PlayArrow,
 } from '@mui/icons-material';
 import {
   Box,
@@ -21,21 +27,35 @@ import { useLocation, useNavigate } from 'react-router-dom';
 
 const TopNav = () => {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+  const isCanvasPaused = useAppStore((state) => state.isCanvasPaused);
+  const setIsCanvasPaused = useAppStore((state) => state.setIsCanvasPaused);
 
   const { setMode } = useColorScheme();
   const isDarkMode = useIsDarkMode();
   const location = useLocation();
   const navigate = useNavigate();
 
-  const iOS = /(iPad|iPhone|iPod)/g.test(navigator.userAgent);
-
   const isHome = location.pathname === '/';
   const isRipples = location.pathname === '/ripples';
+  const iOS = /(iPad|iPhone|iPod)/g.test(navigator.userAgent);
+
+  const PauseIcon = isCanvasPaused ? PlayArrow : Pause;
 
   const handleModeToggleClick = async () => {
     setAnchorEl(null);
     await sleep(100);
     setMode(isDarkMode ? 'light' : 'dark');
+  };
+
+  const handlePauseBtnClick = () => {
+    setIsCanvasPaused(!isCanvasPaused);
+    setAnchorEl(null);
+  };
+
+  const handleClearCanvasClick = () => {
+    ripplesRef.current = [];
+    clearCanvas();
+    setAnchorEl(null);
   };
 
   const renderModeToggle = () => {
@@ -78,6 +98,7 @@ const TopNav = () => {
           anchorEl={anchorEl}
           open={!!anchorEl}
           onClose={() => setAnchorEl(null)}
+          sx={{ '& .MuiMenu-list': { minWidth: '180px' } }}
         >
           <MenuItem
             onClick={() => {
@@ -93,6 +114,20 @@ const TopNav = () => {
             <MenuItem onClick={() => canvasRef.current?.requestFullscreen()}>
               <Fullscreen fontSize="small" sx={{ marginRight: '1.25ch' }} />
               Fullscreen
+            </MenuItem>
+          )}
+
+          {isRipples && (
+            <MenuItem onClick={handleClearCanvasClick}>
+              <Clear fontSize="small" sx={{ marginRight: '1.25ch' }} />
+              Clear canvas
+            </MenuItem>
+          )}
+
+          {isRipples && (
+            <MenuItem onClick={handlePauseBtnClick}>
+              <PauseIcon fontSize="small" sx={{ marginRight: '1.25ch' }} />
+              {isCanvasPaused ? 'Play' : 'Pause'} canvas
             </MenuItem>
           )}
 

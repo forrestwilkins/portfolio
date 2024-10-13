@@ -2,6 +2,7 @@ import Layout from '@/components/app/layout';
 import useAppStore from '@/store/app.store';
 import theme from '@/styles/theme';
 import { getToneJS } from '@/utils/audio.utils';
+import { isTouchDevice } from '@/utils/shared.utils';
 import { ThemeProvider } from '@mui/material';
 import CssBaseline from '@mui/material/CssBaseline';
 import { useEffect } from 'react';
@@ -21,7 +22,6 @@ const App = () => {
       await Tone.start();
 
       setIsAudioEnabled(true);
-      console.log('Audio enabled.');
     };
 
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -32,11 +32,20 @@ const App = () => {
       }
     };
 
+    // Prevent context menu for long-press on mobile
+    const handleContextMenu = (e: MouseEvent) => {
+      if (isTouchDevice()) {
+        e.preventDefault();
+      }
+    };
+
     window.addEventListener('keydown', handleKeyDown);
     window.addEventListener('mousedown', enableAudio);
+    document.addEventListener('contextmenu', handleContextMenu);
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('mousedown', enableAudio);
+      document.removeEventListener('contextmenu', handleContextMenu);
     };
   }, [isAudioEnabled, setIsAudioEnabled]);
 
