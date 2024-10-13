@@ -21,7 +21,7 @@ interface Props {
   onMouseDown?(canvas: HTMLCanvasElement, e: MouseEvent<Element>): void;
   onMouseMove?(canvas: HTMLCanvasElement, e: MouseEvent<Element>): void;
   onMouseUp?(x: number, y: number, duration: number): void;
-  onTouch?(x: number, y: number): void;
+  onTouchStart?(x: number, y: number): void;
   onTouchEnd?(x: number, y: number, duration: number): void;
   onTouchMove?(canvas: HTMLCanvasElement, e: TouchEvent<Element>): void;
   sx?: SxProps;
@@ -37,7 +37,7 @@ const Canvas = ({
   onMouseDown,
   onMouseMove,
   onMouseUp,
-  onTouch,
+  onTouchStart,
   onTouchEnd,
   onTouchMove,
   sx,
@@ -218,8 +218,8 @@ const Canvas = ({
       if (isTooClose) {
         continue;
       }
-      if (onTouch) {
-        onTouch(x, y);
+      if (onTouchStart) {
+        onTouchStart(x, y);
       }
       const touchPoint = { x, y, timestamp: now };
       touchPointsRef.current[e.touches[i].identifier] = touchPoint;
