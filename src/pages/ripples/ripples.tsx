@@ -65,7 +65,6 @@ const Ripples = () => {
       isHighBlue,
       isHighOpacity,
       growthRate,
-      colorChangeRate: INITIAL_COLOR_CHANGE_RATE,
       radius: 0,
     });
   };
@@ -125,18 +124,18 @@ const Ripples = () => {
       }
 
       const redDelta = ripple.isHighRed
-        ? ripple.red - ripple.colorChangeRate
-        : ripple.red + ripple.colorChangeRate;
+        ? ripple.red - INITIAL_COLOR_CHANGE_RATE
+        : ripple.red + INITIAL_COLOR_CHANGE_RATE;
       ripple.red = constrain(redDelta, 0, 255);
 
       const greenDelta = ripple.isHighGreen
-        ? ripple.green - ripple.colorChangeRate
-        : ripple.green + ripple.colorChangeRate;
+        ? ripple.green - INITIAL_COLOR_CHANGE_RATE
+        : ripple.green + INITIAL_COLOR_CHANGE_RATE;
       ripple.green = constrain(greenDelta, 0, 255);
 
       const blueDelta = ripple.isHighBlue
-        ? ripple.blue - ripple.colorChangeRate
-        : ripple.blue + ripple.colorChangeRate;
+        ? ripple.blue - INITIAL_COLOR_CHANGE_RATE
+        : ripple.blue + INITIAL_COLOR_CHANGE_RATE;
       ripple.blue = constrain(blueDelta, 0, 255);
 
       const opacityDelta = ripple.isHighOpacity

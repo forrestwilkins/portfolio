@@ -10,7 +10,6 @@ interface Ripple {
   isHighBlue: boolean;
   isHighOpacity: boolean;
   growthRate: number;
-  colorChangeRate: number;
   radius: number;
 }
 
