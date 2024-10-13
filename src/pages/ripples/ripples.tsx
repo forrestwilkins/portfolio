@@ -1,6 +1,6 @@
 import Canvas from '@/components/shared/canvas/canvas';
 import { useScreenSize } from '@/hooks/shared.hooks';
-import { ripplesRef } from '@/pages/ripples/ripples-ref';
+import { ripplesRef } from '@/pages/ripples/ripples.refs';
 import { constrain, mapRange } from '@/utils/math.utils';
 import { isMobileAgent } from '@/utils/shared.utils';
 import { Box } from '@mui/material';

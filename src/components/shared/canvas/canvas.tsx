@@ -1,4 +1,4 @@
-import { canvasRef } from '@/components/shared/canvas/canvas-ref';
+import { canvasRef } from '@/components/shared/canvas/canvas.refs';
 import {
   RenderData,
   TouchPointMap,
@@ -224,8 +224,6 @@ const Canvas = ({
       const touchPoint = { x, y, timestamp: now };
       touchPointsRef.current[e.touches[i].identifier] = touchPoint;
     }
-
-    console.log(Object.keys(touchPointsRef.current).length);
   };
 
   const handleTouchEnd = (e: TouchEvent<Element>) => {

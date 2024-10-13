@@ -22,7 +22,6 @@ const App = () => {
       await Tone.start();
 
       setIsAudioEnabled(true);
-      console.log('Audio enabled.');
     };
 
     const handleKeyDown = (e: KeyboardEvent) => {

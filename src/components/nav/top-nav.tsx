@@ -1,7 +1,7 @@
-import { canvasRef } from '@/components/shared/canvas/canvas-ref';
+import { canvasRef } from '@/components/shared/canvas/canvas.refs';
 import { clearCanvas } from '@/components/shared/canvas/canvas.utils';
 import { useIsDarkMode } from '@/hooks/shared.hooks';
-import { ripplesRef } from '@/pages/ripples/ripples-ref';
+import { ripplesRef } from '@/pages/ripples/ripples.refs';
 import useAppStore from '@/store/app.store';
 import { sleep } from '@/utils/shared.utils';
 import {
