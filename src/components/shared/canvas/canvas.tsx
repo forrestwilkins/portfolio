@@ -205,9 +205,9 @@ const Canvas = ({
     }
     const now = Date.now();
 
-    for (let i = 0; i < e.touches.length; i++) {
-      const x = e.touches[i].clientX - canvasRef.current.offsetLeft;
-      const y = e.touches[i].clientY - canvasRef.current.offsetTop;
+    for (const { clientX, clientY, identifier } of Array.from(e.touches)) {
+      const x = clientX - canvasRef.current.offsetLeft;
+      const y = clientY - canvasRef.current.offsetTop;
 
       // Check if the point is too close to any existing point
       const isTooClose = Object.values(touchPointsRef.current).some(
@@ -222,7 +222,7 @@ const Canvas = ({
         onTouchStart(x, y);
       }
       const touchPoint = { x, y, timestamp: now };
-      touchPointsRef.current[e.touches[i].identifier] = touchPoint;
+      touchPointsRef.current[identifier] = touchPoint;
     }
   };
 
@@ -255,10 +255,10 @@ const Canvas = ({
     }
 
     // Update touch points on move
-    for (const touch of Array.from(e.touches)) {
-      const touchPoint = touchPointsRef.current[touch.identifier];
-      touchPoint.x = touch.clientX - canvasRef.current.offsetLeft;
-      touchPoint.y = touch.clientY - canvasRef.current.offsetTop;
+    for (const { clientX, clientY, identifier } of Array.from(e.touches)) {
+      const touchPoint = touchPointsRef.current[identifier];
+      touchPoint.x = clientX - canvasRef.current.offsetLeft;
+      touchPoint.y = clientY - canvasRef.current.offsetTop;
     }
   };
 
