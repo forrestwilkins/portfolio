@@ -1,10 +1,20 @@
 import { Box, SxProps } from '@mui/material';
+import { useEffect } from 'react';
 import Link from '../components/shared/link';
 import { useAboveBreakpoint } from '../hooks/shared.hooks';
 
 const HomePage = () => {
   const isAboveMd = useAboveBreakpoint('md');
   const isAboveLg = useAboveBreakpoint('lg');
+
+  useEffect(() => {
+    const init = async () => {
+      const result = await fetch('http://localhost:3100');
+      const data = await result.text();
+      console.log(data);
+    };
+    init();
+  }, []);
 
   const linkStyles: SxProps = {
     scrollMargin: '20px',
