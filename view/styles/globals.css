@@ -1,21 +1,21 @@
 @font-face {
   font-family: 'Inter';
-  src: url('/fonts/Inter.ttf') format('woff');
+  src: url('../assets/fonts/Inter.ttf') format('woff');
 }
 
 @font-face {
   font-family: 'Rubik';
-  src: url('/fonts/Rubik.ttf') format('woff');
+  src: url('../assets/fonts/Rubik.ttf') format('woff');
 }
 
 @font-face {
   font-family: 'Raleway';
-  src: url('/fonts/Raleway.ttf') format('woff');
+  src: url('../assets/fonts/Raleway.ttf') format('woff');
 }
 
 @font-face {
   font-family: 'Comfortaa';
-  src: url('/fonts/Comfortaa.ttf') format('woff');
+  src: url('../assets/fonts/Comfortaa.ttf') format('woff');
 }
 
 /* Disable pull-to-refresh and overscroll stretch effect */
