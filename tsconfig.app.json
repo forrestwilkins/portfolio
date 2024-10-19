@@ -11,7 +11,7 @@
     /* shadcn/ui */
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["view/*"]
     },
 
     /* Bundler mode */
@@ -29,5 +29,5 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src"]
+  "include": ["view"]
 }
