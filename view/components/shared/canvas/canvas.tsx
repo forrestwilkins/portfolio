@@ -1,9 +1,9 @@
-import { canvasRef } from '@/components/shared/canvas/canvas.refs';
-import { clearCanvas } from '@/components/shared/canvas/canvas.utils';
-import { useIsDarkMode } from '@/hooks/shared.hooks';
-import useAppStore from '@/store/app.store';
 import { Box, SxProps } from '@mui/material';
 import { MouseEvent, TouchEvent, useEffect, useRef, useState } from 'react';
+import { useIsDarkMode } from '../../../hooks/shared.hooks';
+import useAppStore from '../../../store/app.store';
+import { canvasRef } from './canvas.refs';
+import { clearCanvas } from './canvas.utils';
 
 const TOUCH_POINT_RADIUS = 20;
 

@@ -1,7 +1,7 @@
-import { useIsDarkMode } from '@/hooks/shared.hooks';
 import { Box, Button, SxProps } from '@mui/material';
 import { useEffect, useRef, useState } from 'react';
 import { convertFrequencyToColor, generateMelody } from '../utils/audio.utils';
+import { useIsDarkMode } from '../hooks/shared.hooks';
 
 const HelloSound = () => {
   const isDarkMode = useIsDarkMode();

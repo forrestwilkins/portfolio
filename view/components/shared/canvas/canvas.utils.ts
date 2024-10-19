@@ -1,4 +1,4 @@
-import { canvasRef } from '@/components/shared/canvas/canvas.refs';
+import { canvasRef } from './canvas.refs';
 
 export const clearCanvas = () => {
   if (!canvasRef.current) {

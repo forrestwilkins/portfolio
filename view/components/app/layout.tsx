@@ -1,7 +1,7 @@
-import TopNav from '@/components/nav/top-nav';
 import { Box, Container, SxProps } from '@mui/material';
 import { ReactNode } from 'react';
 import { useLocation } from 'react-router-dom';
+import TopNav from '../nav/top-nav';
 
 interface Props {
   children: ReactNode;

@@ -1,8 +1,8 @@
-import Canvas from '@/components/shared/canvas/canvas';
-import { useScreenSize } from '@/hooks/shared.hooks';
-import { constrain, mapRange } from '@/utils/math.utils';
 import { Box } from '@mui/material';
 import { MouseEvent, TouchEvent } from 'react';
+import Canvas from '../components/shared/canvas/canvas';
+import { useScreenSize } from '../hooks/shared.hooks';
+import { constrain, mapRange } from '../utils/math.utils';
 
 const ColorGrid = () => {
   const [screenWidth, screenHeight] = useScreenSize();

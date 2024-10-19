@@ -1,6 +1,6 @@
-import Link from '@/components/shared/link';
-import { useAboveBreakpoint } from '@/hooks/shared.hooks';
 import { Box, SxProps } from '@mui/material';
+import Link from '../components/shared/link';
+import { useAboveBreakpoint } from '../hooks/shared.hooks';
 
 const HomePage = () => {
   const isAboveMd = useAboveBreakpoint('md');
