@@ -5,6 +5,13 @@ import { VitePWA } from 'vite-plugin-pwa';
 
 // https://vitejs.dev/config
 export default defineConfig({
+  root: 'view',
+  server: {
+    port: 3000,
+  },
+  build: {
+    outDir: '../dist/view',
+  },
   plugins: [
     dynamicImport({
       filter(id) {
@@ -14,6 +21,7 @@ export default defineConfig({
       },
     }),
     VitePWA({
+      srcDir: 'view',
       registerType: 'autoUpdate',
       manifest: {
         name: 'rhizome',
@@ -37,8 +45,4 @@ export default defineConfig({
     }),
     react(),
   ],
-
-  server: {
-    port: 3000,
-  },
 });
