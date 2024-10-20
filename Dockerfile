@@ -11,14 +11,16 @@ COPY tsconfig.json /app
 COPY tsconfig.app.json /app
 COPY tsconfig.node.json /app
 COPY tsconfig.server.json /app
+COPY vite.config.ts /app
 COPY .eslintrc.cjs /app
+COPY .babelrc /app
 
 WORKDIR /app
 RUN npm ci
 
 ARG NODE_ENV
 RUN npm run build
-RUN npm run build:client --mode ${NODE_ENV}
+RUN npm run build:client
 
 # Prep for runtime image
 RUN rm -rf node_modules
