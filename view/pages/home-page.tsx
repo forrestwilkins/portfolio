@@ -9,7 +9,7 @@ const HomePage = () => {
 
   useEffect(() => {
     const init = async () => {
-      const result = await fetch('http://localhost:3100');
+      const result = await fetch('http://localhost:3100/api/hello');
       const data = await result.text();
       console.log(data);
     };
