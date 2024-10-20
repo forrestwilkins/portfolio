@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "start": "tsx src/main.ts",
+    "start": "tsx watch src/main.ts",
     "start:client": "vite --host",
     "build": "tsc && babel -x .ts -d dist src",
     "build:client": "tsc -b && eslint . --ext ts,tsx && vite build --emptyOutDir true",
