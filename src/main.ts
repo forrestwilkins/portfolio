@@ -8,12 +8,11 @@ import helloRouter from './routes/hello.routes';
 dotenv.config();
 
 const app = express();
-
 app.use(cors());
-app.use('/api', helloRouter);
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 app.use(express.static(join(__dirname, './view')));
+app.use('/api', helloRouter);
 
 app.listen(process.env.SERVER_PORT);
 console.log(`Server running at http://localhost:${process.env.SERVER_PORT}`);
