@@ -3,7 +3,6 @@ node_modules
 dist
 dist-ssr
 dev-dist
-build
 *.local
 .husky
 .env

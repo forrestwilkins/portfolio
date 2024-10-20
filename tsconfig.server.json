@@ -8,7 +8,7 @@
 
     /* Modules */
     "module": "ESNext",
-    "outDir": "./build",
+    "outDir": "./dist",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "moduleResolution": "Bundler",
