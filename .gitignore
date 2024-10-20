@@ -1,7 +1,9 @@
+# App files
 node_modules
 dist
 dist-ssr
 dev-dist
+build
 *.local
 .husky
 .env
@@ -15,7 +17,7 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-# Editor directories and files
+# Editor / OS files
 .idea
 .DS_Store
 *.suo

@@ -3,9 +3,9 @@ FROM node:20.16.0-alpine AS build_stage
 RUN apk add --update python3 build-base
 
 COPY src /app/src
+COPY view /app/view
 COPY public /app/public
 
-COPY index.html /app
 COPY package.json /app
 COPY package-lock.json /app
 COPY tsconfig.json /app
@@ -19,6 +19,7 @@ RUN npm ci
 
 ARG NODE_ENV
 RUN npm run build
+RUN npm run build:client --mode ${NODE_ENV}
 
 # Prep for runtime image
 RUN rm -rf node_modules
