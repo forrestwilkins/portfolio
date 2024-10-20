@@ -13,7 +13,7 @@ app.use(cors());
 app.use('/api', helloRouter);
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-app.use(express.static(join(__dirname, '../dist')));
+app.use(express.static(join(__dirname, './view')));
 
 app.listen(process.env.SERVER_PORT);
 console.log(`Server running at http://localhost:${process.env.SERVER_PORT}`);
