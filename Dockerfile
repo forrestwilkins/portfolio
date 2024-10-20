@@ -8,9 +8,8 @@ COPY view /app/view
 COPY package.json /app
 COPY package-lock.json /app
 COPY tsconfig.json /app
-COPY tsconfig.app.json /app
-COPY tsconfig.node.json /app
-COPY tsconfig.server.json /app
+COPY tsconfig.src.json /app
+COPY tsconfig.view.json /app
 COPY vite.config.ts /app
 COPY .eslintrc.cjs /app
 COPY .babelrc /app

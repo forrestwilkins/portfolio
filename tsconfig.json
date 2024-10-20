@@ -2,13 +2,10 @@
   "files": [],
   "references": [
     {
-      "path": "./tsconfig.app.json"
+      "path": "./tsconfig.src.json"
     },
     {
-      "path": "./tsconfig.node.json"
-    },
-    {
-      "path": "./tsconfig.server.json"
+      "path": "./tsconfig.view.json"
     }
   ],
   "compilerOptions": {
