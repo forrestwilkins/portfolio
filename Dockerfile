@@ -4,15 +4,14 @@ RUN apk add --update python3 build-base
 
 COPY src /app/src
 COPY view /app/view
-COPY public /app/public
 
 COPY package.json /app
 COPY package-lock.json /app
 COPY tsconfig.json /app
 COPY tsconfig.app.json /app
 COPY tsconfig.node.json /app
+COPY tsconfig.server.json /app
 COPY .eslintrc.cjs /app
-COPY vite.config.ts /app
 
 WORKDIR /app
 RUN npm ci
@@ -25,11 +24,10 @@ RUN npm run build:client --mode ${NODE_ENV}
 RUN rm -rf node_modules
 RUN npm ci --only=production
 RUN rm -rf src
+RUN rm -rf view
 
-FROM nginx:stable-alpine AS runtime_stage
+FROM node:20.16.0-alpine AS runtime_stage
 
-COPY --from=build_stage /app/dist /usr/share/nginx/html
+COPY --from=build_stage /app /app
 
-EXPOSE 80
-
-CMD ["nginx", "-g", "daemon off;"]
+CMD [ "node", "/app/build/main.js" ]

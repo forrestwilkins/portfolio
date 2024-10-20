@@ -2,6 +2,7 @@
   "name": "rhizome",
   "private": true,
   "version": "0.0.0",
+  "type": "module",
   "scripts": {
     "start": "tsx src/main.ts",
     "build": "tsc --project tsconfig.server.json",
