@@ -1,13 +1,16 @@
 import react from '@vitejs/plugin-react';
+import * as dotenv from 'dotenv';
 import { defineConfig } from 'vite';
 import dynamicImport from 'vite-plugin-dynamic-import';
 import { VitePWA } from 'vite-plugin-pwa';
+
+dotenv.config();
 
 // https://vitejs.dev/config
 export default defineConfig({
   root: 'view',
   server: {
-    port: 3000,
+    port: parseInt(process.env.CLIENT_PORT || '3000'),
   },
   build: {
     outDir: '../dist/view',
