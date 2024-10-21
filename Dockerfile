@@ -18,6 +18,8 @@ WORKDIR /app
 RUN npm ci
 
 ARG NODE_ENV
+ARG SERVER_PORT
+
 RUN npm run build
 RUN npm run build:client
 
