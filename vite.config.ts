@@ -11,6 +11,13 @@ export default defineConfig({
   root: 'view',
   server: {
     port: parseInt(process.env.CLIENT_PORT || '3000'),
+    proxy: {
+      '/api': {
+        target: `http://localhost:${process.env.SERVER_PORT}/api`,
+        rewrite: (path: string) => path.replace(/^\/api/, ''),
+        changeOrigin: true,
+      },
+    },
   },
   build: {
     outDir: '../dist/view',

@@ -11,7 +11,7 @@ const HomePage = () => {
 
   useEffect(() => {
     const init = async () => {
-      const result = await fetch('http://localhost:3100/api/health');
+      const result = await fetch('/api/health');
       const data: { timestamp: string } = await result.json();
       setTime(data.timestamp);
     };
