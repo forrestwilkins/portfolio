@@ -1,5 +1,5 @@
-import Layout from '@/components/app/layout';
 import { Typography } from '@mui/material';
+import Layout from '../components/app/layout';
 
 const PageNotFound = () => (
   <Layout>

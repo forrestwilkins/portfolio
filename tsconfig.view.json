@@ -8,12 +8,6 @@
     "module": "ESNext",
     "skipLibCheck": true,
 
-    /* shadcn/ui */
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["./src/*"]
-    },
-
     /* Bundler mode */
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
@@ -29,5 +23,5 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src"]
+  "include": ["view", "vite.config.ts"]
 }

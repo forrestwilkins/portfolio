@@ -8,8 +8,8 @@ services:
       target: runtime_stage
       args:
         - NODE_ENV=${NODE_ENV}
-        - PORT=${PORT}
+        - SERVER_PORT=${SERVER_PORT}
     ports:
-      - ${PORT}:80
+      - ${SERVER_PORT}:${SERVER_PORT}
     restart: always
     env_file: .env

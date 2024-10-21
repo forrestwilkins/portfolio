@@ -3,32 +3,34 @@ FROM node:20.16.0-alpine AS build_stage
 RUN apk add --update python3 build-base
 
 COPY src /app/src
-COPY public /app/public
+COPY view /app/view
 
-COPY index.html /app
 COPY package.json /app
 COPY package-lock.json /app
 COPY tsconfig.json /app
-COPY tsconfig.app.json /app
-COPY tsconfig.node.json /app
-COPY .eslintrc.cjs /app
+COPY tsconfig.src.json /app
+COPY tsconfig.view.json /app
 COPY vite.config.ts /app
+COPY .eslintrc.cjs /app
+COPY .babelrc /app
 
 WORKDIR /app
 RUN npm ci
 
 ARG NODE_ENV
+ARG SERVER_PORT
+
 RUN npm run build
+RUN npm run build:client
 
 # Prep for runtime image
 RUN rm -rf node_modules
 RUN npm ci --only=production
 RUN rm -rf src
+RUN rm -rf view
 
-FROM nginx:stable-alpine AS runtime_stage
+FROM node:20.16.0-alpine AS runtime_stage
 
-COPY --from=build_stage /app/dist /usr/share/nginx/html
+COPY --from=build_stage /app /app
 
-EXPOSE 80
-
-CMD ["nginx", "-g", "daemon off;"]
+CMD [ "node", "/app/dist/main.js" ]

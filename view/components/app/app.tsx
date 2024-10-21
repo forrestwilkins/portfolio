@@ -1,12 +1,12 @@
-import Layout from '@/components/app/layout';
-import useAppStore from '@/store/app.store';
-import theme from '@/styles/theme';
-import { getToneJS } from '@/utils/audio.utils';
-import { isTouchDevice } from '@/utils/shared.utils';
 import { ThemeProvider } from '@mui/material';
 import CssBaseline from '@mui/material/CssBaseline';
 import { useEffect } from 'react';
 import { Outlet } from 'react-router-dom';
+import useAppStore from '../../store/app.store';
+import theme from '../../styles/theme';
+import { getToneJS } from '../../utils/audio.utils';
+import { isTouchDevice } from '../../utils/shared.utils';
+import Layout from './layout';
 
 const App = () => {
   const isAudioEnabled = useAppStore((state) => state.isAudioEnabled);

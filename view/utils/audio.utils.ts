@@ -1,4 +1,4 @@
-import type ToneType from 'tone';
+import * as ToneType from 'tone';
 
 type ToneJS = typeof ToneType;
 

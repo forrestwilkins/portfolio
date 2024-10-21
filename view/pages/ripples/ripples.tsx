@@ -1,10 +1,10 @@
-import Canvas from '@/components/shared/canvas/canvas';
-import { useScreenSize } from '@/hooks/shared.hooks';
-import { ripplesRef } from '@/pages/ripples/ripples.refs';
-import { constrain, mapRange } from '@/utils/math.utils';
-import { isMobileAgent } from '@/utils/shared.utils';
 import { Box } from '@mui/material';
 import { useEffect } from 'react';
+import Canvas from '../../components/shared/canvas/canvas';
+import { useScreenSize } from '../../hooks/shared.hooks';
+import { mapRange, constrain } from '../../utils/math.utils';
+import { isMobileAgent } from '../../utils/shared.utils';
+import { ripplesRef } from './ripples.refs';
 
 const RIPPLES_MAX_COUNT = 200;
 const LONG_PRESS_DURATION = 500;

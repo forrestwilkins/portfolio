@@ -1,10 +1,22 @@
-import Link from '@/components/shared/link';
-import { useAboveBreakpoint } from '@/hooks/shared.hooks';
-import { Box, SxProps } from '@mui/material';
+import { Box, SxProps, Typography } from '@mui/material';
+import { useEffect, useState } from 'react';
+import Link from '../components/shared/link';
+import { useAboveBreakpoint } from '../hooks/shared.hooks';
 
 const HomePage = () => {
+  const [time, setTime] = useState<string>();
+
   const isAboveMd = useAboveBreakpoint('md');
   const isAboveLg = useAboveBreakpoint('lg');
+
+  useEffect(() => {
+    const init = async () => {
+      const result = await fetch('/api/health');
+      const data: { timestamp: string } = await result.json();
+      setTime(data.timestamp);
+    };
+    init();
+  }, []);
 
   const linkStyles: SxProps = {
     scrollMargin: '20px',
@@ -35,6 +47,21 @@ const HomePage = () => {
       <Link to="/hello-sound" sx={linkStyles}>
         Hello Sound
       </Link>
+
+      {time && (
+        <Box
+          position="fixed"
+          bottom={10}
+          right={10}
+          width="fit-content"
+          height={10}
+          borderRadius={0.5}
+        >
+          <Typography fontSize="8px" color="text.secondary">
+            {time}
+          </Typography>
+        </Box>
+      )}
     </Box>
   );
 };

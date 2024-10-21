@@ -1,10 +1,10 @@
-import { useIsDarkMode } from '@/hooks/shared.hooks';
-import useAppStore from '@/store/app.store';
-import { getToneJS } from '@/utils/audio.utils';
-import { getRandom } from '@/utils/math.utils';
-import { getRandomRGB } from '@/utils/visual.utils';
 import { Box, SxProps } from '@mui/material';
 import { useRef } from 'react';
+import { useIsDarkMode } from '../hooks/shared.hooks';
+import useAppStore from '../store/app.store';
+import { getToneJS } from '../utils/audio.utils';
+import { getRandom } from '../utils/math.utils';
+import { getRandomRGB } from '../utils/visual.utils';
 
 const NOTES = ['A', 'B', 'C', 'D', 'E', 'F', 'G'];
 

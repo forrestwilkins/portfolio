@@ -5,15 +5,33 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Debug",
+      "name": "Debug Client",
       "request": "launch",
-      "runtimeArgs": ["run-script", "dev"],
+      "runtimeArgs": ["run-script", "start:client"],
       "outputCapture": "std",
       "runtimeExecutable": "npm",
       "skipFiles": ["<node_internals>/**"],
       "runtimeVersion": "20.16.0",
       "restart": true,
       "type": "node"
+    },
+    {
+      "name": "Debug Server",
+      "request": "launch",
+      "runtimeArgs": ["run-script", "start"],
+      "outputCapture": "std",
+      "runtimeExecutable": "npm",
+      "skipFiles": ["<node_internals>/**"],
+      "runtimeVersion": "20.16.0",
+      "restart": true,
+      "type": "node"
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Debug App",
+      "configurations": ["Debug Server", "Debug Client"],
+      "stopAll": true
     }
   ]
 }
