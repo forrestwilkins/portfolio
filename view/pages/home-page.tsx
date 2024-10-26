@@ -9,7 +9,7 @@ const HomePage = () => {
   const isAboveMd = useAboveBreakpoint('md');
   const isAboveLg = useAboveBreakpoint('lg');
 
-  const ws = useRef<WebSocket | null>(null);
+  const ws = useRef<WebSocket>();
 
   useEffect(() => {
     ws.current = new WebSocket(`ws://localhost:3100/ws`);
