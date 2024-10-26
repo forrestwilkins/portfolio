@@ -67,6 +67,10 @@ const HomePage = () => {
         Hello Sound
       </Link>
 
+      <Link to="/sockets" sx={linkStyles}>
+        Sockets
+      </Link>
+
       {time && (
         <Box
           position="fixed"
