@@ -17,12 +17,10 @@ export default defineConfig({
         rewrite: (path: string) => path.replace(/^\/api/, ''),
         changeOrigin: true,
       },
-      // '/ws': {
-      //   target: `ws://localhost:${process.env.SERVER_PORT}/ws`,
-      //   changeOrigin: true,
-      //   ws: true,
-      // },
     },
+  },
+  define: {
+    'process.env': process.env,
   },
   build: {
     outDir: '../dist/view',
