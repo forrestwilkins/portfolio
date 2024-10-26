@@ -93,9 +93,7 @@ const HomePage = () => {
             borderRadius="2px"
             paddingX={0.3}
             sx={{
-              '&:hover': {
-                color: 'text.primary',
-              },
+              '&:hover': { color: 'text.primary' },
               transition: 'all 0.3s ease-in-out',
             }}
           >
