@@ -3,6 +3,22 @@ import { useEffect, useState } from 'react';
 import Link from '../components/shared/link';
 import { useAboveBreakpoint } from '../hooks/shared.hooks';
 
+const socket = new WebSocket(`ws://localhost:3100/ws`);
+
+socket.onopen = () => {
+  console.log('connected');
+
+  socket.send('Hello from client');
+};
+
+socket.onmessage = (event) => {
+  console.log(`Message from server: ${event.data}`);
+};
+
+socket.onerror = (error) => {
+  console.error(`WebSocket error`, error);
+};
+
 const HomePage = () => {
   const [time, setTime] = useState<string>();
 
@@ -31,6 +47,9 @@ const HomePage = () => {
       gap={isAboveMd ? '4px' : '16px'}
       paddingLeft={isAboveLg ? 0 : '70px'}
       paddingTop={isAboveLg ? 0 : '20px'}
+      onClick={() => {
+        socket.send('Hello from client');
+      }}
     >
       <Link to="/ripples" sx={linkStyles}>
         Ripples
