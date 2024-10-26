@@ -18,16 +18,17 @@ const Sockets = () => {
 
   const handleMouseUp = (x: number, y: number, duration: number) => {
     const isMobile = isMobileAgent();
-    if (isMobile) {
+    if (isMobile || !ws) {
       return;
     }
-    // TODO: Implement mouse up logic
-    console.log('Mouse up at: ', x, y, 'with duration: ', duration);
+    ws.send(JSON.stringify({ x, y, duration }));
   };
 
   const handleTouchEnd = (x: number, y: number, duration: number) => {
-    // TODO: Implement touch end logic
-    console.log('Touch end at: ', x, y, 'with duration: ', duration);
+    if (!ws) {
+      return;
+    }
+    ws.send(JSON.stringify({ x, y, duration }));
   };
 
   const handleRender = (canvas: HTMLCanvasElement) => {
@@ -35,7 +36,6 @@ const Sockets = () => {
     if (!ctx || !ws) {
       return;
     }
-    // TODO: Implement render logic
   };
 
   return (

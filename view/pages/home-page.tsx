@@ -1,16 +1,11 @@
 import { Box, SxProps, Typography } from '@mui/material';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from '../components/shared/link';
-import { useAboveBreakpoint } from '../hooks/shared.hooks';
-
-const webSocketURL =
-  process.env.NODE_ENV === 'development'
-    ? `ws://${window.location.hostname}:${process.env.SERVER_PORT}/ws`
-    : `wss://${window.location.host}/ws`;
+import { useAboveBreakpoint, useWebSocket } from '../hooks/shared.hooks';
 
 const HomePage = () => {
   const [time, setTime] = useState<string>();
-  const ws = useRef<WebSocket>();
+  const ws = useWebSocket();
 
   const isAboveMd = useAboveBreakpoint('md');
   const isAboveLg = useAboveBreakpoint('lg');
@@ -22,19 +17,6 @@ const HomePage = () => {
       setTime(data.timestamp);
     };
     init();
-  }, []);
-
-  useEffect(() => {
-    ws.current = new WebSocket(webSocketURL);
-    ws.current.onmessage = (event) => {
-      console.log('Client received: ', event.data);
-    };
-
-    return () => {
-      if (ws.current && ws.current.readyState === WebSocket.OPEN) {
-        ws.current.close();
-      }
-    };
   }, []);
 
   const linkStyles: SxProps = {
@@ -78,13 +60,9 @@ const HomePage = () => {
           right={10}
           width="fit-content"
           height={10}
-          sx={{
-            cursor: 'pointer',
-          }}
+          sx={{ cursor: 'pointer' }}
           onClick={(e) =>
-            ws.current?.send(
-              `Hello from client! - ${e.clientX}, ${e.clientY} 🎉`,
-            )
+            ws?.send(`Hello from client! - ${e.clientX}, ${e.clientY} 🎉`)
           }
         >
           <Typography
