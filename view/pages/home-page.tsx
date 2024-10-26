@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import Link from '../components/shared/link';
 import { useAboveBreakpoint } from '../hooks/shared.hooks';
 
-const webSocketHost =
+const webSocketURL =
   process.env.NODE_ENV === 'development'
     ? `ws://${window.location.hostname}:${process.env.SERVER_PORT}/ws`
     : `wss://${window.location.host}/ws`;
@@ -25,7 +25,7 @@ const HomePage = () => {
   }, []);
 
   useEffect(() => {
-    ws.current = new WebSocket(webSocketHost);
+    ws.current = new WebSocket(webSocketURL);
     ws.current.onmessage = (event) => {
       console.log('Client received: ', event.data);
     };
