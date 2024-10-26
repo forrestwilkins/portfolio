@@ -5,11 +5,19 @@ import { useAboveBreakpoint } from '../hooks/shared.hooks';
 
 const HomePage = () => {
   const [time, setTime] = useState<string>();
+  const ws = useRef<WebSocket>();
 
   const isAboveMd = useAboveBreakpoint('md');
   const isAboveLg = useAboveBreakpoint('lg');
 
-  const ws = useRef<WebSocket>();
+  useEffect(() => {
+    const init = async () => {
+      const result = await fetch('/api/health');
+      const data: { timestamp: string } = await result.json();
+      setTime(data.timestamp);
+    };
+    init();
+  }, []);
 
   useEffect(() => {
     ws.current = new WebSocket(`ws://localhost:3100/ws`);
@@ -22,15 +30,6 @@ const HomePage = () => {
         ws.current.close();
       }
     };
-  }, []);
-
-  useEffect(() => {
-    const init = async () => {
-      const result = await fetch('/api/health');
-      const data: { timestamp: string } = await result.json();
-      setTime(data.timestamp);
-    };
-    init();
   }, []);
 
   const linkStyles: SxProps = {
