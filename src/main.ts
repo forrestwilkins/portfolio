@@ -1,11 +1,11 @@
 import cors from 'cors';
 import * as dotenv from 'dotenv';
 import express from 'express';
+import { createServer } from 'http';
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
-import { WebSocketServer } from 'ws';
+import { WebSocket, WebSocketServer } from 'ws';
 import appRouter from './routes/app.routes';
-import { createServer } from 'http';
 
 dotenv.config();
 
@@ -21,8 +21,11 @@ app.use('/api', appRouter);
 
 wss.on('connection', (ws) => {
   ws.on('message', (data) => {
-    console.log('Server received: %s', data);
-    ws.send(`Hello - ${new Date().toLocaleString()} ✨`);
+    for (const client of wss.clients) {
+      if (client.readyState === WebSocket.OPEN) {
+        client.send(data.toString());
+      }
+    }
   });
   ws.on('error', console.error);
 });

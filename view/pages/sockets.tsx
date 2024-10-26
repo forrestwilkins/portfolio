@@ -12,7 +12,7 @@ const Sockets = () => {
       return;
     }
     ws.onmessage = (event) => {
-      console.log('Client received: ', event.data);
+      console.log(JSON.parse(event.data));
     };
   }, [ws]);
 
