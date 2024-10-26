@@ -47,9 +47,6 @@ const HomePage = () => {
       gap={isAboveMd ? '4px' : '16px'}
       paddingLeft={isAboveLg ? 0 : '70px'}
       paddingTop={isAboveLg ? 0 : '20px'}
-      onClick={() => {
-        socket.send('Hello from client');
-      }}
     >
       <Link to="/ripples" sx={linkStyles}>
         Ripples
@@ -75,6 +72,9 @@ const HomePage = () => {
           width="fit-content"
           height={10}
           borderRadius={0.5}
+          onClick={() => {
+            socket.send('Hello from client! 🎉');
+          }}
         >
           <Typography fontSize="8px" color="text.secondary">
             {time}

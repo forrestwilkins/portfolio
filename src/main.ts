@@ -22,8 +22,7 @@ app.use('/api', appRouter);
 wss.on('connection', (ws) => {
   ws.on('message', (data) => {
     console.log('received: %s', data);
-
-    ws.send('Hello from server');
+    ws.send(`'Hello from server - ${new Date().toLocaleString()}'`);
   });
   ws.on('error', console.error);
 });
