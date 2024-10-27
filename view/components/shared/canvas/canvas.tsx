@@ -24,9 +24,19 @@ interface Props {
   onMount?(canvas: HTMLCanvasElement): void;
   onMouseDown?(canvas: HTMLCanvasElement, e: MouseEvent<Element>): void;
   onMouseMove?(canvas: HTMLCanvasElement, e: MouseEvent<Element>): void;
-  onMouseUp?(x: number, y: number, duration: number): void;
+  onMouseUp?(
+    x: number,
+    y: number,
+    duration: number,
+    canvas: HTMLCanvasElement,
+  ): void;
   onTouchStart?(x: number, y: number): void;
-  onTouchEnd?(x: number, y: number, duration: number): void;
+  onTouchEnd?(
+    x: number,
+    y: number,
+    duration: number,
+    canvas: HTMLCanvasElement,
+  ): void;
   onTouchMove?(canvas: HTMLCanvasElement, e: TouchEvent<Element>): void;
   sx?: SxProps;
 }
@@ -191,11 +201,14 @@ const Canvas = ({
   };
 
   const handleMouseUp = (e: MouseEvent<Element>) => {
+    if (!canvasRef.current) {
+      return;
+    }
     const touchPoint = touchPointsRef.current['click'];
     const duration = Date.now() - touchPoint.timestamp;
 
     if (onMouseUp) {
-      onMouseUp(e.clientX, e.clientY, duration);
+      onMouseUp(e.clientX, e.clientY, duration, canvasRef.current);
     }
     delete touchPointsRef.current['click'];
   };
@@ -235,7 +248,7 @@ const Canvas = ({
       const touchPoint = touchPointsRef.current[touch.identifier];
       const duration = Date.now() - touchPoint.timestamp;
       if (onTouchEnd) {
-        onTouchEnd(touch.clientX, touch.clientY, duration);
+        onTouchEnd(touch.clientX, touch.clientY, duration, canvasRef.current);
       }
       delete touchPointsRef.current[touch.identifier];
     }

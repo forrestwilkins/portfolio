@@ -16,19 +16,40 @@ const Sockets = () => {
     };
   }, [ws]);
 
-  const handleMouseUp = (x: number, y: number, duration: number) => {
+  const drawDot = (x: number, y: number, canvas: HTMLCanvasElement) => {
+    const ctx = canvas.getContext('2d');
+    if (!ctx) {
+      return;
+    }
+    ctx.fillStyle = 'white';
+    ctx.fillRect(x, y, 1, 1);
+  };
+
+  const handleMouseUp = (
+    x: number,
+    y: number,
+    duration: number,
+    canvas: HTMLCanvasElement,
+  ) => {
     const isMobile = isMobileAgent();
     if (isMobile || !ws) {
       return;
     }
     ws.send(JSON.stringify({ x, y, duration }));
+    drawDot(x, y, canvas);
   };
 
-  const handleTouchEnd = (x: number, y: number, duration: number) => {
+  const handleTouchEnd = (
+    x: number,
+    y: number,
+    duration: number,
+    canvas: HTMLCanvasElement,
+  ) => {
     if (!ws) {
       return;
     }
     ws.send(JSON.stringify({ x, y, duration }));
+    drawDot(x, y, canvas);
   };
 
   const handleRender = (canvas: HTMLCanvasElement) => {
