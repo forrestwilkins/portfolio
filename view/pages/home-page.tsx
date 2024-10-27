@@ -1,11 +1,10 @@
 import { Box, SxProps, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import Link from '../components/shared/link';
-import { useAboveBreakpoint, useWebSocket } from '../hooks/shared.hooks';
+import { useAboveBreakpoint } from '../hooks/shared.hooks';
 
 const HomePage = () => {
   const [time, setTime] = useState<string>();
-  const ws = useWebSocket();
 
   const isAboveMd = useAboveBreakpoint('md');
   const isAboveLg = useAboveBreakpoint('lg');
@@ -60,10 +59,6 @@ const HomePage = () => {
           right={10}
           width="fit-content"
           height={10}
-          sx={{ cursor: 'pointer' }}
-          onClick={(e) =>
-            ws?.send(`Hello from client! - ${e.clientX}, ${e.clientY} 🎉`)
-          }
         >
           <Typography
             fontSize="8px"
