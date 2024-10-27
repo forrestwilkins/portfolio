@@ -19,15 +19,8 @@ app.use(cors());
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-app.use((req, res, next) => {
-  if (/ws|api/.test(req.path)) {
-    return next();
-  }
-  const statics = express.static(join(__dirname, './view'));
-  return statics(req, res, next);
-});
-
 app.use('/api', appRouter);
+app.use(/(.*)/, express.static(join(__dirname, './view')));
 
 webSocketServer.on('connection', (webSocket) => {
   webSocket.id = uuidv4();
