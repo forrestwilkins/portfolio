@@ -24,19 +24,25 @@ interface Props {
   onMount?(canvas: HTMLCanvasElement): void;
   onMouseDown?(canvas: HTMLCanvasElement, e: MouseEvent<Element>): void;
   onMouseMove?(canvas: HTMLCanvasElement, e: MouseEvent<Element>): void;
+
+  // TODO: Add handler props types so fields can be omitted
   onMouseUp?(
     x: number,
     y: number,
     duration: number,
     canvas: HTMLCanvasElement,
   ): void;
+
   onTouchStart?(x: number, y: number): void;
+
+  // TODO: Add handler props types
   onTouchEnd?(
     x: number,
     y: number,
     duration: number,
     canvas: HTMLCanvasElement,
   ): void;
+
   onTouchMove?(canvas: HTMLCanvasElement, e: TouchEvent<Element>): void;
   sx?: SxProps;
 }
