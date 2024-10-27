@@ -1,36 +1,29 @@
-import { useCallback, useEffect } from 'react';
-import { useScreenSize, useWebSocket } from '../hooks/shared.hooks';
+import useWebSocket from 'react-use-websocket';
 import Canvas from '../components/shared/canvas/canvas';
-import { isMobileAgent } from '../utils/shared.utils';
+import { useScreenSize } from '../hooks/shared.hooks';
+import { getWebSocketURL, isMobileAgent } from '../utils/shared.utils';
 
 const Sockets = () => {
   const [canvasWidth, canvasHeight] = useScreenSize();
-  const ws = useWebSocket();
 
-  const drawDot = useCallback(
-    (x: number, y: number, canvas: HTMLCanvasElement) => {
-      const ctx = canvas.getContext('2d');
-      if (!ctx) {
-        return;
-      }
-      ctx.fillStyle = 'white';
-      ctx.fillRect(x, y, 1, 1);
-    },
-    [],
-  );
-
-  useEffect(() => {
-    if (!ws) {
-      return;
-    }
-    ws.onmessage = (event) => {
+  const { sendMessage } = useWebSocket(getWebSocketURL(), {
+    onMessage: (event) => {
       const data: { x: number; y: number } = JSON.parse(event.data);
       const canvas = document.querySelector('canvas');
       if (canvas) {
         drawDot(data.x, data.y, canvas);
       }
-    };
-  }, [ws, drawDot]);
+    },
+  });
+
+  const drawDot = (x: number, y: number, canvas: HTMLCanvasElement) => {
+    const ctx = canvas.getContext('2d');
+    if (!ctx) {
+      return;
+    }
+    ctx.fillStyle = 'white';
+    ctx.fillRect(x, y, 1, 1);
+  };
 
   const handleMouseUp = (
     x: number,
@@ -39,10 +32,10 @@ const Sockets = () => {
     canvas: HTMLCanvasElement,
   ) => {
     const isMobile = isMobileAgent();
-    if (isMobile || !ws) {
+    if (isMobile) {
       return;
     }
-    ws.send(JSON.stringify({ x, y, duration }));
+    sendMessage(JSON.stringify({ x, y, duration }));
     drawDot(x, y, canvas);
   };
 
@@ -52,16 +45,13 @@ const Sockets = () => {
     duration: number,
     canvas: HTMLCanvasElement,
   ) => {
-    if (!ws) {
-      return;
-    }
-    ws.send(JSON.stringify({ x, y, duration }));
+    sendMessage(JSON.stringify({ x, y, duration }));
     drawDot(x, y, canvas);
   };
 
   const handleRender = (canvas: HTMLCanvasElement) => {
     const ctx = canvas.getContext('2d');
-    if (!ctx || !ws) {
+    if (!ctx) {
       return;
     }
   };

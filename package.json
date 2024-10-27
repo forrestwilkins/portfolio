@@ -24,6 +24,7 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.26.1",
+    "react-use-websocket": "^4.10.0",
     "tone": "^15.0.4",
     "url": "^0.11.4",
     "uuid": "^10.0.0",
