@@ -26,7 +26,7 @@ webSocketServer.on('connection', (webSocket) => {
 
   webSocket.on('message', (data) => {
     for (const client of webSocketServer.clients) {
-      if (client.readyState === WebSocket.OPEN) {
+      if (client.readyState === WebSocket.OPEN && client.id !== webSocket.id) {
         client.send(data.toString());
       }
     }
