@@ -5,16 +5,9 @@ import { createServer } from 'http';
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
 import { v4 as uuidv4 } from 'uuid';
-import { WebSocket, WebSocketServer } from 'ws';
+import { WebSocket } from 'ws';
+import { WebSocketServerWithIds } from './models/shared.models';
 import appRouter from './routes/app.routes';
-
-export class WebSocketWithId extends WebSocket {
-  id!: string;
-}
-
-export class WebSocketServerWithIds extends WebSocketServer<
-  typeof WebSocketWithId
-> {}
 
 dotenv.config();
 
