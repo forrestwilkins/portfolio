@@ -10,4 +10,4 @@ export const isTouchDevice = () =>
 export const getWebSocketURL = () =>
   process.env.NODE_ENV === 'development'
     ? `ws://${window.location.hostname}:${process.env.SERVER_PORT}/ws`
-    : `wss://${window.location.host}:${process.env.SERVER_PORT}/ws`;
+    : `wss://${window.location.host}/ws`;
