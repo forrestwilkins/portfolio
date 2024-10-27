@@ -18,9 +18,8 @@ const webSocketServer = new WebSocketServerWithIds({ path: '/ws', server });
 app.use(cors());
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-
+app.use(express.static(join(__dirname, './view')));
 app.use('/api', appRouter);
-app.use(/(.*)/, express.static(join(__dirname, './view')));
 
 webSocketServer.on('connection', (webSocket) => {
   webSocket.id = uuidv4();
