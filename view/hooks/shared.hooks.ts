@@ -5,7 +5,6 @@ import {
   useTheme,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
-import { getWebSocketURL } from '../utils/shared.utils';
 
 export const useIsDarkMode = () => {
   const [prefersDarkMode, setPrefersDarkMode] = useState(false);
@@ -51,22 +50,4 @@ export const useScreenSize = () => {
   }, []);
 
   return [screenSize.width, screenSize.height];
-};
-
-export const useWebSocket = () => {
-  const [webSocket, setWebSocket] = useState<WebSocket>();
-
-  useEffect(() => {
-    if (!webSocket) {
-      setWebSocket(new WebSocket(getWebSocketURL()));
-    }
-
-    return () => {
-      if (webSocket && webSocket.readyState === WebSocket.OPEN) {
-        webSocket.close();
-      }
-    };
-  }, [webSocket, setWebSocket]);
-
-  return webSocket;
 };
