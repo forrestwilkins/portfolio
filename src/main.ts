@@ -21,6 +21,11 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 app.use(express.static(join(__dirname, './view')));
 app.use('/api', appRouter);
 
+// Catch-all route to serve index.html for SPA routing
+app.get(/(.*)/, (_, res) => {
+  res.sendFile(join(__dirname, './view', 'index.html'));
+});
+
 webSocketServer.on('connection', (webSocket) => {
   webSocket.id = uuidv4();
 
