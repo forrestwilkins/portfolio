@@ -1,10 +1,11 @@
 import useWebSocket from 'react-use-websocket';
 import Canvas from '../components/shared/canvas/canvas';
-import { useScreenSize } from '../hooks/shared.hooks';
+import { useIsDarkMode, useScreenSize } from '../hooks/shared.hooks';
 import { getWebSocketURL, isMobileAgent } from '../utils/shared.utils';
 
 const Sockets = () => {
   const [canvasWidth, canvasHeight] = useScreenSize();
+  const isDarkMode = useIsDarkMode();
 
   const { sendMessage } = useWebSocket(getWebSocketURL(), {
     onMessage: (event) => {
@@ -21,7 +22,7 @@ const Sockets = () => {
     if (!ctx) {
       return;
     }
-    ctx.fillStyle = 'white';
+    ctx.fillStyle = isDarkMode ? 'white' : 'black';
     ctx.fillRect(x, y, 1, 1);
   };
 
