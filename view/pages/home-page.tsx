@@ -2,19 +2,9 @@ import { Box, SxProps, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import Link from '../components/shared/link';
 import { useAboveBreakpoint } from '../hooks/shared.hooks';
-import useWebSocket from 'react-use-websocket';
-import { getWebSocketURL } from '../utils/shared.utils';
 
 const HomePage = () => {
   const [time, setTime] = useState<string>();
-
-  // TODO: Remove after testing
-  useWebSocket(getWebSocketURL(), {
-    onMessage: (event) => {
-      const data = JSON.parse(event.data);
-      console.log(data);
-    },
-  });
 
   const isAboveMd = useAboveBreakpoint('md');
   const isAboveLg = useAboveBreakpoint('lg');
