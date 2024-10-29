@@ -6,7 +6,7 @@ import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
 import { v4 as uuidv4 } from 'uuid';
 import appRouter from './app.routes';
-import { WebSocket, WebSocketServer } from './shared/shared.models';
+import { WebSocket, WebSocketServer } from './pub-sub/pub-sub.models';
 
 dotenv.config();
 

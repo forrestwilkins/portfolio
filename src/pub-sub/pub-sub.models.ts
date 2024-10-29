@@ -8,3 +8,7 @@ export class WebSocket extends WebSocketDefault {
 }
 
 export class WebSocketServer extends WebSocketServerDefault<typeof WebSocket> {}
+
+export interface PubSubChannel {
+  subscribers: WebSocket[];
+}

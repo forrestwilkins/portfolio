@@ -1,11 +1,7 @@
-import { WebSocket } from '../shared/shared.models';
-
-interface Channel {
-  subscribers: WebSocket[];
-}
+import { PubSubChannel, WebSocket } from './pub-sub.models';
 
 class PubSubManager {
-  private channels: Record<string, Channel>;
+  private channels: Record<string, PubSubChannel>;
 
   constructor() {
     this.channels = {};
