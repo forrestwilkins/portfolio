@@ -18,6 +18,7 @@ const pubSubManager = new PubSubManager();
 
 app.use(cors());
 
+// Serve static files and API routes
 const __dirname = dirname(fileURLToPath(import.meta.url));
 app.use(express.static(join(__dirname, './view')));
 app.use('/api', appRouter);
@@ -27,9 +28,9 @@ app.get(/(.*)/, (_, res) => {
   res.sendFile(join(__dirname, './view', 'index.html'));
 });
 
+// Handle web socket connections with pub-sub manager
 webSocketServer.on('connection', (webSocket) => {
   webSocket.id = uuidv4();
-
   webSocket.on('message', (data) =>
     pubSubManager.handleMessage(webSocket, data),
   );
@@ -37,4 +38,4 @@ webSocketServer.on('connection', (webSocket) => {
 });
 
 server.listen(process.env.SERVER_PORT);
-console.log(`Server running at http://localhost:${process.env.SERVER_PORT}`);
+console.log(`Server running at http://localhost:${process.env.SERVER_PORT} 🚀`);
