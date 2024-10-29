@@ -6,8 +6,8 @@ import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
 import { v4 as uuidv4 } from 'uuid';
 import { WebSocket } from 'ws';
-import { WebSocketServerWithIds } from './models/shared.models';
-import appRouter from './routes/app.routes';
+import appRouter from './app.routes';
+import { WebSocketServerWithIds } from './shared/shared.models';
 
 dotenv.config();
 
