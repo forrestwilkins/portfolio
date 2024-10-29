@@ -1,14 +1,13 @@
-import {
-  WebSocket as WebSocketDefault,
-  WebSocketServer as WebSocketServerDefault,
-} from 'ws';
+import { WebSocket, WebSocketServer } from 'ws';
 
-export class WebSocket extends WebSocketDefault {
+export class WebSocketWithId extends WebSocket {
   id!: string;
 }
 
-export class WebSocketServer extends WebSocketServerDefault<typeof WebSocket> {}
+export class WebSocketServerWithIds extends WebSocketServer<
+  typeof WebSocketWithId
+> {}
 
 export interface PubSubChannel {
-  subscribers: WebSocket[];
+  subscribers: WebSocketWithId[];
 }

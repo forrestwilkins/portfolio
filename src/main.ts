@@ -6,13 +6,15 @@ import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
 import { v4 as uuidv4 } from 'uuid';
 import appRouter from './app.routes';
-import { WebSocket, WebSocketServer } from './pub-sub/pub-sub.models';
+import PubSubManager from './pub-sub/pub-sub.manager';
+import { WebSocketServerWithIds } from './pub-sub/pub-sub.models';
 
 dotenv.config();
 
 const app = express();
 const server = createServer(app);
-const webSocketServer = new WebSocketServer({ path: '/ws', server });
+const webSocketServer = new WebSocketServerWithIds({ path: '/ws', server });
+const pubSubManager = new PubSubManager();
 
 app.use(cors());
 
@@ -28,13 +30,9 @@ app.get(/(.*)/, (_, res) => {
 webSocketServer.on('connection', (webSocket) => {
   webSocket.id = uuidv4();
 
-  webSocket.on('message', (data) => {
-    for (const client of webSocketServer.clients) {
-      if (client.readyState === WebSocket.OPEN && client.id !== webSocket.id) {
-        client.send(data.toString());
-      }
-    }
-  });
+  webSocket.on('message', (data) =>
+    pubSubManager.handleMessage(webSocket, data),
+  );
   webSocket.on('error', console.error);
 });
 

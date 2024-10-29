@@ -1,4 +1,5 @@
-import { PubSubChannel, WebSocket } from './pub-sub.models';
+import WebSocket from 'ws';
+import { PubSubChannel, WebSocketWithId } from './pub-sub.models';
 
 class PubSubManager {
   private channels: Record<string, PubSubChannel>;
@@ -7,7 +8,22 @@ class PubSubManager {
     this.channels = {};
   }
 
-  subscribe(subscriber: WebSocket, channel: string): void {
+  handleMessage(webSocket: WebSocketWithId, data: WebSocket.RawData) {
+    const json = JSON.parse(data.toString());
+    const request = json.request;
+    const message = json.message;
+    const channel = json.channel;
+
+    if (request === 'PUBLISH') {
+      this.publish(channel, message);
+    }
+
+    if (request === 'SUBSCRIBE') {
+      this.subscribe(webSocket, channel);
+    }
+  }
+
+  subscribe(subscriber: WebSocketWithId, channel: string): void {
     console.log(`Subscribing to ${channel}`);
     if (!this.channels[channel]) {
       // Create the channel if it doesn't exist
