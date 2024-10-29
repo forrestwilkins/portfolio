@@ -9,11 +9,22 @@ const Sockets = () => {
 
   const { sendMessage } = useWebSocket(getWebSocketURL(), {
     onMessage: (event) => {
-      const data: { x: number; y: number } = JSON.parse(event.data);
+      const { body }: { body: { x: number; y: number } } = JSON.parse(
+        event.data,
+      );
       const canvas = document.querySelector('canvas');
       if (canvas) {
-        drawDot(data.x, data.y, canvas);
+        drawDot(body.x, body.y, canvas);
       }
+    },
+    onOpen(event) {
+      const ws = event.target as WebSocket;
+      ws.send(
+        JSON.stringify({
+          channel: 'sockets',
+          request: 'SUBSCRIBE',
+        }),
+      );
     },
   });
 
@@ -36,7 +47,12 @@ const Sockets = () => {
     if (isMobile) {
       return;
     }
-    sendMessage(JSON.stringify({ x, y, duration }));
+    const message = {
+      channel: 'sockets',
+      request: 'PUBLISH',
+      body: { x, y, duration },
+    };
+    sendMessage(JSON.stringify(message));
     drawDot(x, y, canvas);
   };
 
@@ -46,7 +62,12 @@ const Sockets = () => {
     duration: number,
     canvas: HTMLCanvasElement,
   ) => {
-    sendMessage(JSON.stringify({ x, y, duration }));
+    const message = {
+      channel: 'sockets',
+      request: 'PUBLISH',
+      body: { x, y, duration },
+    };
+    sendMessage(JSON.stringify(message));
     drawDot(x, y, canvas);
   };
 

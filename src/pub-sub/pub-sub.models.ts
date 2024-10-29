@@ -2,7 +2,7 @@ import { WebSocket, WebSocketServer } from 'ws';
 
 export interface PubSubMessage {
   channel: string;
-  message: unknown;
+  body: unknown;
   request: 'PUBLISH' | 'SUBSCRIBE';
 }
 

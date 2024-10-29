@@ -13,11 +13,11 @@ class PubSubManager {
   }
 
   handleMessage(webSocket: WebSocketWithId, data: WebSocket.RawData) {
-    const { request, message, channel }: PubSubMessage = JSON.parse(
+    const { channel, body, request }: PubSubMessage = JSON.parse(
       data.toString(),
     );
     if (request === 'PUBLISH') {
-      this.publish(channel, message);
+      this.publish(channel, body);
     }
     if (request === 'SUBSCRIBE') {
       this.subscribe(webSocket, channel);
@@ -26,7 +26,8 @@ class PubSubManager {
 
   publish(channel: string, message: unknown): void {
     if (!this.channels[channel]) {
-      console.log(`Channel ${channel} does not exist.`);
+      console.error(`Channel ${channel} does not exist.`);
+      return;
     }
 
     console.log(`Publishing message to ${channel}: ${message}`);
@@ -34,7 +35,7 @@ class PubSubManager {
       subscriber.send(
         JSON.stringify({
           channel: channel,
-          message: message,
+          body: message,
         }),
       );
     }
