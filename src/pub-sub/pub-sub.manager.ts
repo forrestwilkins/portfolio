@@ -23,6 +23,22 @@ class PubSubManager {
     }
   }
 
+  publish(channel: string, message: string): void {
+    if (!this.channels[channel]) {
+      console.log(`Channel ${channel} does not exist.`);
+    }
+
+    console.log(`Publishing message to ${channel}: ${message}`);
+    for (const subscriber of this.channels[channel].subscribers) {
+      subscriber.send(
+        JSON.stringify({
+          channel: channel,
+          message: message,
+        }),
+      );
+    }
+  }
+
   subscribe(subscriber: WebSocketWithId, channel: string): void {
     console.log(`Subscribing to ${channel}`);
     if (!this.channels[channel]) {
@@ -39,22 +55,6 @@ class PubSubManager {
       );
       this.channels[channel].subscribers = filtered;
     });
-  }
-
-  publish(channel: string, message: string): void {
-    if (!this.channels[channel]) {
-      console.log(`Channel ${channel} does not exist.`);
-    }
-
-    console.log(`Publishing message to ${channel}: ${message}`);
-    for (const subscriber of this.channels[channel].subscribers) {
-      subscriber.send(
-        JSON.stringify({
-          channel: channel,
-          message: message,
-        }),
-      );
-    }
   }
 }
 
