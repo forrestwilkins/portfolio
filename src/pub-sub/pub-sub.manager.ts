@@ -1,6 +1,4 @@
-// pubsub.ts
-
-import { WebSocket } from 'ws';
+import { WebSocket } from '../shared/shared.models';
 
 interface Channel {
   subscribers: WebSocket[];
@@ -24,26 +22,26 @@ class PubSubManager {
     // Remove subscriber on disconnect
     subscriber.on('close', () => {
       console.log(`Subscriber disconnected from ${channel}`);
-      this.channels[channel].subscribers = this.channels[
-        channel
-      ].subscribers.filter((sock) => sock !== subscriber);
+      const filtered = this.channels[channel].subscribers.filter(
+        (sub) => sub !== subscriber,
+      );
+      this.channels[channel].subscribers = filtered;
     });
   }
 
   publish(channel: string, message: string): void {
-    const channelObj = this.channels[channel];
-    if (channelObj) {
-      console.log(`Publishing message to ${channel}: ${message}`);
-      channelObj.subscribers.forEach((subscriber) => {
-        subscriber.send(
-          JSON.stringify({
-            channel: channel,
-            message: message,
-          }),
-        );
-      });
-    } else {
+    if (!this.channels[channel]) {
       console.log(`Channel ${channel} does not exist.`);
+    }
+
+    console.log(`Publishing message to ${channel}: ${message}`);
+    for (const subscriber of this.channels[channel].subscribers) {
+      subscriber.send(
+        JSON.stringify({
+          channel: channel,
+          message: message,
+        }),
+      );
     }
   }
 }

@@ -5,15 +5,14 @@ import { createServer } from 'http';
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
 import { v4 as uuidv4 } from 'uuid';
-import { WebSocket } from 'ws';
 import appRouter from './app.routes';
-import { WebSocketServerWithIds } from './shared/shared.models';
+import { WebSocket, WebSocketServer } from './shared/shared.models';
 
 dotenv.config();
 
 const app = express();
 const server = createServer(app);
-const webSocketServer = new WebSocketServerWithIds({ path: '/ws', server });
+const webSocketServer = new WebSocketServer({ path: '/ws', server });
 
 app.use(cors());
 

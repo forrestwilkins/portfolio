@@ -1,9 +1,10 @@
-import { WebSocket, WebSocketServer } from 'ws';
+import {
+  WebSocket as WebSocketDefault,
+  WebSocketServer as WebSocketServerDefault,
+} from 'ws';
 
-export class WebSocketWithId extends WebSocket {
+export class WebSocket extends WebSocketDefault {
   id!: string;
 }
 
-export class WebSocketServerWithIds extends WebSocketServer<
-  typeof WebSocketWithId
-> {}
+export class WebSocketServer extends WebSocketServerDefault<typeof WebSocket> {}
