@@ -6,3 +6,8 @@ export const isMobileAgent = () =>
 
 export const isTouchDevice = () =>
   !!navigator.maxTouchPoints || 'ontouchstart' in document.documentElement;
+
+export const getWebSocketURL = () =>
+  process.env.NODE_ENV === 'development'
+    ? `ws://${window.location.hostname}:${process.env.SERVER_PORT}/ws`
+    : `wss://${window.location.host}/ws`;

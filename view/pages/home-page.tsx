@@ -48,6 +48,10 @@ const HomePage = () => {
         Hello Sound
       </Link>
 
+      <Link to="/sockets" sx={linkStyles}>
+        Sockets
+      </Link>
+
       {time && (
         <Box
           position="fixed"
@@ -55,9 +59,17 @@ const HomePage = () => {
           right={10}
           width="fit-content"
           height={10}
-          borderRadius={0.5}
         >
-          <Typography fontSize="8px" color="text.secondary">
+          <Typography
+            fontSize="8px"
+            color="text.secondary"
+            borderRadius="2px"
+            paddingX={0.3}
+            sx={{
+              '&:hover': { color: 'text.primary' },
+              transition: 'all 0.3s ease-in-out',
+            }}
+          >
             {time}
           </Typography>
         </Box>
