@@ -1,4 +1,5 @@
 import express from 'express';
+import authRouter from './auth/auth.routes';
 
 const appRouter = express.Router();
 
@@ -8,5 +9,7 @@ appRouter.get('/health', (_, res) => {
     timestamp: new Date().toLocaleString(),
   });
 });
+
+appRouter.use('/auth', authRouter);
 
 export default appRouter;

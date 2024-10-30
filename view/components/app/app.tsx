@@ -9,8 +9,29 @@ import { isTouchDevice } from '../../utils/shared.utils';
 import Layout from './layout';
 
 const App = () => {
-  const isAudioEnabled = useAppStore((state) => state.isAudioEnabled);
-  const setIsAudioEnabled = useAppStore((state) => state.setIsAudioEnabled);
+  const { token, setToken, isAudioEnabled, setIsAudioEnabled } = useAppStore(
+    (state) => state,
+  );
+
+  useEffect(() => {
+    if (token) {
+      return;
+    }
+
+    const tokenFromStorage = localStorage.getItem('token');
+    if (tokenFromStorage) {
+      setToken(tokenFromStorage);
+      return;
+    }
+
+    const init = async () => {
+      const result = await fetch('/api/auth', { method: 'POST' });
+      const data: { token: string } = await result.json();
+      localStorage.setItem('token', data.token);
+      setToken(data.token);
+    };
+    init();
+  }, [token, setToken]);
 
   useEffect(() => {
     const enableAudio = async () => {
