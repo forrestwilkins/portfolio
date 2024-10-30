@@ -5,7 +5,7 @@ import { createServer } from 'http';
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
 import appRouter from './app.routes';
-import PubSubManager from './pub-sub/pub-sub.manager';
+import PubSubService from './pub-sub/pub-sub.service';
 import { WebSocketServerWithIds } from './pub-sub/pub-sub.models';
 
 dotenv.config();
@@ -13,7 +13,7 @@ dotenv.config();
 const app = express();
 const server = createServer(app);
 const webSocketServer = new WebSocketServerWithIds({ path: '/ws', server });
-const pubSubManager = new PubSubManager();
+const pubSubService = new PubSubService();
 
 app.use(cors());
 
@@ -27,10 +27,10 @@ app.get(/(.*)/, (_, res) => {
   res.sendFile(join(__dirname, './view', 'index.html'));
 });
 
-// Handle web socket connections with pub-sub manager
+// Handle web socket connections with pub-sub service
 webSocketServer.on('connection', (webSocket) => {
   webSocket.on('message', (data) =>
-    pubSubManager.handleMessage(webSocket, data),
+    pubSubService.handleMessage(webSocket, data),
   );
   webSocket.on('error', console.error);
 });

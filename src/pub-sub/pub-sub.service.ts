@@ -6,7 +6,7 @@ import {
   WebSocketWithId,
 } from './pub-sub.models';
 
-class PubSubManager {
+class PubSubService {
   private channels: Record<string, PubSubChannel>;
 
   constructor() {
@@ -62,4 +62,4 @@ class PubSubManager {
   }
 }
 
-export default PubSubManager;
+export default PubSubService;
