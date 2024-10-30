@@ -40,8 +40,8 @@ const Sockets = () => {
 
   const sendDot = (x: number, y: number, duration: number) => {
     const message = {
-      channel: 'sockets',
       request: 'PUBLISH',
+      channel: SOCKETS_CHANNEL,
       body: { x, y, duration },
     };
     sendMessage(JSON.stringify(message));
