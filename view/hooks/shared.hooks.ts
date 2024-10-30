@@ -5,6 +5,37 @@ import {
   useTheme,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
+import { ReadyState, SendMessage } from 'react-use-websocket';
+
+export interface PubSubMessage<T = unknown> {
+  request: 'PUBLISH' | 'SUBSCRIBE';
+  channel: string;
+  body?: T;
+}
+
+export const useSubscription = (
+  channel: string,
+  readyState: ReadyState,
+  sendMessage: SendMessage,
+) => {
+  const [isSubscribed, setIsSubscribed] = useState(false);
+
+  useEffect(() => {
+    if (readyState !== ReadyState.OPEN) {
+      setIsSubscribed(false);
+      return;
+    }
+
+    const message: PubSubMessage = {
+      request: 'SUBSCRIBE',
+      channel,
+    };
+    sendMessage(JSON.stringify(message));
+    setIsSubscribed(true);
+  }, [readyState]);
+
+  return isSubscribed;
+};
 
 export const useIsDarkMode = () => {
   const [prefersDarkMode, setPrefersDarkMode] = useState(false);
