@@ -33,7 +33,7 @@ export const useSubscription = (channel: string, options: Options) => {
     };
     sendMessage(JSON.stringify(message));
     setIsSubscribed(true);
-  }, [readyState]);
+  }, [readyState, sendMessage, channel]);
 
   return { sendMessage, readyState, isSubscribed, ...rest };
 };
