@@ -25,6 +25,7 @@ class PubSubManager {
     }
   }
 
+  // TODO: Ensure other services can publish messages - replace publisher param with ID
   publish(publisher: WebSocketWithId, channel: string, message: unknown): void {
     if (!this.channels[channel]) {
       console.error(`Channel ${channel} does not exist.`);
