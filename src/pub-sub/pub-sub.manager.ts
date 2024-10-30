@@ -30,8 +30,6 @@ class PubSubManager {
       console.error(`Channel ${channel} does not exist.`);
       return;
     }
-
-    console.log(`Publishing message to ${channel}: ${message}`);
     for (const subscriber of this.channels[channel].subscribers) {
       if (subscriber.id === publisher.id) {
         continue;
@@ -46,7 +44,6 @@ class PubSubManager {
   }
 
   subscribe(subscriber: WebSocketWithId, channel: string): void {
-    console.log(`Subscribing to ${channel}`);
     if (!this.channels[channel]) {
       // Create the channel if it doesn't exist
       this.channels[channel] = { subscribers: [] };
@@ -56,7 +53,6 @@ class PubSubManager {
 
     // Remove subscriber on disconnect
     subscriber.on('close', () => {
-      console.log(`Subscriber disconnected from ${channel}`);
       const filtered = this.channels[channel].subscribers.filter(
         (sub) => sub.id !== subscriber.id,
       );
