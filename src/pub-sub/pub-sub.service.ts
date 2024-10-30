@@ -17,21 +17,20 @@ class PubSubService {
       data.toString(),
     );
     if (request === 'PUBLISH') {
-      this.publish(webSocket, channel, body);
+      this.publish(webSocket.id, channel, body);
     }
     if (request === 'SUBSCRIBE') {
       this.subscribe(webSocket, channel, body);
     }
   }
 
-  // TODO: Ensure other services can publish messages - replace publisher param with ID
-  publish(publisher: WebSocketWithId, channel: string, message: unknown) {
+  publish(publisherId: string, channel: string, message: unknown) {
     if (!this.channels[channel]) {
       console.error(`Channel ${channel} does not exist.`);
       return;
     }
     for (const subscriber of this.channels[channel].subscribers) {
-      if (subscriber.id === publisher.id) {
+      if (subscriber.id === publisherId) {
         continue;
       }
       subscriber.send(
