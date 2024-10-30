@@ -4,7 +4,6 @@ import express from 'express';
 import { createServer } from 'http';
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
-import { v4 as uuidv4 } from 'uuid';
 import appRouter from './app.routes';
 import PubSubManager from './pub-sub/pub-sub.manager';
 import { WebSocketServerWithIds } from './pub-sub/pub-sub.models';
@@ -30,7 +29,6 @@ app.get(/(.*)/, (_, res) => {
 
 // Handle web socket connections with pub-sub manager
 webSocketServer.on('connection', (webSocket) => {
-  webSocket.id = uuidv4();
   webSocket.on('message', (data) =>
     pubSubManager.handleMessage(webSocket, data),
   );

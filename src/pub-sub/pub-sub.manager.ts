@@ -1,3 +1,4 @@
+import { v4 as uuidv4 } from 'uuid';
 import WebSocket from 'ws';
 import {
   PubSubChannel,
@@ -17,14 +18,14 @@ class PubSubManager {
       data.toString(),
     );
     if (request === 'PUBLISH') {
-      this.publish(channel, body);
+      this.publish(webSocket, channel, body);
     }
     if (request === 'SUBSCRIBE') {
       this.subscribe(webSocket, channel);
     }
   }
 
-  publish(channel: string, message: unknown): void {
+  publish(publisher: WebSocketWithId, channel: string, message: unknown): void {
     if (!this.channels[channel]) {
       console.error(`Channel ${channel} does not exist.`);
       return;
@@ -32,6 +33,9 @@ class PubSubManager {
 
     console.log(`Publishing message to ${channel}: ${message}`);
     for (const subscriber of this.channels[channel].subscribers) {
+      if (subscriber.id === publisher.id) {
+        continue;
+      }
       subscriber.send(
         JSON.stringify({
           channel: channel,
@@ -47,6 +51,7 @@ class PubSubManager {
       // Create the channel if it doesn't exist
       this.channels[channel] = { subscribers: [] };
     }
+    subscriber.id = uuidv4();
     this.channels[channel].subscribers.push(subscriber);
 
     // Remove subscriber on disconnect
