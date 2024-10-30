@@ -6,6 +6,7 @@ import {
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 import useWebSocket, { Options, ReadyState } from 'react-use-websocket';
+import useAppStore from '../store/app.store';
 import { getWebSocketURL } from '../utils/shared.utils';
 
 export interface PubSubMessage<T = unknown> {
@@ -15,21 +16,24 @@ export interface PubSubMessage<T = unknown> {
 }
 
 export const useSubscription = (channel: string, options: Options) => {
+  const token = useAppStore((state) => state.token);
+
   const { sendMessage, readyState, ...rest } = useWebSocket(
     getWebSocketURL(),
     options,
   );
 
   useEffect(() => {
-    if (readyState !== ReadyState.OPEN) {
+    if (readyState !== ReadyState.OPEN || !token) {
       return;
     }
     const message: PubSubMessage = {
       request: 'SUBSCRIBE',
+      body: { token },
       channel,
     };
     sendMessage(JSON.stringify(message));
-  }, [readyState, sendMessage, channel]);
+  }, [readyState, sendMessage, channel, token]);
 
   return { sendMessage, readyState, ...rest };
 };
