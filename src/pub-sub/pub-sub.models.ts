@@ -14,6 +14,7 @@ export class WebSocketServerWithIds extends WebSocketServer<
   typeof WebSocketWithId
 > {}
 
+// TODO: Convert subscribers to a map keyed by subscriber ID
 export interface PubSubChannel {
   subscribers: WebSocketWithId[];
 }
