@@ -3,27 +3,36 @@ import Canvas from '../components/shared/canvas/canvas';
 import { useIsDarkMode, useScreenSize } from '../hooks/shared.hooks';
 import { getWebSocketURL, isMobileAgent } from '../utils/shared.utils';
 
+interface PubSubMessage<T = unknown> {
+  channel: string;
+  body?: T;
+  request: 'PUBLISH' | 'SUBSCRIBE';
+}
+
+interface DotMessage {
+  x: number;
+  y: number;
+  duration: number;
+}
+
 const Sockets = () => {
   const [canvasWidth, canvasHeight] = useScreenSize();
   const isDarkMode = useIsDarkMode();
 
   const { sendMessage } = useWebSocket(getWebSocketURL(), {
     onMessage: (event) => {
-      const { body }: { body: { x: number; y: number } } = JSON.parse(
-        event.data,
-      );
+      const { body }: PubSubMessage<DotMessage> = JSON.parse(event.data);
       const canvas = document.querySelector('canvas');
-      if (canvas) {
+      if (canvas && body) {
         drawDot(body.x, body.y, canvas);
       }
     },
     onOpen(event) {
-      (event.target as WebSocket).send(
-        JSON.stringify({
-          channel: 'sockets',
-          request: 'SUBSCRIBE',
-        }),
-      );
+      const message: PubSubMessage = {
+        channel: 'sockets',
+        request: 'SUBSCRIBE',
+      };
+      (event.target as WebSocket).send(JSON.stringify(message));
     },
   });
 
@@ -69,18 +78,10 @@ const Sockets = () => {
     sendDot(x, y, duration);
   };
 
-  const handleRender = (canvas: HTMLCanvasElement) => {
-    const ctx = canvas.getContext('2d');
-    if (!ctx) {
-      return;
-    }
-  };
-
   return (
     <Canvas
       width={canvasWidth}
       height={canvasHeight}
-      onFrameRender={handleRender}
       onMouseUp={handleMouseUp}
       onTouchEnd={handleTouchEnd}
       fillViewport

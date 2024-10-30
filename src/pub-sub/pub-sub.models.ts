@@ -1,8 +1,8 @@
 import { WebSocket, WebSocketServer } from 'ws';
 
-export interface PubSubMessage {
+export interface PubSubMessage<T = unknown> {
   channel: string;
-  body: unknown;
+  body: T;
   request: 'PUBLISH' | 'SUBSCRIBE';
 }
 
