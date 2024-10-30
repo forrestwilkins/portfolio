@@ -15,8 +15,6 @@ export interface PubSubMessage<T = unknown> {
 }
 
 export const useSubscription = (channel: string, options: Options) => {
-  const [isSubscribed, setIsSubscribed] = useState(false);
-
   const { sendMessage, readyState, ...rest } = useWebSocket(
     getWebSocketURL(),
     options,
@@ -24,7 +22,6 @@ export const useSubscription = (channel: string, options: Options) => {
 
   useEffect(() => {
     if (readyState !== ReadyState.OPEN) {
-      setIsSubscribed(false);
       return;
     }
     const message: PubSubMessage = {
@@ -32,10 +29,9 @@ export const useSubscription = (channel: string, options: Options) => {
       channel,
     };
     sendMessage(JSON.stringify(message));
-    setIsSubscribed(true);
   }, [readyState, sendMessage, channel]);
 
-  return { sendMessage, readyState, isSubscribed, ...rest };
+  return { sendMessage, readyState, ...rest };
 };
 
 export const useIsDarkMode = () => {
