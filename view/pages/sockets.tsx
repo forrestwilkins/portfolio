@@ -9,7 +9,7 @@ import { isMobileAgent } from '../utils/shared.utils';
 
 const SOCKETS_CHANNEL = 'sockets';
 
-interface DotMessage {
+interface Dot {
   x: number;
   y: number;
   duration: number;
@@ -21,7 +21,7 @@ const Sockets = () => {
 
   const { sendMessage } = useSubscription(SOCKETS_CHANNEL, {
     onMessage: (event) => {
-      const { body }: PubSubMessage<DotMessage> = JSON.parse(event.data);
+      const { body }: PubSubMessage<Dot> = JSON.parse(event.data);
       const canvas = document.querySelector('canvas');
       if (canvas && body) {
         drawDot(body.x, body.y, canvas);
