@@ -18,8 +18,7 @@ const Sockets = () => {
       }
     },
     onOpen(event) {
-      const ws = event.target as WebSocket;
-      ws.send(
+      (event.target as WebSocket).send(
         JSON.stringify({
           channel: 'sockets',
           request: 'SUBSCRIBE',
@@ -37,6 +36,15 @@ const Sockets = () => {
     ctx.fillRect(x, y, 1, 1);
   };
 
+  const sendDot = (x: number, y: number, duration: number) => {
+    const message = {
+      channel: 'sockets',
+      request: 'PUBLISH',
+      body: { x, y, duration },
+    };
+    sendMessage(JSON.stringify(message));
+  };
+
   const handleMouseUp = (
     x: number,
     y: number,
@@ -47,13 +55,8 @@ const Sockets = () => {
     if (isMobile) {
       return;
     }
-    const message = {
-      channel: 'sockets',
-      request: 'PUBLISH',
-      body: { x, y, duration },
-    };
-    sendMessage(JSON.stringify(message));
     drawDot(x, y, canvas);
+    sendDot(x, y, duration);
   };
 
   const handleTouchEnd = (
@@ -62,13 +65,8 @@ const Sockets = () => {
     duration: number,
     canvas: HTMLCanvasElement,
   ) => {
-    const message = {
-      channel: 'sockets',
-      request: 'PUBLISH',
-      body: { x, y, duration },
-    };
-    sendMessage(JSON.stringify(message));
     drawDot(x, y, canvas);
+    sendDot(x, y, duration);
   };
 
   const handleRender = (canvas: HTMLCanvasElement) => {
