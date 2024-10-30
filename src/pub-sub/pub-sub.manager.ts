@@ -58,7 +58,7 @@ class PubSubManager {
     subscriber.on('close', () => {
       console.log(`Subscriber disconnected from ${channel}`);
       const filtered = this.channels[channel].subscribers.filter(
-        (sub) => sub !== subscriber,
+        (sub) => sub.id !== subscriber.id,
       );
       this.channels[channel].subscribers = filtered;
     });
