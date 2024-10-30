@@ -1,4 +1,3 @@
-import { v4 as uuidv4 } from 'uuid';
 import WebSocket from 'ws';
 import {
   PubSubChannel,
@@ -21,7 +20,7 @@ class PubSubService {
       this.publish(webSocket, channel, body);
     }
     if (request === 'SUBSCRIBE') {
-      this.subscribe(webSocket, channel);
+      this.subscribe(webSocket, channel, body);
     }
   }
 
@@ -44,12 +43,13 @@ class PubSubService {
     }
   }
 
-  subscribe(subscriber: WebSocketWithId, channel: string) {
+  subscribe(subscriber: WebSocketWithId, channel: string, message: unknown) {
     if (!this.channels[channel]) {
       // Create the channel if it doesn't exist
       this.channels[channel] = { subscribers: [] };
     }
-    subscriber.id = uuidv4();
+
+    subscriber.id = (message as { token: string }).token;
     this.channels[channel].subscribers.push(subscriber);
 
     // Remove subscriber on disconnect
