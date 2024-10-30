@@ -6,6 +6,11 @@ export interface PubSubMessage<T = unknown> {
   request: 'PUBLISH' | 'SUBSCRIBE';
 }
 
+// TODO: Convert subscribers to a map keyed by subscriber ID
+export interface PubSubChannel {
+  subscribers: WebSocketWithId[];
+}
+
 export class WebSocketWithId extends WebSocket {
   id!: string;
 }
@@ -13,8 +18,3 @@ export class WebSocketWithId extends WebSocket {
 export class WebSocketServerWithIds extends WebSocketServer<
   typeof WebSocketWithId
 > {}
-
-// TODO: Convert subscribers to a map keyed by subscriber ID
-export interface PubSubChannel {
-  subscribers: WebSocketWithId[];
-}
