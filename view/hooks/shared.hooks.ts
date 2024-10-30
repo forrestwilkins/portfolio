@@ -5,7 +5,8 @@ import {
   useTheme,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
-import { ReadyState, SendMessage } from 'react-use-websocket';
+import useWebSocket, { Options, ReadyState } from 'react-use-websocket';
+import { getWebSocketURL } from '../utils/shared.utils';
 
 export interface PubSubMessage<T = unknown> {
   request: 'PUBLISH' | 'SUBSCRIBE';
@@ -13,19 +14,19 @@ export interface PubSubMessage<T = unknown> {
   body?: T;
 }
 
-export const useSubscription = (
-  channel: string,
-  readyState: ReadyState,
-  sendMessage: SendMessage,
-) => {
+export const useSubscription = (channel: string, options: Options) => {
   const [isSubscribed, setIsSubscribed] = useState(false);
+
+  const { sendMessage, readyState, ...rest } = useWebSocket(
+    getWebSocketURL(),
+    options,
+  );
 
   useEffect(() => {
     if (readyState !== ReadyState.OPEN) {
       setIsSubscribed(false);
       return;
     }
-
     const message: PubSubMessage = {
       request: 'SUBSCRIBE',
       channel,
@@ -34,7 +35,7 @@ export const useSubscription = (
     setIsSubscribed(true);
   }, [readyState]);
 
-  return isSubscribed;
+  return { sendMessage, readyState, isSubscribed, ...rest };
 };
 
 export const useIsDarkMode = () => {

@@ -1,4 +1,3 @@
-import useWebSocket from 'react-use-websocket';
 import Canvas from '../components/shared/canvas/canvas';
 import {
   PubSubMessage,
@@ -6,7 +5,7 @@ import {
   useScreenSize,
   useSubscription,
 } from '../hooks/shared.hooks';
-import { getWebSocketURL, isMobileAgent } from '../utils/shared.utils';
+import { isMobileAgent } from '../utils/shared.utils';
 
 const SOCKETS_CHANNEL = 'sockets';
 
@@ -20,7 +19,7 @@ const Sockets = () => {
   const [canvasWidth, canvasHeight] = useScreenSize();
   const isDarkMode = useIsDarkMode();
 
-  const { sendMessage, readyState } = useWebSocket(getWebSocketURL(), {
+  const { sendMessage } = useSubscription(SOCKETS_CHANNEL, {
     onMessage: (event) => {
       const { body }: PubSubMessage<DotMessage> = JSON.parse(event.data);
       const canvas = document.querySelector('canvas');
@@ -29,12 +28,6 @@ const Sockets = () => {
       }
     },
   });
-
-  const isSubscribed = useSubscription(
-    SOCKETS_CHANNEL,
-    readyState,
-    sendMessage,
-  );
 
   const drawDot = (x: number, y: number, canvas: HTMLCanvasElement) => {
     const ctx = canvas.getContext('2d');
@@ -77,10 +70,6 @@ const Sockets = () => {
     drawDot(x, y, canvas);
     sendDot(x, y, duration);
   };
-
-  if (!isSubscribed) {
-    return null;
-  }
 
   return (
     <Canvas
