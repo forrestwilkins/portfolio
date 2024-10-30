@@ -1,9 +1,9 @@
 import { WebSocket, WebSocketServer } from 'ws';
 
 export interface PubSubMessage<T = unknown> {
-  channel: string;
-  body: T;
   request: 'PUBLISH' | 'SUBSCRIBE';
+  channel: string;
+  body?: T;
 }
 
 // TODO: Convert subscribers to a map keyed by subscriber ID
