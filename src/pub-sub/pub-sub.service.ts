@@ -13,14 +13,14 @@ class PubSubService {
   }
 
   handleMessage(webSocket: WebSocketWithId, data: WebSocket.RawData) {
-    const { channel, body, request }: PubSubMessage = JSON.parse(
+    const { channel, body, request, token }: PubSubMessage = JSON.parse(
       data.toString(),
     );
     if (request === 'PUBLISH') {
       this.publish(webSocket.id, channel, body);
     }
     if (request === 'SUBSCRIBE') {
-      this.subscribe(webSocket, channel, body);
+      this.subscribe(webSocket, channel, token);
     }
   }
 
@@ -42,13 +42,13 @@ class PubSubService {
     }
   }
 
-  subscribe(subscriber: WebSocketWithId, channel: string, message: unknown) {
+  subscribe(subscriber: WebSocketWithId, channel: string, token: string) {
     if (!this.channels[channel]) {
       // Create the channel if it doesn't exist
       this.channels[channel] = { subscribers: [] };
     }
 
-    subscriber.id = (message as { token: string }).token;
+    subscriber.id = token;
     this.channels[channel].subscribers.push(subscriber);
 
     // Remove subscriber on disconnect

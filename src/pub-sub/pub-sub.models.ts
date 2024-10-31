@@ -3,6 +3,7 @@ import { WebSocket, WebSocketServer } from 'ws';
 export interface PubSubMessage<T = unknown> {
   request: 'PUBLISH' | 'SUBSCRIBE';
   channel: string;
+  token: string;
   body?: T;
 }
 

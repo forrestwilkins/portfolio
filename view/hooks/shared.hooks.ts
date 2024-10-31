@@ -12,6 +12,7 @@ import { getWebSocketURL } from '../utils/shared.utils';
 export interface PubSubMessage<T = unknown> {
   request: 'PUBLISH' | 'SUBSCRIBE';
   channel: string;
+  token: string;
   body?: T;
 }
 
@@ -29,8 +30,8 @@ export const useSubscription = (channel: string, options: Options) => {
     }
     const message: PubSubMessage = {
       request: 'SUBSCRIBE',
-      body: { token },
       channel,
+      token,
     };
     sendMessage(JSON.stringify(message));
   }, [readyState, sendMessage, channel, token]);
