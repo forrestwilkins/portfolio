@@ -1,11 +1,7 @@
 import { Box, SxProps, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import Link from '../components/shared/link';
-import {
-  PubSubMessage,
-  useAboveBreakpoint,
-  useSubscription,
-} from '../hooks/shared.hooks';
+import { useAboveBreakpoint } from '../hooks/shared.hooks';
 import useAppStore from '../store/app.store';
 
 const HomePage = () => {
@@ -14,16 +10,6 @@ const HomePage = () => {
 
   const isAboveMd = useAboveBreakpoint('md');
   const isAboveLg = useAboveBreakpoint('lg');
-
-  // TODO: Remove wehn done testing
-  useSubscription('health', {
-    onMessage: (message) => {
-      const data: PubSubMessage<{ timestamp: string }> = JSON.parse(
-        message.data,
-      );
-      console.log(data.body?.timestamp);
-    },
-  });
 
   useEffect(() => {
     if (!token) {

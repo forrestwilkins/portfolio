@@ -1,13 +1,9 @@
-import { pubSubService } from '../pub-sub/pub-sub.service';
-
 class HealthService {
-  async getHealth(token: string) {
-    const payload = {
+  getHealth() {
+    return {
       status: 'healthy',
       timestamp: new Date().toLocaleString(),
     };
-    pubSubService.publish(token, 'health', payload);
-    return payload;
   }
 }
 
