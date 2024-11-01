@@ -5,15 +5,14 @@ import { createServer } from 'http';
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
 import appRouter from './app.routes';
-import PubSubService from './pub-sub/pub-sub.service';
 import { WebSocketServerWithIds } from './pub-sub/pub-sub.models';
+import { pubSubService } from './pub-sub/pub-sub.service';
 
 dotenv.config();
 
 const app = express();
 const server = createServer(app);
 const webSocketServer = new WebSocketServerWithIds({ path: '/ws', server });
-const pubSubService = new PubSubService();
 
 app.use(cors());
 

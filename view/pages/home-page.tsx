@@ -1,22 +1,43 @@
 import { Box, SxProps, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import Link from '../components/shared/link';
-import { useAboveBreakpoint } from '../hooks/shared.hooks';
+import {
+  PubSubMessage,
+  useAboveBreakpoint,
+  useSubscription,
+} from '../hooks/shared.hooks';
+import useAppStore from '../store/app.store';
 
 const HomePage = () => {
+  const token = useAppStore((state) => state.token);
   const [time, setTime] = useState<string>();
 
   const isAboveMd = useAboveBreakpoint('md');
   const isAboveLg = useAboveBreakpoint('lg');
 
+  // TODO: Remove wehn done testing
+  useSubscription('health', {
+    onMessage: (message) => {
+      const data: PubSubMessage<{ timestamp: string }> = JSON.parse(
+        message.data,
+      );
+      console.log(data.body?.timestamp);
+    },
+  });
+
   useEffect(() => {
+    if (!token) {
+      return;
+    }
     const init = async () => {
-      const result = await fetch('/api/health');
+      const result = await fetch('/api/health', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       const data: { timestamp: string } = await result.json();
       setTime(data.timestamp);
     };
     init();
-  }, []);
+  }, [token]);
 
   const linkStyles: SxProps = {
     scrollMargin: '20px',

@@ -61,4 +61,5 @@ class PubSubService {
   }
 }
 
+export const pubSubService = new PubSubService();
 export default PubSubService;

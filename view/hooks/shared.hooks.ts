@@ -16,7 +16,7 @@ export interface PubSubMessage<T = unknown> {
   body?: T;
 }
 
-export const useSubscription = (channel: string, options: Options) => {
+export const useSubscription = (channel: string, options?: Options) => {
   const token = useAppStore((state) => state.token);
 
   const { sendMessage, readyState, ...rest } = useWebSocket(
