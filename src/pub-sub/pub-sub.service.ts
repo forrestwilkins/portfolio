@@ -27,8 +27,7 @@ class PubSubService {
         this.unsubscribe(channel, webSocket);
         break;
       default:
-        const error = `Invalid request type: ${request}`;
-        webSocket.send(JSON.stringify({ error }));
+        webSocket.send(JSON.stringify({ error: 'Invalid request type' }));
     }
   }
 
