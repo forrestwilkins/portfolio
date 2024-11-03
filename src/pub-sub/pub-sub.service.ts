@@ -53,11 +53,24 @@ class PubSubService {
 
     // Remove subscriber on disconnect
     subscriber.on('close', () => {
-      const filtered = this.channels[channel].subscribers.filter(
-        (sub) => sub.id !== subscriber.id,
-      );
-      this.channels[channel].subscribers = filtered;
+      this.unsubscribe(channel, subscriber);
     });
+  }
+
+  unsubscribe(channel: string, subscriber: WebSocketWithId) {
+    if (!this.channels[channel]) {
+      return;
+    }
+    const filtered = this.channels[channel].subscribers.filter(
+      (sub) => sub.id !== subscriber.id,
+    );
+    this.channels[channel].subscribers = filtered;
+  }
+
+  unsubscribeAll(subscriber: WebSocketWithId) {
+    for (const channel in this.channels) {
+      this.unsubscribe(channel, subscriber);
+    }
   }
 }
 
