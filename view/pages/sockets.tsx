@@ -1,18 +1,30 @@
-import useWebSocket from 'react-use-websocket';
 import Canvas from '../components/shared/canvas/canvas';
-import { useIsDarkMode, useScreenSize } from '../hooks/shared.hooks';
-import { getWebSocketURL, isMobileAgent } from '../utils/shared.utils';
+import {
+  PubSubMessage,
+  useIsDarkMode,
+  useScreenSize,
+  useSubscription,
+} from '../hooks/shared.hooks';
+import { isMobileAgent } from '../utils/shared.utils';
+
+const SOCKETS_CHANNEL = 'sockets';
+
+interface Dot {
+  x: number;
+  y: number;
+  duration: number;
+}
 
 const Sockets = () => {
   const [canvasWidth, canvasHeight] = useScreenSize();
   const isDarkMode = useIsDarkMode();
 
-  const { sendMessage } = useWebSocket(getWebSocketURL(), {
+  const { sendMessage } = useSubscription(SOCKETS_CHANNEL, {
     onMessage: (event) => {
-      const data: { x: number; y: number } = JSON.parse(event.data);
+      const { body }: PubSubMessage<Dot> = JSON.parse(event.data);
       const canvas = document.querySelector('canvas');
-      if (canvas) {
-        drawDot(data.x, data.y, canvas);
+      if (canvas && body) {
+        drawDot(body.x, body.y, canvas);
       }
     },
   });
@@ -26,6 +38,15 @@ const Sockets = () => {
     ctx.fillRect(x, y, 1, 1);
   };
 
+  const sendDot = (x: number, y: number, duration: number) => {
+    const message = {
+      request: 'PUBLISH',
+      channel: SOCKETS_CHANNEL,
+      body: { x, y, duration },
+    };
+    sendMessage(JSON.stringify(message));
+  };
+
   const handleMouseUp = (
     x: number,
     y: number,
@@ -36,8 +57,8 @@ const Sockets = () => {
     if (isMobile) {
       return;
     }
-    sendMessage(JSON.stringify({ x, y, duration }));
     drawDot(x, y, canvas);
+    sendDot(x, y, duration);
   };
 
   const handleTouchEnd = (
@@ -46,22 +67,14 @@ const Sockets = () => {
     duration: number,
     canvas: HTMLCanvasElement,
   ) => {
-    sendMessage(JSON.stringify({ x, y, duration }));
     drawDot(x, y, canvas);
-  };
-
-  const handleRender = (canvas: HTMLCanvasElement) => {
-    const ctx = canvas.getContext('2d');
-    if (!ctx) {
-      return;
-    }
+    sendDot(x, y, duration);
   };
 
   return (
     <Canvas
       width={canvasWidth}
       height={canvasHeight}
-      onFrameRender={handleRender}
       onMouseUp={handleMouseUp}
       onTouchEnd={handleTouchEnd}
       fillViewport

@@ -1,3 +1,5 @@
+// TODO: Add refresh button for certain pages
+
 import {
   Clear,
   DarkMode,
