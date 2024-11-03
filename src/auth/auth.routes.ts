@@ -1,10 +1,12 @@
-import { v4 as uuidv4 } from 'uuid';
 import express from 'express';
+import AuthService from './auth.service';
 
 const authRouter = express.Router();
+const authService = new AuthService();
 
 authRouter.post('/', (_, res) => {
-  res.json({ token: uuidv4() });
+  const token = authService.generateToken();
+  res.json({ token });
 });
 
 export default authRouter;
