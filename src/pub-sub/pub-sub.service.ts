@@ -17,20 +17,20 @@ class PubSubService {
       data.toString(),
     );
     if (request === 'PUBLISH') {
-      this.publish(webSocket.id, channel, body);
+      this.publish(channel, body, webSocket);
     }
     if (request === 'SUBSCRIBE') {
-      this.subscribe(webSocket, channel, token);
+      this.subscribe(channel, token, webSocket);
     }
   }
 
-  publish(publisherId: string, channel: string, message: unknown) {
+  publish(channel: string, message: unknown, publisher?: WebSocketWithId) {
     if (!this.channels[channel]) {
       console.error(`Channel ${channel} does not exist.`);
       return;
     }
     for (const subscriber of this.channels[channel].subscribers) {
-      if (subscriber.id === publisherId) {
+      if (subscriber.id === publisher?.id) {
         continue;
       }
       subscriber.send(
@@ -42,7 +42,7 @@ class PubSubService {
     }
   }
 
-  subscribe(subscriber: WebSocketWithId, channel: string, token: string) {
+  subscribe(channel: string, token: string, subscriber: WebSocketWithId) {
     if (!this.channels[channel]) {
       // Create the channel if it doesn't exist
       this.channels[channel] = { subscribers: [] };
