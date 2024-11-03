@@ -16,14 +16,19 @@ class PubSubService {
     const { channel, body, request, token }: PubSubMessage = JSON.parse(
       data.toString(),
     );
-    if (request === 'PUBLISH') {
-      this.publish(channel, body, webSocket);
-    }
-    if (request === 'SUBSCRIBE') {
-      this.subscribe(channel, token, webSocket);
-    }
-    if (request === 'UNSUBSCRIBE') {
-      this.unsubscribe(channel, webSocket);
+    switch (request) {
+      case 'PUBLISH':
+        this.publish(channel, body, webSocket);
+        break;
+      case 'SUBSCRIBE':
+        this.subscribe(channel, token, webSocket);
+        break;
+      case 'UNSUBSCRIBE':
+        this.unsubscribe(channel, webSocket);
+        break;
+      default:
+        const error = `Invalid request type: ${request}`;
+        webSocket.send(JSON.stringify({ error }));
     }
   }
 
