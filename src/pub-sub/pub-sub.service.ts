@@ -22,6 +22,9 @@ class PubSubService {
     if (request === 'SUBSCRIBE') {
       this.subscribe(channel, token, webSocket);
     }
+    if (request === 'UNSUBSCRIBE') {
+      this.unsubscribe(channel, webSocket);
+    }
   }
 
   publish(channel: string, message: unknown, publisher?: WebSocketWithId) {
@@ -65,12 +68,6 @@ class PubSubService {
       (sub) => sub.id !== subscriber.id,
     );
     this.channels[channel].subscribers = filtered;
-  }
-
-  unsubscribeAll(subscriber: WebSocketWithId) {
-    for (const channel in this.channels) {
-      this.unsubscribe(channel, subscriber);
-    }
   }
 }
 
