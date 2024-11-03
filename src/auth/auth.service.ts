@@ -5,6 +5,8 @@ class AuthService {
   generateToken() {
     return uuidv4();
   }
+
+  // TODO: Implement addTokenToLocals once more routes are added
   async addTokenToLocals(req: Request, res: Response, next: NextFunction) {
     const { authorization } = req.headers;
     const [type, token] = authorization?.split(' ') ?? [];
