@@ -12,7 +12,7 @@ let redisClient: RedisClientType;
 })();
 
 class CacheService {
-  async set(key: string, value: any) {
+  async set(key: string, value: unknown) {
     await redisClient.set(key, JSON.stringify(value));
   }
 
