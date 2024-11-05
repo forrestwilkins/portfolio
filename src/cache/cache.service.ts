@@ -1,7 +1,7 @@
 import { createClient, RedisClientType } from 'redis';
 
 class CacheService {
-  private client: RedisClientType;
+  public client: RedisClientType;
 
   constructor() {
     this.client = createClient();
@@ -16,4 +16,5 @@ class CacheService {
   }
 }
 
+export const cacheService = new CacheService();
 export default CacheService;
