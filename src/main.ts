@@ -15,11 +15,8 @@ dotenv.config();
   const app = express();
   const server = createServer(app);
   const webSocketServer = new WebSocketServerWithIds({ path: '/ws', server });
-
-  app.use(cors());
-
-  // Connect to Redis
   await cacheService.connect();
+  app.use(cors());
 
   // Serve static files and API routes
   const __dirname = dirname(fileURLToPath(import.meta.url));
