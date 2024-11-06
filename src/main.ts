@@ -5,9 +5,9 @@ import { createServer } from 'http';
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
 import appRouter from './app.routes';
-import { cacheService } from './cache/cache.service';
+import cacheService from './cache/cache.service';
 import { WebSocketServerWithIds } from './pub-sub/pub-sub.models';
-import { pubSubService } from './pub-sub/pub-sub.service';
+import pubSubService from './pub-sub/pub-sub.service';
 
 dotenv.config();
 

@@ -1,5 +1,5 @@
 import WebSocket from 'ws';
-import { cacheService } from '../cache/cache.service';
+import cacheService from '../cache/cache.service';
 import { PubSubMessage, WebSocketWithId } from './pub-sub.models';
 
 class PubSubService {
@@ -77,5 +77,5 @@ class PubSubService {
   }
 }
 
-export const pubSubService = new PubSubService();
-export default PubSubService;
+const pubSubService = new PubSubService();
+export default pubSubService;
