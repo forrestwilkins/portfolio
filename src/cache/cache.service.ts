@@ -21,16 +21,23 @@ class CacheService {
     await this.client.connect();
   }
 
+  getChannelKey(channel: string) {
+    return `channel:${channel}`;
+  }
+
   async getSubscribers(channel: string) {
-    return this.client.sMembers(`channel:${channel}`);
+    const channelKey = this.getChannelKey(channel);
+    return this.client.sMembers(channelKey);
   }
 
   async subscribe(channel: string, token: string) {
-    return this.client.sAdd(`channel:${channel}`, token);
+    const channelKey = this.getChannelKey(channel);
+    return this.client.sAdd(channelKey, token);
   }
 
   async unsubscribe(channel: string, token: string) {
-    return this.client.sRem(`channel:${channel}`, token);
+    const channelKey = this.getChannelKey(channel);
+    return this.client.sRem(channelKey, token);
   }
 }
 
