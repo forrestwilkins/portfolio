@@ -34,9 +34,7 @@ class PubSubService {
     message: unknown,
     publisher?: WebSocketWithId,
   ) {
-    const subscriberIds = await cacheService.client.sMembers(
-      `channel:${channel}`,
-    );
+    const subscriberIds = await cacheService.getSubscribers(channel);
     if (subscriberIds.length === 0) {
       console.error(`Channel ${channel} does not have any subscribers.`);
       return;
@@ -60,9 +58,9 @@ class PubSubService {
   async subscribe(channel: string, token: string, subscriber: WebSocketWithId) {
     subscriber.id = token;
 
-    // Add subscriber to local map and Redis set
+    // Add subscriber to Redis set and local map
+    await cacheService.subscribe(channel, token);
     this.subscribers[token] = subscriber;
-    await cacheService.client.sAdd(`channel:${channel}`, token);
 
     // Clean up on disconnect
     subscriber.on('close', async () => {
@@ -72,7 +70,7 @@ class PubSubService {
   }
 
   async unsubscribe(channel: string, subscriber: WebSocketWithId) {
-    await cacheService.client.sRem(`channel:${channel}`, subscriber.id);
+    await cacheService.unsubscribe(channel, subscriber.id);
     delete this.subscribers[subscriber.id];
   }
 }

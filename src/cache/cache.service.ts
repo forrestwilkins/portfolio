@@ -4,7 +4,7 @@ import { createClient, RedisClientType } from 'redis';
 dotenv.config();
 
 class CacheService {
-  public client: RedisClientType;
+  private client: RedisClientType;
 
   constructor() {
     this.client = createClient({
@@ -19,6 +19,18 @@ class CacheService {
 
   async connect() {
     await this.client.connect();
+  }
+
+  async getSubscribers(channel: string) {
+    return this.client.sMembers(`channel:${channel}`);
+  }
+
+  async subscribe(channel: string, token: string) {
+    return this.client.sAdd(`channel:${channel}`, token);
+  }
+
+  async unsubscribe(channel: string, token: string) {
+    return this.client.sRem(`channel:${channel}`, token);
   }
 }
 
