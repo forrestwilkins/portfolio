@@ -21,8 +21,26 @@ class CacheService {
     await this.client.connect();
   }
 
+  getUserKey(token: string) {
+    return `user:${token}`;
+  }
+
   getChannelKey(channel: string) {
     return `channel:${channel}`;
+  }
+
+  async getUser(token: string) {
+    const userKey = this.getUserKey(token);
+    const user = await this.client.get(userKey);
+    if (!user) {
+      return null;
+    }
+    return JSON.parse(user);
+  }
+
+  async setUser(token: string) {
+    const userKey = this.getUserKey(token);
+    return this.client.set(userKey, JSON.stringify({ createdAt: new Date() }));
   }
 
   async getSubscribers(channel: string) {
