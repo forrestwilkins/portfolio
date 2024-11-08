@@ -1,15 +1,13 @@
 import WebSocket from 'ws';
-import {
-  PubSubChannel,
-  PubSubMessage,
-  WebSocketWithId,
-} from './pub-sub.models';
+import cacheService from '../cache/cache.service';
+import { PubSubMessage, WebSocketWithId } from './pub-sub.models';
 
 class PubSubService {
-  private channels: Record<string, PubSubChannel>;
+  /** Local mapping of subscriber IDs to WebSocket connections */
+  private subscribers: Record<string, WebSocketWithId>;
 
   constructor() {
-    this.channels = {};
+    this.subscribers = {};
   }
 
   handleMessage(webSocket: WebSocketWithId, data: WebSocket.RawData) {
@@ -31,49 +29,51 @@ class PubSubService {
     }
   }
 
-  publish(channel: string, message: unknown, publisher?: WebSocketWithId) {
-    if (!this.channels[channel]) {
-      console.error(`Channel ${channel} does not exist.`);
+  async publish(
+    channel: string,
+    message: unknown,
+    publisher?: WebSocketWithId,
+  ) {
+    const subscriberIds = await cacheService.getSubscribers(channel);
+    if (subscriberIds.length === 0) {
+      console.error(`Channel ${channel} does not have any subscribers.`);
       return;
     }
-    for (const subscriber of this.channels[channel].subscribers) {
-      if (subscriber.id === publisher?.id) {
+    for (const subscriberId of subscriberIds) {
+      if (subscriberId === publisher?.id) {
         continue;
       }
-      subscriber.send(
-        JSON.stringify({
-          channel: channel,
-          body: message,
-        }),
-      );
+      const subscriber = this.subscribers[subscriberId];
+      if (subscriber?.readyState === WebSocket.OPEN) {
+        subscriber.send(
+          JSON.stringify({
+            channel: channel,
+            body: message,
+          }),
+        );
+      }
     }
   }
 
-  subscribe(channel: string, token: string, subscriber: WebSocketWithId) {
-    if (!this.channels[channel]) {
-      // Create the channel if it doesn't exist
-      this.channels[channel] = { subscribers: [] };
-    }
-
+  async subscribe(channel: string, token: string, subscriber: WebSocketWithId) {
     subscriber.id = token;
-    this.channels[channel].subscribers.push(subscriber);
 
-    // Remove subscriber on disconnect
-    subscriber.on('close', () => {
-      this.unsubscribe(channel, subscriber);
+    // Add subscriber to Redis set and local map
+    await cacheService.subscribe(channel, token);
+    this.subscribers[token] = subscriber;
+
+    // Clean up on disconnect
+    subscriber.on('close', async () => {
+      await this.unsubscribe(channel, subscriber);
+      delete this.subscribers[token];
     });
   }
 
-  unsubscribe(channel: string, subscriber: WebSocketWithId) {
-    if (!this.channels[channel]) {
-      return;
-    }
-    const filtered = this.channels[channel].subscribers.filter(
-      (sub) => sub.id !== subscriber.id,
-    );
-    this.channels[channel].subscribers = filtered;
+  async unsubscribe(channel: string, subscriber: WebSocketWithId) {
+    await cacheService.unsubscribe(channel, subscriber.id);
+    delete this.subscribers[subscriber.id];
   }
 }
 
-export const pubSubService = new PubSubService();
-export default PubSubService;
+const pubSubService = new PubSubService();
+export default pubSubService;

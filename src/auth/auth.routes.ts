@@ -1,8 +1,7 @@
 import express from 'express';
-import AuthService from './auth.service';
+import authService from './auth.service';
 
 const authRouter = express.Router();
-const authService = new AuthService();
 
 authRouter.post('/', (_, res) => {
   const token = authService.generateToken();
