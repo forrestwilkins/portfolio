@@ -4,10 +4,10 @@ import { PubSubMessage, WebSocketWithId } from './pub-sub.models';
 
 class PubSubService {
   /** Local mapping of subscriber IDs to WebSocket connections */
-  private subscribers: Map<string, WebSocketWithId>;
+  private subscribers: Record<string, WebSocketWithId>;
 
   constructor() {
-    this.subscribers = new Map();
+    this.subscribers = {};
   }
 
   handleMessage(webSocket: WebSocketWithId, data: WebSocket.RawData) {
@@ -45,7 +45,7 @@ class PubSubService {
       if (subscriberId === publisher?.id) {
         continue;
       }
-      const subscriber = this.subscribers.get(subscriberId);
+      const subscriber = this.subscribers[subscriberId];
       if (subscriber?.readyState === WebSocket.OPEN) {
         subscriber.send(
           JSON.stringify({
@@ -61,19 +61,19 @@ class PubSubService {
     subscriber.id = token;
 
     // Add subscriber to local map and Redis set
-    this.subscribers.set(token, subscriber);
+    this.subscribers[token] = subscriber;
     await cacheService.client.sAdd(`channel:${channel}`, token);
 
     // Clean up on disconnect
     subscriber.on('close', async () => {
-      this.subscribers.delete(token);
       await this.unsubscribe(channel, subscriber);
+      delete this.subscribers[token];
     });
   }
 
   async unsubscribe(channel: string, subscriber: WebSocketWithId) {
     await cacheService.client.sRem(`channel:${channel}`, subscriber.id);
-    this.subscribers.delete(subscriber.id);
+    delete this.subscribers[subscriber.id];
   }
 }
 
