@@ -34,11 +34,14 @@ class PubSubService {
     message: unknown,
     publisher?: WebSocketWithId,
   ) {
-    const subscriberIds = await cacheService.getSubscribers(channel);
+    const channelKey = this.getChannelCacheKey(channel);
+    const subscriberIds = await cacheService.getSetMembers(channelKey);
+
     if (subscriberIds.length === 0) {
       console.error(`Channel ${channel} does not have any subscribers.`);
       return;
     }
+
     for (const subscriberId of subscriberIds) {
       if (subscriberId === publisher?.id) {
         continue;
@@ -59,7 +62,8 @@ class PubSubService {
     subscriber.id = token;
 
     // Add subscriber to Redis set and local map
-    await cacheService.subscribe(channel, token);
+    const channelKey = this.getChannelCacheKey(channel);
+    await cacheService.addSetMember(channelKey, token);
     this.subscribers[token] = subscriber;
 
     // Clean up on disconnect
@@ -70,8 +74,14 @@ class PubSubService {
   }
 
   async unsubscribe(channel: string, subscriber: WebSocketWithId) {
-    await cacheService.unsubscribe(channel, subscriber.id);
+    const channelKey = this.getChannelCacheKey(channel);
+    await cacheService.removeSetMember(channelKey, subscriber.id);
+
     delete this.subscribers[subscriber.id];
+  }
+
+  getChannelCacheKey(channel: string) {
+    return `channel:${channel}`;
   }
 }
 
