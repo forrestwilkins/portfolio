@@ -32,6 +32,10 @@ class CacheService {
   async removeSetMember(key: string, value: string) {
     return this.client.sRem(key, value);
   }
+
+  async addToStream(key: string, value: Record<string, any>) {
+    return this.client.xAdd(key, '*', value);
+  }
 }
 
 const cacheService = new CacheService();
