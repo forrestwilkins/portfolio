@@ -34,7 +34,13 @@ class CacheService {
   }
 
   async addToStream(key: string, value: Record<string, any>) {
-    return this.client.xAdd(key, '*', value);
+    return this.client.xAdd(key, '*', value, {
+      TRIM: {
+        strategy: 'MAXLEN',
+        strategyModifier: '~',
+        threshold: 100000,
+      },
+    });
   }
 }
 
