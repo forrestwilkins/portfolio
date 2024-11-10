@@ -15,7 +15,7 @@ dotenv.config();
   const app = express();
   const server = createServer(app);
   const webSocketServer = new WebSocketServerWithIds({ path: '/ws', server });
-  await cacheService.connect();
+  await cacheService.initializeCache();
   app.use(cors());
 
   // Serve static files and API routes

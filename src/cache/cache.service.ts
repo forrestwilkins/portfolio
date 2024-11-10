@@ -1,3 +1,4 @@
+import { CronJob } from 'cron';
 import * as dotenv from 'dotenv';
 import { createClient, RedisClientType } from 'redis';
 
@@ -17,8 +18,9 @@ class CacheService {
     });
   }
 
-  async connect() {
+  async initializeCache() {
     await this.client.connect();
+    await this.initCleanUpJob();
   }
 
   async getSetMembers(key: string) {
@@ -31,6 +33,11 @@ class CacheService {
 
   async removeSetMember(key: string, value: string) {
     return this.client.sRem(key, value);
+  }
+
+  async getStreamKeys() {
+    const streams = await this.client.scan(0, { TYPE: 'stream' });
+    return streams.keys;
   }
 
   async getStreamMessages(key: string, start = '+', end = '-') {
@@ -47,10 +54,6 @@ class CacheService {
     });
   }
 
-  /**
-   * Expires messages in a stream older than the given time.
-   * Defaults to 1 week ago.
-   */
   async expireStreamMessages(
     key: string,
     time = Date.now() - 1000 * 60 * 60 * 24 * 7,
@@ -58,6 +61,20 @@ class CacheService {
     return this.client.xTrim(key, 'MINID', time, {
       strategyModifier: '~',
     });
+  }
+
+  async cleanUpStreams() {
+    const streams = await this.getStreamKeys();
+    for (const stream of streams) {
+      await this.expireStreamMessages(stream);
+    }
+  }
+
+  async initCleanUpJob() {
+    const cleanUpJob = new CronJob('0 0 * * 0', async () => {
+      await this.cleanUpStreams();
+    });
+    cleanUpJob.start();
   }
 }
 
