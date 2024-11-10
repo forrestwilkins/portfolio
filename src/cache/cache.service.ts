@@ -71,6 +71,7 @@ class CacheService {
   }
 
   async initCleanUpJob() {
+    // Clean up streams every Sunday at midnight
     const cleanUpJob = new CronJob('0 0 * * 0', async () => {
       await this.cleanUpStreams();
     });
