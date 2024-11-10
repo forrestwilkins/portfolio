@@ -33,8 +33,8 @@ class CacheService {
     return this.client.sRem(key, value);
   }
 
-  async getStreamMessages(key: string, start = '-', end = '+') {
-    return this.client.xRange(key, start, end);
+  async getStreamMessages(key: string, start = '+', end = '-') {
+    return this.client.xRevRange(key, start, end);
   }
 
   async addStreamMessage(key: string, value: Record<string, any>) {
@@ -42,7 +42,7 @@ class CacheService {
       TRIM: {
         strategy: 'MAXLEN',
         strategyModifier: '~',
-        threshold: 100000,
+        threshold: 10000,
       },
     });
   }

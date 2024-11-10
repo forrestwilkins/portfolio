@@ -1,3 +1,4 @@
+import { useCallback, useEffect } from 'react';
 import Canvas from '../components/shared/canvas/canvas';
 import {
   PubSubMessage,
@@ -5,6 +6,7 @@ import {
   useScreenSize,
   useSubscription,
 } from '../hooks/shared.hooks';
+import useAppStore from '../store/app.store';
 import { isMobileAgent } from '../utils/shared.utils';
 
 const SOCKETS_CHANNEL = 'sockets';
@@ -16,6 +18,8 @@ interface Dot {
 }
 
 const Sockets = () => {
+  const token = useAppStore((state) => state.token);
+
   const [canvasWidth, canvasHeight] = useScreenSize();
   const isDarkMode = useIsDarkMode();
 
@@ -29,14 +33,37 @@ const Sockets = () => {
     },
   });
 
-  const drawDot = (x: number, y: number, canvas: HTMLCanvasElement) => {
-    const ctx = canvas.getContext('2d');
-    if (!ctx) {
+  const drawDot = useCallback(
+    (x: number, y: number, canvas: HTMLCanvasElement) => {
+      const ctx = canvas.getContext('2d');
+      if (!ctx) {
+        return;
+      }
+      ctx.fillStyle = isDarkMode ? 'white' : 'black';
+      ctx.fillRect(x, y, 1, 1);
+    },
+    [isDarkMode],
+  );
+
+  useEffect(() => {
+    if (!token) {
       return;
     }
-    ctx.fillStyle = isDarkMode ? 'white' : 'black';
-    ctx.fillRect(x, y, 1, 1);
-  };
+    const init = async () => {
+      const result = await fetch('/api/interactions/sockets', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data: { message: Dot }[] = await result.json();
+      const canvas = document.querySelector('canvas');
+
+      for (const { message } of data) {
+        if (canvas) {
+          drawDot(message.x, message.y, canvas);
+        }
+      }
+    };
+    init();
+  }, [token, drawDot]);
 
   const sendDot = (x: number, y: number, duration: number) => {
     const message = {
