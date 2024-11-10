@@ -2,12 +2,23 @@ import WebSocket from 'ws';
 import cacheService from '../cache/cache.service';
 import { PubSubMessage, WebSocketWithId } from './pub-sub.models';
 
+type ChannelHandler = (
+  message: unknown,
+  publisher: WebSocketWithId,
+) => Promise<void>;
+
 class PubSubService {
-  /** Local mapping of subscriber IDs to WebSocket connections */
+  /** Local mapping of subscriber IDs to websockets */
   private subscribers: Record<string, WebSocketWithId>;
+
+  /** Map of channel names to message handlers */
+  private channelHandlers: Record<string, ChannelHandler>;
 
   constructor() {
     this.subscribers = {};
+    this.channelHandlers = {};
+
+    // TODO: Register channel handlers here
   }
 
   handleMessage(webSocket: WebSocketWithId, data: WebSocket.RawData) {
@@ -34,6 +45,11 @@ class PubSubService {
     message: unknown,
     publisher?: WebSocketWithId,
   ) {
+    // Handle channel specific actions
+    if (this.channelHandlers[channel] && publisher) {
+      await this.channelHandlers[channel](message, publisher);
+    }
+
     const channelKey = this.getChannelCacheKey(channel);
     const subscriberIds = await cacheService.getSetMembers(channelKey);
 
