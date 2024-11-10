@@ -11,6 +11,8 @@ interface Dot {
 
 class InteractionsService {
   async getSocketTestStream() {
+    // Clean up old messages before returning the current ones
+    await cacheService.expireStreamMessages(SOCKETS_KEY);
     return cacheService.getStreamMessages(SOCKETS_KEY);
   }
 

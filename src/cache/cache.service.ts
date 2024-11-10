@@ -46,6 +46,19 @@ class CacheService {
       },
     });
   }
+
+  /**
+   * Expires messages in a stream older than the given time.
+   * Defaults to 1 week ago.
+   */
+  async expireStreamMessages(
+    key: string,
+    time = Date.now() - 1000 * 60 * 60 * 24 * 7,
+  ) {
+    return this.client.xTrim(key, 'MINID', time, {
+      strategyModifier: '~',
+    });
+  }
 }
 
 const cacheService = new CacheService();
