@@ -33,6 +33,10 @@ class CacheService {
     return this.client.sRem(key, value);
   }
 
+  async getStream(key: string, start = '-', end = '+') {
+    return this.client.xRange(key, start, end);
+  }
+
   async addToStream(key: string, value: Record<string, any>) {
     return this.client.xAdd(key, '*', value, {
       TRIM: {
