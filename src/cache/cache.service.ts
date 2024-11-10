@@ -37,8 +37,8 @@ class CacheService {
     return this.client.xRevRange(key, start, end);
   }
 
-  async addStreamMessage(key: string, value: Record<string, any>) {
-    return this.client.xAdd(key, '*', value, {
+  async addStreamMessage(key: string, message: Record<string, any>) {
+    return this.client.xAdd(key, '*', message, {
       TRIM: {
         strategy: 'MAXLEN',
         strategyModifier: '~',

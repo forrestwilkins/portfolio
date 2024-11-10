@@ -15,6 +15,8 @@ interface Dot {
   x: number;
   y: number;
   duration: number;
+  canvasWidth: number;
+  canvasHeight: number;
 }
 
 const Sockets = () => {
@@ -66,10 +68,21 @@ const Sockets = () => {
   }, [token, drawDot]);
 
   const sendDot = (x: number, y: number, duration: number) => {
-    const message = {
+    if (!token) {
+      return;
+    }
+    const body = {
+      x,
+      y,
+      duration,
+      canvasWidth,
+      canvasHeight,
+    };
+    const message: PubSubMessage<Dot> = {
       request: 'PUBLISH',
       channel: SOCKETS_CHANNEL,
-      body: { x, y, duration },
+      token,
+      body,
     };
     sendMessage(JSON.stringify(message));
   };

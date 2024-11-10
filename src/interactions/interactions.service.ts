@@ -7,6 +7,8 @@ interface Dot {
   x: number;
   y: number;
   duration: number;
+  canvasWidth: number;
+  canvasHeight: number;
 }
 
 class InteractionsService {
@@ -14,12 +16,17 @@ class InteractionsService {
     return cacheService.getStreamMessages(SOCKETS_KEY);
   }
 
-  async handleSocketTestMessage(message: Dot, publisher: WebSocketWithId) {
+  async handleSocketTestMessage(
+    { x, y, duration, canvasWidth, canvasHeight }: Dot,
+    publisher: WebSocketWithId,
+  ) {
     await cacheService.addStreamMessage(SOCKETS_KEY, {
       userId: publisher.id,
-      x: message.x.toString(),
-      y: message.y.toString(),
-      duration: message.duration.toString(),
+      x: x.toString(),
+      y: y.toString(),
+      duration: duration.toString(),
+      canvasWidth: canvasWidth.toString(),
+      canvasHeight: canvasHeight.toString(),
     });
   }
 }
