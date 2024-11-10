@@ -9,7 +9,7 @@ interface Dot {
 
 class InteractionsService {
   async handleSocketTestMessage(message: Dot, publisher: WebSocketWithId) {
-    await cacheService.addToStream('sockets', {
+    await cacheService.addStreamMessage('sockets', {
       userId: publisher.id,
       x: message.x.toString(),
       y: message.y.toString(),
