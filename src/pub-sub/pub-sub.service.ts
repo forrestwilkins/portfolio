@@ -1,9 +1,10 @@
 import WebSocket from 'ws';
 import cacheService from '../cache/cache.service';
+import interactionsService from '../interactions/interactions.service';
 import { PubSubMessage, WebSocketWithId } from './pub-sub.models';
 
 type ChannelHandler = (
-  message: unknown,
+  message: any,
   publisher: WebSocketWithId,
 ) => Promise<void>;
 
@@ -16,9 +17,11 @@ class PubSubService {
 
   constructor() {
     this.subscribers = {};
-    this.channelHandlers = {};
 
-    // TODO: Register channel handlers here
+    // Register channel handlers
+    this.channelHandlers = {
+      sockets: interactionsService.handleSocketTestMessage,
+    };
   }
 
   handleMessage(webSocket: WebSocketWithId, data: WebSocket.RawData) {
