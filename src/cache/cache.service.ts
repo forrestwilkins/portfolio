@@ -56,7 +56,7 @@ class CacheService {
 
   async expireStreamMessages(
     key: string,
-    time = Date.now() - 1000 * 60 * 60 * 24 * 7,
+    time = Date.now() - 1000 * 60 * 60 * 24,
   ) {
     return this.client.xTrim(key, 'MINID', time, {
       strategyModifier: '~',
@@ -71,8 +71,8 @@ class CacheService {
   }
 
   async initCleanUpJob() {
-    // Clean up streams every Sunday at midnight
-    const cleanUpJob = new CronJob('0 0 * * 0', async () => {
+    // Clean up streams every night at midnight
+    const cleanUpJob = new CronJob('0 0 * * *', async () => {
       await this.cleanUpStreams();
     });
     cleanUpJob.start();
