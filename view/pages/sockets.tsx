@@ -15,8 +15,6 @@ interface Dot {
   x: number;
   y: number;
   duration: number;
-  canvasWidth: number;
-  canvasHeight: number;
 }
 
 const Sockets = () => {
@@ -30,7 +28,9 @@ const Sockets = () => {
       const { body }: PubSubMessage<Dot> = JSON.parse(event.data);
       const canvas = document.querySelector('canvas');
       if (canvas && body) {
-        drawDot(body.x, body.y, canvas);
+        const denormalizedX = body.x * canvasWidth;
+        const denormalizedY = body.y * canvasHeight;
+        drawDot(denormalizedX, denormalizedY, canvas);
       }
     },
   });
@@ -60,7 +60,9 @@ const Sockets = () => {
 
       for (const { message } of data) {
         if (canvas) {
-          drawDot(message.x, message.y, canvas);
+          const denormalizedX = message.x * canvasWidth;
+          const denormalizedY = message.y * canvasHeight;
+          drawDot(denormalizedX, denormalizedY, canvas);
         }
       }
     };
@@ -71,13 +73,18 @@ const Sockets = () => {
     if (!token) {
       return;
     }
+
+    const normalizedX = x / canvasWidth;
+    const normalizedY = y / canvasHeight;
+
     const body = {
-      x,
-      y,
+      x: normalizedX,
+      y: normalizedY,
       duration,
       canvasWidth,
       canvasHeight,
     };
+
     const message: PubSubMessage<Dot> = {
       request: 'PUBLISH',
       channel: SOCKETS_CHANNEL,

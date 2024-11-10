@@ -7,8 +7,6 @@ interface Dot {
   x: number;
   y: number;
   duration: number;
-  canvasWidth: number;
-  canvasHeight: number;
 }
 
 class InteractionsService {
@@ -17,7 +15,7 @@ class InteractionsService {
   }
 
   async handleSocketTestMessage(
-    { x, y, duration, canvasWidth, canvasHeight }: Dot,
+    { x, y, duration }: Dot,
     publisher: WebSocketWithId,
   ) {
     await cacheService.addStreamMessage(SOCKETS_KEY, {
@@ -25,8 +23,6 @@ class InteractionsService {
       x: x.toString(),
       y: y.toString(),
       duration: duration.toString(),
-      canvasWidth: canvasWidth.toString(),
-      canvasHeight: canvasHeight.toString(),
     });
   }
 }
