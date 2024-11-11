@@ -30,7 +30,7 @@ import { clearCanvas } from '../shared/canvas/canvas.utils';
 
 const TopNav = () => {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isClearLoading, setIsClearLoading] = useState(false);
 
   const isCanvasPaused = useAppStore((state) => state.isCanvasPaused);
   const setIsCanvasPaused = useAppStore((state) => state.setIsCanvasPaused);
@@ -61,11 +61,11 @@ const TopNav = () => {
 
   const handleClearCanvasClick = async () => {
     if (isSockets) {
-      setIsLoading(true);
+      setIsClearLoading(true);
       await fetch('/api/interactions/sockets', {
         method: 'DELETE',
       });
-      setIsLoading(false);
+      setIsClearLoading(false);
     }
     ripplesRef.current = [];
     clearCanvas();
@@ -132,8 +132,11 @@ const TopNav = () => {
           )}
 
           {showClearCanvas && (
-            <MenuItem onClick={handleClearCanvasClick} disabled={isLoading}>
-              {isLoading ? (
+            <MenuItem
+              onClick={handleClearCanvasClick}
+              disabled={isClearLoading}
+            >
+              {isClearLoading ? (
                 <CircularProgress
                   size={18}
                   sx={{ color: 'white', marginRight: '1.75ch' }}
