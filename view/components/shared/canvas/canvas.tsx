@@ -174,7 +174,7 @@ const Canvas = ({
     };
     window.addEventListener('resize', handleScreenResize);
     return () => window.removeEventListener('resize', handleScreenResize);
-  }, [isFullScreen, fillViewport]);
+  }, [isFullScreen, fillViewport, onScreenResize]);
 
   const getBackgroundColor = () => {
     if (fillViewport && !isFullScreen) {

@@ -47,6 +47,7 @@ const Sockets = () => {
     [isDarkMode],
   );
 
+  // TODO: Add debouncing or prevent subsequent calls on screen resize
   useEffect(() => {
     if (!token) {
       return;
@@ -67,7 +68,7 @@ const Sockets = () => {
       }
     };
     init();
-  }, [token, drawDot]);
+  }, [token, drawDot, canvasWidth, canvasHeight]);
 
   const sendDot = (x: number, y: number, duration: number) => {
     if (!token) {
