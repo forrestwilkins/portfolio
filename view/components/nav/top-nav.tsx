@@ -13,6 +13,7 @@ import {
 import {
   Box,
   Button,
+  CircularProgress,
   IconButton,
   Menu,
   MenuItem,
@@ -29,6 +30,8 @@ import { clearCanvas } from '../shared/canvas/canvas.utils';
 
 const TopNav = () => {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+
   const isCanvasPaused = useAppStore((state) => state.isCanvasPaused);
   const setIsCanvasPaused = useAppStore((state) => state.setIsCanvasPaused);
 
@@ -58,9 +61,11 @@ const TopNav = () => {
 
   const handleClearCanvasClick = async () => {
     if (isSockets) {
+      setIsLoading(true);
       await fetch('/api/interactions/sockets', {
         method: 'DELETE',
       });
+      setIsLoading(false);
     }
     ripplesRef.current = [];
     clearCanvas();
@@ -127,8 +132,15 @@ const TopNav = () => {
           )}
 
           {showClearCanvas && (
-            <MenuItem onClick={handleClearCanvasClick}>
-              <Clear fontSize="small" sx={{ marginRight: '1.25ch' }} />
+            <MenuItem onClick={handleClearCanvasClick} disabled={isLoading}>
+              {isLoading ? (
+                <CircularProgress
+                  size={18}
+                  sx={{ color: 'white', marginRight: '1.75ch' }}
+                />
+              ) : (
+                <Clear fontSize="small" sx={{ marginRight: '1.25ch' }} />
+              )}
               Clear canvas
             </MenuItem>
           )}
