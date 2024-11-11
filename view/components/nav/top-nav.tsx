@@ -39,7 +39,9 @@ const TopNav = () => {
 
   const isHome = location.pathname === '/';
   const isRipples = location.pathname === '/ripples';
+  const isSockets = location.pathname === '/sockets';
   const iOS = /(iPad|iPhone|iPod)/g.test(navigator.userAgent);
+  const showClearCanvas = isRipples || isSockets;
 
   const PauseIcon = isCanvasPaused ? PlayArrow : Pause;
 
@@ -119,7 +121,7 @@ const TopNav = () => {
             </MenuItem>
           )}
 
-          {isRipples && (
+          {showClearCanvas && (
             <MenuItem onClick={handleClearCanvasClick}>
               <Clear fontSize="small" sx={{ marginRight: '1.25ch' }} />
               Clear canvas
