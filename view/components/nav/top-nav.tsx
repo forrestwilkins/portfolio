@@ -94,7 +94,7 @@ const TopNav = () => {
       {!isHome && (
         <Box position="fixed" left="12px" top="12px" zIndex={10} display="flex">
           <Button variant="contained" onClick={() => navigate('/')}>
-            home
+            Home
           </Button>
         </Box>
       )}
