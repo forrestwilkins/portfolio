@@ -1,3 +1,4 @@
+import { CronJob } from 'cron';
 import * as dotenv from 'dotenv';
 import { createClient, RedisClientType } from 'redis';
 
@@ -17,27 +18,64 @@ class CacheService {
     });
   }
 
-  async connect() {
+  async initializeCache() {
     await this.client.connect();
+    await this.initCleanUpJob();
   }
 
-  getChannelKey(channel: string) {
-    return `channel:${channel}`;
+  async getSetMembers(key: string) {
+    return this.client.sMembers(key);
   }
 
-  async getSubscribers(channel: string) {
-    const channelKey = this.getChannelKey(channel);
-    return this.client.sMembers(channelKey);
+  async addSetMember(key: string, value: string) {
+    return this.client.sAdd(key, value);
   }
 
-  async subscribe(channel: string, token: string) {
-    const channelKey = this.getChannelKey(channel);
-    return this.client.sAdd(channelKey, token);
+  async removeSetMember(key: string, value: string) {
+    return this.client.sRem(key, value);
   }
 
-  async unsubscribe(channel: string, token: string) {
-    const channelKey = this.getChannelKey(channel);
-    return this.client.sRem(channelKey, token);
+  async getStreamKeys() {
+    const streams = await this.client.scan(0, { TYPE: 'stream' });
+    return streams.keys;
+  }
+
+  async getStreamMessages(key: string, start = '+', end = '-') {
+    return this.client.xRevRange(key, start, end);
+  }
+
+  async addStreamMessage(key: string, message: Record<string, any>) {
+    return this.client.xAdd(key, '*', message, {
+      TRIM: {
+        strategy: 'MAXLEN',
+        strategyModifier: '~',
+        threshold: 10000,
+      },
+    });
+  }
+
+  async trimStreamMessages(
+    key: string,
+    time = Date.now() - 1000 * 60 * 60 * 24,
+  ) {
+    return this.client.xTrim(key, 'MINID', time, {
+      strategyModifier: '~',
+    });
+  }
+
+  async cleanUpStreams() {
+    const streams = await this.getStreamKeys();
+    for (const stream of streams) {
+      await this.trimStreamMessages(stream);
+    }
+  }
+
+  async initCleanUpJob() {
+    // Clean up streams every night at midnight
+    const cleanUpJob = new CronJob('0 0 * * *', async () => {
+      await this.cleanUpStreams();
+    });
+    cleanUpJob.start();
   }
 }
 

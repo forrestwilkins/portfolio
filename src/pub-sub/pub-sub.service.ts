@@ -1,13 +1,27 @@
 import WebSocket from 'ws';
 import cacheService from '../cache/cache.service';
+import interactionsService from '../interactions/interactions.service';
 import { PubSubMessage, WebSocketWithId } from './pub-sub.models';
 
+type ChannelHandler = (
+  message: any,
+  publisher: WebSocketWithId,
+) => Promise<void>;
+
 class PubSubService {
-  /** Local mapping of subscriber IDs to WebSocket connections */
+  /** Local mapping of subscriber IDs to websockets */
   private subscribers: Record<string, WebSocketWithId>;
+
+  /** Map of channel names to message handlers */
+  private channelHandlers: Record<string, ChannelHandler>;
 
   constructor() {
     this.subscribers = {};
+
+    // Register channel handlers
+    this.channelHandlers = {
+      sockets: interactionsService.handleSocketTestMessage,
+    };
   }
 
   handleMessage(webSocket: WebSocketWithId, data: WebSocket.RawData) {
@@ -34,11 +48,19 @@ class PubSubService {
     message: unknown,
     publisher?: WebSocketWithId,
   ) {
-    const subscriberIds = await cacheService.getSubscribers(channel);
+    // Handle channel specific actions
+    if (this.channelHandlers[channel] && publisher) {
+      await this.channelHandlers[channel](message, publisher);
+    }
+
+    const channelKey = this.getChannelCacheKey(channel);
+    const subscriberIds = await cacheService.getSetMembers(channelKey);
+
     if (subscriberIds.length === 0) {
       console.error(`Channel ${channel} does not have any subscribers.`);
       return;
     }
+
     for (const subscriberId of subscriberIds) {
       if (subscriberId === publisher?.id) {
         continue;
@@ -59,7 +81,8 @@ class PubSubService {
     subscriber.id = token;
 
     // Add subscriber to Redis set and local map
-    await cacheService.subscribe(channel, token);
+    const channelKey = this.getChannelCacheKey(channel);
+    await cacheService.addSetMember(channelKey, token);
     this.subscribers[token] = subscriber;
 
     // Clean up on disconnect
@@ -70,8 +93,14 @@ class PubSubService {
   }
 
   async unsubscribe(channel: string, subscriber: WebSocketWithId) {
-    await cacheService.unsubscribe(channel, subscriber.id);
+    const channelKey = this.getChannelCacheKey(channel);
+    await cacheService.removeSetMember(channelKey, subscriber.id);
+
     delete this.subscribers[subscriber.id];
+  }
+
+  getChannelCacheKey(channel: string) {
+    return `channel:${channel}`;
   }
 }
 

@@ -1,3 +1,4 @@
+import { useCallback, useEffect } from 'react';
 import Canvas from '../components/shared/canvas/canvas';
 import {
   PubSubMessage,
@@ -5,7 +6,9 @@ import {
   useScreenSize,
   useSubscription,
 } from '../hooks/shared.hooks';
+import useAppStore from '../store/app.store';
 import { isMobileAgent } from '../utils/shared.utils';
+import { clearCanvas } from '../components/shared/canvas/canvas.utils';
 
 const SOCKETS_CHANNEL = 'sockets';
 
@@ -16,6 +19,8 @@ interface Dot {
 }
 
 const Sockets = () => {
+  const token = useAppStore((state) => state.token);
+
   const [canvasWidth, canvasHeight] = useScreenSize();
   const isDarkMode = useIsDarkMode();
 
@@ -24,25 +29,72 @@ const Sockets = () => {
       const { body }: PubSubMessage<Dot> = JSON.parse(event.data);
       const canvas = document.querySelector('canvas');
       if (canvas && body) {
-        drawDot(body.x, body.y, canvas);
+        const denormalizedX = body.x * canvasWidth;
+        const denormalizedY = body.y * canvasHeight;
+        drawDot(denormalizedX, denormalizedY, canvas);
       }
     },
   });
 
-  const drawDot = (x: number, y: number, canvas: HTMLCanvasElement) => {
-    const ctx = canvas.getContext('2d');
-    if (!ctx) {
+  const drawDot = useCallback(
+    (x: number, y: number, canvas: HTMLCanvasElement) => {
+      const ctx = canvas.getContext('2d');
+      if (!ctx) {
+        return;
+      }
+      ctx.fillStyle = isDarkMode ? 'white' : 'black';
+      ctx.fillRect(x, y, 1, 1);
+    },
+    [isDarkMode],
+  );
+
+  useEffect(() => {
+    if (!token) {
       return;
     }
-    ctx.fillStyle = isDarkMode ? 'white' : 'black';
-    ctx.fillRect(x, y, 1, 1);
-  };
+    const init = setTimeout(async () => {
+      const result = await fetch('/api/interactions/sockets', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data: { message: Dot }[] = await result.json();
+      const canvas = document.querySelector('canvas');
+
+      clearCanvas();
+      for (const { message } of data) {
+        if (canvas) {
+          const denormalizedX = message.x * canvasWidth;
+          const denormalizedY = message.y * canvasHeight;
+          drawDot(denormalizedX, denormalizedY, canvas);
+        }
+      }
+    }, 200);
+
+    return () => {
+      clearTimeout(init);
+    };
+  }, [token, drawDot, canvasWidth, canvasHeight]);
 
   const sendDot = (x: number, y: number, duration: number) => {
-    const message = {
+    if (!token) {
+      return;
+    }
+
+    const normalizedX = x / canvasWidth;
+    const normalizedY = y / canvasHeight;
+
+    const body = {
+      x: normalizedX,
+      y: normalizedY,
+      duration,
+      canvasWidth,
+      canvasHeight,
+    };
+
+    const message: PubSubMessage<Dot> = {
       request: 'PUBLISH',
       channel: SOCKETS_CHANNEL,
-      body: { x, y, duration },
+      token,
+      body,
     };
     sendMessage(JSON.stringify(message));
   };

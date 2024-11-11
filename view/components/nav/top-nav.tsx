@@ -13,6 +13,7 @@ import {
 import {
   Box,
   Button,
+  CircularProgress,
   IconButton,
   Menu,
   MenuItem,
@@ -29,6 +30,8 @@ import { clearCanvas } from '../shared/canvas/canvas.utils';
 
 const TopNav = () => {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+  const [isClearLoading, setIsClearLoading] = useState(false);
+
   const isCanvasPaused = useAppStore((state) => state.isCanvasPaused);
   const setIsCanvasPaused = useAppStore((state) => state.setIsCanvasPaused);
 
@@ -39,7 +42,9 @@ const TopNav = () => {
 
   const isHome = location.pathname === '/';
   const isRipples = location.pathname === '/ripples';
+  const isSockets = location.pathname === '/sockets';
   const iOS = /(iPad|iPhone|iPod)/g.test(navigator.userAgent);
+  const showClearCanvas = isRipples || isSockets;
 
   const PauseIcon = isCanvasPaused ? PlayArrow : Pause;
 
@@ -54,7 +59,14 @@ const TopNav = () => {
     setAnchorEl(null);
   };
 
-  const handleClearCanvasClick = () => {
+  const handleClearCanvasClick = async () => {
+    if (isSockets) {
+      setIsClearLoading(true);
+      await fetch('/api/interactions/sockets', {
+        method: 'DELETE',
+      });
+      setIsClearLoading(false);
+    }
     ripplesRef.current = [];
     clearCanvas();
     setAnchorEl(null);
@@ -119,9 +131,19 @@ const TopNav = () => {
             </MenuItem>
           )}
 
-          {isRipples && (
-            <MenuItem onClick={handleClearCanvasClick}>
-              <Clear fontSize="small" sx={{ marginRight: '1.25ch' }} />
+          {showClearCanvas && (
+            <MenuItem
+              onClick={handleClearCanvasClick}
+              disabled={isClearLoading}
+            >
+              {isClearLoading ? (
+                <CircularProgress
+                  size={18}
+                  sx={{ color: 'white', marginRight: '1.75ch' }}
+                />
+              ) : (
+                <Clear fontSize="small" sx={{ marginRight: '1.25ch' }} />
+              )}
               Clear canvas
             </MenuItem>
           )}

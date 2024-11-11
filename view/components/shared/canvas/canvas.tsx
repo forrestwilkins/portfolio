@@ -24,6 +24,7 @@ interface Props {
   onMount?(canvas: HTMLCanvasElement): void;
   onMouseDown?(canvas: HTMLCanvasElement, e: MouseEvent<Element>): void;
   onMouseMove?(canvas: HTMLCanvasElement, e: MouseEvent<Element>): void;
+  onScreenResize?(canvas: HTMLCanvasElement): void;
 
   // TODO: Add handler props types so fields can be omitted
   onMouseUp?(
@@ -57,9 +58,10 @@ const Canvas = ({
   onMouseDown,
   onMouseMove,
   onMouseUp,
-  onTouchStart,
+  onScreenResize,
   onTouchEnd,
   onTouchMove,
+  onTouchStart,
   sx,
 }: Props) => {
   const isCanvasPaused = useAppStore((state) => state.isCanvasPaused);
@@ -72,18 +74,20 @@ const Canvas = ({
 
   // On mount actions
   useEffect(() => {
-    if (canvasRef.current) {
-      if (isFullScreen || fillViewport) {
-        canvasRef.current.width = window.innerWidth;
-        canvasRef.current.height = window.innerHeight;
-      } else {
-        canvasRef.current.width = width;
-        canvasRef.current.height = height;
-      }
+    if (!canvasRef.current) {
+      return;
+    }
 
-      if (onMount) {
-        onMount(canvasRef.current);
-      }
+    if (isFullScreen || fillViewport) {
+      canvasRef.current.width = window.innerWidth;
+      canvasRef.current.height = window.innerHeight;
+    } else {
+      canvasRef.current.width = width;
+      canvasRef.current.height = height;
+    }
+
+    if (onMount) {
+      onMount(canvasRef.current);
     }
   }, [onMount, width, height, isFullScreen, fillViewport]);
 
@@ -164,10 +168,13 @@ const Canvas = ({
         canvasRef.current.width = window.innerWidth;
         canvasRef.current.height = window.innerHeight;
       }
+      if (onScreenResize) {
+        onScreenResize(canvasRef.current);
+      }
     };
     window.addEventListener('resize', handleScreenResize);
     return () => window.removeEventListener('resize', handleScreenResize);
-  }, [isFullScreen, fillViewport]);
+  }, [isFullScreen, fillViewport, onScreenResize]);
 
   const getBackgroundColor = () => {
     if (fillViewport && !isFullScreen) {
