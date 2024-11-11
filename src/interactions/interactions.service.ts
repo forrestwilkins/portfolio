@@ -14,6 +14,10 @@ class InteractionsService {
     return cacheService.getStreamMessages(SOCKETS_KEY);
   }
 
+  async clearSocketTestStream() {
+    await cacheService.expireStreamMessages(SOCKETS_KEY, Date.now());
+  }
+
   async handleSocketTestMessage(
     { x, y, duration }: Dot,
     publisher: WebSocketWithId,

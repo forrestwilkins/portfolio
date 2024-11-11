@@ -8,4 +8,9 @@ interactionsRouter.get('/sockets', async (_, res) => {
   res.json(payload);
 });
 
+interactionsRouter.delete('/sockets', async (_, res) => {
+  await interactionsService.clearSocketTestStream();
+  res.status(204).end();
+});
+
 export default interactionsRouter;

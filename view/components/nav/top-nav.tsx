@@ -56,7 +56,12 @@ const TopNav = () => {
     setAnchorEl(null);
   };
 
-  const handleClearCanvasClick = () => {
+  const handleClearCanvasClick = async () => {
+    if (isSockets) {
+      await fetch('/api/interactions/sockets', {
+        method: 'DELETE',
+      });
+    }
     ripplesRef.current = [];
     clearCanvas();
     setAnchorEl(null);
