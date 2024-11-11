@@ -15,7 +15,7 @@ class InteractionsService {
   }
 
   async clearSocketTestStream() {
-    await cacheService.expireStreamMessages(SOCKETS_KEY, Date.now());
+    await cacheService.trimStreamMessages(SOCKETS_KEY, Date.now());
   }
 
   async handleSocketTestMessage(

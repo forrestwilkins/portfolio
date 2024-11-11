@@ -54,7 +54,7 @@ class CacheService {
     });
   }
 
-  async expireStreamMessages(
+  async trimStreamMessages(
     key: string,
     time = Date.now() - 1000 * 60 * 60 * 24,
   ) {
@@ -66,7 +66,7 @@ class CacheService {
   async cleanUpStreams() {
     const streams = await this.getStreamKeys();
     for (const stream of streams) {
-      await this.expireStreamMessages(stream);
+      await this.trimStreamMessages(stream);
     }
   }
 
