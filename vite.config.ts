@@ -23,6 +23,13 @@ export default defineConfig({
   },
   build: {
     outDir: '../dist/view',
+    rollupOptions: {
+      output: {
+        entryFileNames: `[name].${Date.now()}.js`,
+        chunkFileNames: `[name].${Date.now()}.js`,
+        assetFileNames: `[name].${Date.now()}.[ext]`,
+      },
+    },
   },
   plugins: [
     dynamicImport({
