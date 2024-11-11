@@ -8,6 +8,7 @@ import {
 } from '../hooks/shared.hooks';
 import useAppStore from '../store/app.store';
 import { isMobileAgent } from '../utils/shared.utils';
+import { clearCanvas } from '../components/shared/canvas/canvas.utils';
 
 const SOCKETS_CHANNEL = 'sockets';
 
@@ -47,18 +48,18 @@ const Sockets = () => {
     [isDarkMode],
   );
 
-  // TODO: Add debouncing or prevent subsequent calls on screen resize
   useEffect(() => {
     if (!token) {
       return;
     }
-    const init = async () => {
+    const init = setTimeout(async () => {
       const result = await fetch('/api/interactions/sockets', {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data: { message: Dot }[] = await result.json();
       const canvas = document.querySelector('canvas');
 
+      clearCanvas();
       for (const { message } of data) {
         if (canvas) {
           const denormalizedX = message.x * canvasWidth;
@@ -66,8 +67,11 @@ const Sockets = () => {
           drawDot(denormalizedX, denormalizedY, canvas);
         }
       }
+    }, 200);
+
+    return () => {
+      clearTimeout(init);
     };
-    init();
   }, [token, drawDot, canvasWidth, canvasHeight]);
 
   const sendDot = (x: number, y: number, duration: number) => {
