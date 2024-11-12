@@ -19,10 +19,10 @@ export interface PubSubMessage<T = unknown> {
 export const useSubscription = (channel: string, options?: Options) => {
   const token = useAppStore((state) => state.token);
 
-  const { sendMessage, readyState, ...rest } = useWebSocket(
-    getWebSocketURL(),
-    options,
-  );
+  const { sendMessage, readyState, ...rest } = useWebSocket(getWebSocketURL(), {
+    shouldReconnect: () => true,
+    ...options,
+  });
 
   useEffect(() => {
     if (readyState !== ReadyState.OPEN || !token) {
