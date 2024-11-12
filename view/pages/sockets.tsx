@@ -29,8 +29,8 @@ const Sockets = () => {
       const { body }: PubSubMessage<Dot> = JSON.parse(event.data);
       const canvas = document.querySelector('canvas');
       if (canvas && body) {
-        const denormalizedX = body.x * canvasWidth;
-        const denormalizedY = body.y * canvasHeight;
+        const denormalizedX = Math.round(body.x * canvasWidth);
+        const denormalizedY = Math.round(body.y * canvasHeight);
         drawDot(denormalizedX, denormalizedY, canvas);
       }
     },
@@ -62,8 +62,8 @@ const Sockets = () => {
       clearCanvas();
       for (const { message } of data) {
         if (canvas) {
-          const denormalizedX = message.x * canvasWidth;
-          const denormalizedY = message.y * canvasHeight;
+          const denormalizedX = Math.round(message.x * canvasWidth);
+          const denormalizedY = Math.round(message.y * canvasHeight);
           drawDot(denormalizedX, denormalizedY, canvas);
         }
       }
