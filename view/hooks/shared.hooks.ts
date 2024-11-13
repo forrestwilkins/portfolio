@@ -9,7 +9,7 @@ import useWebSocket, { Options } from 'react-use-websocket';
 import useAppStore from '../store/app.store';
 import { getWebSocketURL } from '../utils/shared.utils';
 
-export interface PubSubMessage<T = any> {
+export interface PubSubMessage<T = unknown> {
   request: 'PUBLISH' | 'SUBSCRIBE' | 'UNSUBSCRIBE';
   channel: string;
   token: string;
