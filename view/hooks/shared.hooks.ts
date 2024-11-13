@@ -19,7 +19,7 @@ export interface PubSubMessage<T = unknown> {
 export const useSubscription = (channel: string, options?: Options) => {
   const token = useAppStore((state) => state.token);
 
-  const { sendMessage, readyState, ...rest } = useWebSocket(getWebSocketURL(), {
+  const { sendMessage, ...rest } = useWebSocket(getWebSocketURL(), {
     onOpen: () => {
       if (!token) {
         return;
@@ -35,7 +35,7 @@ export const useSubscription = (channel: string, options?: Options) => {
     ...options,
   });
 
-  return { sendMessage, readyState, ...rest };
+  return { sendMessage, ...rest };
 };
 
 export const useIsDarkMode = () => {
