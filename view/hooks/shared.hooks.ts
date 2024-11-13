@@ -5,7 +5,7 @@ import {
   useTheme,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
-import useWebSocket, { Options, ReadyState } from 'react-use-websocket';
+import useWebSocket, { Options } from 'react-use-websocket';
 import useAppStore from '../store/app.store';
 import { getWebSocketURL } from '../utils/shared.utils';
 
@@ -24,28 +24,42 @@ export const useSubscription = (channel: string, options?: Options) => {
       console.log('shouldReconnect:', !!token, new Date().toLocaleTimeString());
       return !!token;
     },
+    onOpen: () => {
+      if (!token) {
+        return;
+      }
+      const message: PubSubMessage = {
+        request: 'SUBSCRIBE',
+        channel,
+        token,
+      };
+      sendMessage(JSON.stringify(message));
+      console.log(`Subscribed to ${channel}`, new Date().toLocaleTimeString());
+    },
+
     ...options,
   });
 
-  useEffect(() => {
-    console.log(
-      'Ready state:',
-      ReadyState[readyState] + ',',
-      new Date().toLocaleTimeString(),
-    );
+  // TODO: Uncomment when done testing
+  // useEffect(() => {
+  //   console.log(
+  //     'Ready state:',
+  //     ReadyState[readyState] + ',',
+  //     new Date().toLocaleTimeString(),
+  //   );
 
-    if (readyState !== ReadyState.OPEN || !token) {
-      return;
-    }
-    const message: PubSubMessage = {
-      request: 'SUBSCRIBE',
-      channel,
-      token,
-    };
-    sendMessage(JSON.stringify(message));
+  //   if (readyState !== ReadyState.OPEN || !token) {
+  //     return;
+  //   }
+  //   const message: PubSubMessage = {
+  //     request: 'SUBSCRIBE',
+  //     channel,
+  //     token,
+  //   };
+  //   sendMessage(JSON.stringify(message));
 
-    console.log(`Subscribed to ${channel}`, new Date().toLocaleTimeString());
-  }, [readyState, sendMessage, channel, token]);
+  //   console.log(`Subscribed to ${channel}`, new Date().toLocaleTimeString());
+  // }, [readyState, sendMessage, channel, token]);
 
   return { sendMessage, readyState, ...rest };
 };
