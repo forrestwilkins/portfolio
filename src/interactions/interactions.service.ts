@@ -30,7 +30,6 @@ class InteractionsService {
         y: y.toString(),
         duration: duration.toString(),
       });
-      console.log('publisher:', publisher);
     }
 
     await cacheService.addStreamMessage(SOCKETS_KEY, {
