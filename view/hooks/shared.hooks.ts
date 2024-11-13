@@ -25,6 +25,12 @@ export const useSubscription = (channel: string, options?: Options) => {
   });
 
   useEffect(() => {
+    console.log(
+      'Ready state:',
+      ReadyState[readyState] + ',',
+      new Date().toLocaleTimeString(),
+    );
+
     if (readyState !== ReadyState.OPEN || !token) {
       return;
     }
@@ -34,6 +40,8 @@ export const useSubscription = (channel: string, options?: Options) => {
       token,
     };
     sendMessage(JSON.stringify(message));
+
+    console.log(`Subscribed to ${channel}`, new Date().toLocaleTimeString());
   }, [readyState, sendMessage, channel, token]);
 
   return { sendMessage, readyState, ...rest };
