@@ -5,7 +5,7 @@ import {
   useTheme,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
-import useWebSocket, { Options, ReadyState } from 'react-use-websocket';
+import useWebSocket, { Options } from 'react-use-websocket';
 import useAppStore from '../store/app.store';
 import { getWebSocketURL } from '../utils/shared.utils';
 
@@ -19,24 +19,23 @@ export interface PubSubMessage<T = unknown> {
 export const useSubscription = (channel: string, options?: Options) => {
   const token = useAppStore((state) => state.token);
 
-  const { sendMessage, readyState, ...rest } = useWebSocket(
-    getWebSocketURL(),
-    options,
-  );
+  const { sendMessage, ...rest } = useWebSocket(getWebSocketURL(), {
+    onOpen: () => {
+      if (!token) {
+        return;
+      }
+      const message: PubSubMessage = {
+        request: 'SUBSCRIBE',
+        channel,
+        token,
+      };
+      sendMessage(JSON.stringify(message));
+    },
+    shouldReconnect: () => !!token,
+    ...options,
+  });
 
-  useEffect(() => {
-    if (readyState !== ReadyState.OPEN || !token) {
-      return;
-    }
-    const message: PubSubMessage = {
-      request: 'SUBSCRIBE',
-      channel,
-      token,
-    };
-    sendMessage(JSON.stringify(message));
-  }, [readyState, sendMessage, channel, token]);
-
-  return { sendMessage, readyState, ...rest };
+  return { sendMessage, ...rest };
 };
 
 export const useIsDarkMode = () => {
