@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react';
 import useWebSocket, { Options, ReadyState } from 'react-use-websocket';
 import useAppStore from '../store/app.store';
 import { getWebSocketURL } from '../utils/shared.utils';
+import { WebSocketMessage } from 'react-use-websocket/dist/lib/types';
 
 export interface PubSubMessage<T = any> {
   request: 'PUBLISH' | 'SUBSCRIBE' | 'UNSUBSCRIBE';
@@ -30,31 +31,19 @@ export const useSubscription = (channel: string, options?: Options) => {
         );
         return !!token;
       },
-      onClose: () => {
-        console.log(
-          'onClose: Reconnecting...',
-          new Date().toLocaleTimeString(),
-        );
-        const ws = getWebSocket();
-        if (ws) {
-          ws.close();
-        }
-      },
       ...options,
     },
   );
 
-  // TODO: Try next if other method doesn't work
-  // const sendMessageWithReconnect = (message: WebSocketMessage) => {
-  //   if (readyState === ReadyState.CLOSED) {
-  //     console.log('Reconnecting...', new Date().toLocaleTimeString());
-  //     const ws = getWebSocket();
-  //     if (ws) {
-  //       ws.close();
-  //     }
-  //   }
-  //   sendMessage(message);
-  // };
+  const sendMessageWithReconnect = (message: WebSocketMessage) => {
+    if (readyState === ReadyState.CLOSED) {
+      const ws = getWebSocket();
+      if (ws) {
+        ws.close();
+      }
+    }
+    sendMessage(message);
+  };
 
   useEffect(() => {
     console.log(
@@ -76,7 +65,7 @@ export const useSubscription = (channel: string, options?: Options) => {
     console.log(`Subscribed to ${channel}`, new Date().toLocaleTimeString());
   }, [readyState, sendMessage, channel, token]);
 
-  return { sendMessage, readyState, ...rest };
+  return { sendMessage: sendMessageWithReconnect, readyState, ...rest };
 };
 
 export const useIsDarkMode = () => {
