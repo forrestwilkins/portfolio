@@ -8,7 +8,6 @@ import { useEffect, useState } from 'react';
 import useWebSocket, { Options, ReadyState } from 'react-use-websocket';
 import useAppStore from '../store/app.store';
 import { getWebSocketURL } from '../utils/shared.utils';
-import { WebSocketMessage } from 'react-use-websocket/dist/lib/types';
 
 export interface PubSubMessage<T = any> {
   request: 'PUBLISH' | 'SUBSCRIBE' | 'UNSUBSCRIBE';
@@ -35,16 +34,6 @@ export const useSubscription = (channel: string, options?: Options) => {
     },
   );
 
-  const sendMessageWithReconnect = (message: WebSocketMessage) => {
-    if (readyState === ReadyState.CLOSED) {
-      const ws = getWebSocket();
-      if (ws) {
-        ws.close();
-      }
-    }
-    sendMessage(message);
-  };
-
   useEffect(() => {
     console.log(
       'Ready state:',
@@ -65,7 +54,7 @@ export const useSubscription = (channel: string, options?: Options) => {
     console.log(`Subscribed to ${channel}`, new Date().toLocaleTimeString());
   }, [readyState, sendMessage, channel, token]);
 
-  return { sendMessage: sendMessageWithReconnect, readyState, ...rest };
+  return { sendMessage, readyState, ...rest };
 };
 
 export const useIsDarkMode = () => {
