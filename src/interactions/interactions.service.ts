@@ -22,16 +22,6 @@ class InteractionsService {
     { x, y, duration }: Dot,
     publisher: WebSocketWithId,
   ) {
-    // TODO: Remove when done testing
-    if (!publisher.id) {
-      console.log('handleSocketTestMessage:', {
-        userId: publisher.id,
-        x: x.toString(),
-        y: y.toString(),
-        duration: duration.toString(),
-      });
-    }
-
     await cacheService.addStreamMessage(SOCKETS_KEY, {
       userId: publisher.id,
       x: x.toString(),

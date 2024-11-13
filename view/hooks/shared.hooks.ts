@@ -20,10 +20,6 @@ export const useSubscription = (channel: string, options?: Options) => {
   const token = useAppStore((state) => state.token);
 
   const { sendMessage, readyState, ...rest } = useWebSocket(getWebSocketURL(), {
-    shouldReconnect: () => {
-      console.log('shouldReconnect:', !!token, new Date().toLocaleTimeString());
-      return !!token;
-    },
     onOpen: () => {
       if (!token) {
         return;
@@ -34,32 +30,10 @@ export const useSubscription = (channel: string, options?: Options) => {
         token,
       };
       sendMessage(JSON.stringify(message));
-      console.log(`Subscribed to ${channel}`, new Date().toLocaleTimeString());
     },
-
+    shouldReconnect: () => !!token,
     ...options,
   });
-
-  // TODO: Uncomment when done testing
-  // useEffect(() => {
-  //   console.log(
-  //     'Ready state:',
-  //     ReadyState[readyState] + ',',
-  //     new Date().toLocaleTimeString(),
-  //   );
-
-  //   if (readyState !== ReadyState.OPEN || !token) {
-  //     return;
-  //   }
-  //   const message: PubSubMessage = {
-  //     request: 'SUBSCRIBE',
-  //     channel,
-  //     token,
-  //   };
-  //   sendMessage(JSON.stringify(message));
-
-  //   console.log(`Subscribed to ${channel}`, new Date().toLocaleTimeString());
-  // }, [readyState, sendMessage, channel, token]);
 
   return { sendMessage, readyState, ...rest };
 };
