@@ -24,6 +24,7 @@ export const useSubscription = (channel: string, options?: Options) => {
       console.log('shouldReconnect:', !!token, new Date().toLocaleTimeString());
       return !!token;
     },
+    retryOnError: true,
     ...options,
   });
 
