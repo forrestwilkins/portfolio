@@ -19,20 +19,13 @@ export interface PubSubMessage<T = any> {
 export const useSubscription = (channel: string, options?: Options) => {
   const token = useAppStore((state) => state.token);
 
-  const { sendMessage, readyState, getWebSocket, ...rest } = useWebSocket(
-    getWebSocketURL(),
-    {
-      shouldReconnect: () => {
-        console.log(
-          'shouldReconnect:',
-          !!token,
-          new Date().toLocaleTimeString(),
-        );
-        return !!token;
-      },
-      ...options,
+  const { sendMessage, readyState, ...rest } = useWebSocket(getWebSocketURL(), {
+    shouldReconnect: () => {
+      console.log('shouldReconnect:', !!token, new Date().toLocaleTimeString());
+      return !!token;
     },
-  );
+    ...options,
+  });
 
   useEffect(() => {
     console.log(
