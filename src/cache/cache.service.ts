@@ -44,6 +44,7 @@ class CacheService {
     return this.client.xRevRange(key, start, end);
   }
 
+  // TODO: Add error handling for xAdd in case any fields are missing or non-string
   async addStreamMessage(key: string, message: Record<string, any>) {
     return this.client.xAdd(key, '*', message, {
       TRIM: {
