@@ -9,7 +9,7 @@ import useWebSocket, { Options, ReadyState } from 'react-use-websocket';
 import useAppStore from '../store/app.store';
 import { getWebSocketURL } from '../utils/shared.utils';
 
-export interface PubSubMessage<T = unknown> {
+export interface PubSubMessage<T = any> {
   request: 'PUBLISH' | 'SUBSCRIBE' | 'UNSUBSCRIBE';
   channel: string;
   token: string;
@@ -19,14 +19,42 @@ export interface PubSubMessage<T = unknown> {
 export const useSubscription = (channel: string, options?: Options) => {
   const token = useAppStore((state) => state.token);
 
-  const { sendMessage, readyState, ...rest } = useWebSocket(getWebSocketURL(), {
-    shouldReconnect: () => {
-      console.log('shouldReconnect:', !!token, new Date().toLocaleTimeString());
-      return !!token;
+  const { sendMessage, readyState, getWebSocket, ...rest } = useWebSocket(
+    getWebSocketURL(),
+    {
+      shouldReconnect: () => {
+        console.log(
+          'shouldReconnect:',
+          !!token,
+          new Date().toLocaleTimeString(),
+        );
+        return !!token;
+      },
+      onClose: () => {
+        console.log(
+          'onClose: Reconnecting...',
+          new Date().toLocaleTimeString(),
+        );
+        const ws = getWebSocket();
+        if (ws) {
+          ws.close();
+        }
+      },
+      ...options,
     },
-    retryOnError: true,
-    ...options,
-  });
+  );
+
+  // TODO: Try next if other method doesn't work
+  // const sendMessageWithReconnect = (message: WebSocketMessage) => {
+  //   if (readyState === ReadyState.CLOSED) {
+  //     console.log('Reconnecting...', new Date().toLocaleTimeString());
+  //     const ws = getWebSocket();
+  //     if (ws) {
+  //       ws.close();
+  //     }
+  //   }
+  //   sendMessage(message);
+  // };
 
   useEffect(() => {
     console.log(
