@@ -23,12 +23,15 @@ class InteractionsService {
     publisher: WebSocketWithId,
   ) {
     // TODO: Remove when done testing
-    console.log('handleSocketTestMessage:', {
-      userId: publisher.id,
-      x: x.toString(),
-      y: y.toString(),
-      duration: duration.toString(),
-    });
+    if (!publisher.id) {
+      console.log('handleSocketTestMessage:', {
+        userId: publisher.id,
+        x: x.toString(),
+        y: y.toString(),
+        duration: duration.toString(),
+      });
+      console.log('publisher:', publisher);
+    }
 
     await cacheService.addStreamMessage(SOCKETS_KEY, {
       userId: publisher.id,
