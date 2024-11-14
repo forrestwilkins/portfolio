@@ -11,6 +11,7 @@ import { isMobileAgent } from '../utils/shared.utils';
 import { clearCanvas } from '../components/shared/canvas/canvas.utils';
 
 const SOCKETS_CHANNEL = 'sockets';
+const SOCKETS_CLEAN_CHANNEL = 'sockets:clear';
 
 interface Dot {
   x: number;
@@ -32,6 +33,18 @@ const Sockets = () => {
         const denormalizedX = Math.round(body.x * canvasWidth);
         const denormalizedY = Math.round(body.y * canvasHeight);
         drawDot(denormalizedX, denormalizedY, canvas);
+      }
+    },
+  });
+
+  useSubscription(SOCKETS_CLEAN_CHANNEL, {
+    onMessage: (event) => {
+      const { body }: PubSubMessage<{ clear: boolean }> = JSON.parse(
+        event.data,
+      );
+      const canvas = document.querySelector('canvas');
+      if (canvas && body?.clear) {
+        clearCanvas();
       }
     },
   });

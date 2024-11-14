@@ -1,7 +1,9 @@
 import cacheService from '../cache/cache.service';
 import { WebSocketWithId } from '../pub-sub/pub-sub.models';
+import pubSubService from '../pub-sub/pub-sub.service';
 
-const SOCKETS_KEY = 'interactions:sockets';
+const SOCKETS_STREAM_KEY = 'interactions:sockets';
+const SOCKETS_CLEAR_CHANNEL = 'sockets:clear';
 
 interface Dot {
   x: number;
@@ -10,19 +12,27 @@ interface Dot {
 }
 
 class InteractionsService {
+  constructor() {
+    pubSubService.registerChannelHandler(
+      'sockets',
+      this.handleSocketTestMessage.bind(this),
+    );
+  }
+
   async getSocketTestStream() {
-    return cacheService.getStreamMessages(SOCKETS_KEY);
+    return cacheService.getStreamMessages(SOCKETS_STREAM_KEY);
   }
 
   async clearSocketTestStream() {
-    await cacheService.trimStreamMessages(SOCKETS_KEY, Date.now());
+    await cacheService.trimStreamMessages(SOCKETS_STREAM_KEY, Date.now());
+    await pubSubService.publish(SOCKETS_CLEAR_CHANNEL, { clear: true });
   }
 
   async handleSocketTestMessage(
     { x, y, duration }: Dot,
     publisher: WebSocketWithId,
   ) {
-    await cacheService.addStreamMessage(SOCKETS_KEY, {
+    await cacheService.addStreamMessage(SOCKETS_STREAM_KEY, {
       userId: publisher.id,
       x: x.toString(),
       y: y.toString(),

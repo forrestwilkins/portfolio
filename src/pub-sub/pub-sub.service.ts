@@ -1,6 +1,5 @@
 import WebSocket from 'ws';
 import cacheService from '../cache/cache.service';
-import interactionsService from '../interactions/interactions.service';
 import { PubSubMessage, WebSocketWithId } from './pub-sub.models';
 
 type ChannelHandler = (
@@ -17,11 +16,11 @@ class PubSubService {
 
   constructor() {
     this.subscribers = {};
+    this.channelHandlers = {};
+  }
 
-    // Register channel handlers
-    this.channelHandlers = {
-      sockets: interactionsService.handleSocketTestMessage,
-    };
+  registerChannelHandler(channel: string, handler: ChannelHandler) {
+    this.channelHandlers[channel] = handler;
   }
 
   handleMessage(webSocket: WebSocketWithId, data: WebSocket.RawData) {
