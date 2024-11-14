@@ -46,8 +46,10 @@ export const useSubscription = (channel: string, options?: Options) => {
       };
       sendMessage(JSON.stringify(message));
     },
-    shouldReconnect: () => !!token,
+    // Ensure multiple channels can be subscribed to in
+    // the same component with `share` set to `true`
     share: true,
+    shouldReconnect: () => !!token,
     ...getOptions(),
   });
 
