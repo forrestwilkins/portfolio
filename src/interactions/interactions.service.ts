@@ -4,6 +4,7 @@ import pubSubService from '../pub-sub/pub-sub.service';
 
 const SOCKETS_STREAM_KEY = 'interactions:sockets';
 const SOCKETS_CLEAR_CHANNEL = 'sockets:clear';
+const SOCKETS_CHANNEL = 'sockets';
 
 interface Dot {
   x: number;
@@ -14,7 +15,7 @@ interface Dot {
 class InteractionsService {
   constructor() {
     pubSubService.registerChannelHandler(
-      'sockets',
+      SOCKETS_CHANNEL,
       this.handleSocketTestMessage.bind(this),
     );
   }
