@@ -19,6 +19,21 @@ export interface PubSubMessage<T = unknown> {
 export const useSubscription = (channel: string, options?: Options) => {
   const token = useAppStore((state) => state.token);
 
+  const getOptions = () => {
+    if (!options || !options.onMessage) {
+      return options;
+    }
+    // Ignore messages from other channels
+    const onMessage = (event: MessageEvent) => {
+      const message: PubSubMessage = JSON.parse(event.data);
+      if (message.channel !== channel || !options.onMessage) {
+        return;
+      }
+      options.onMessage(event);
+    };
+    return { ...options, onMessage };
+  };
+
   const { sendMessage, ...rest } = useWebSocket(getWebSocketURL(), {
     onOpen: () => {
       if (!token) {
@@ -31,8 +46,11 @@ export const useSubscription = (channel: string, options?: Options) => {
       };
       sendMessage(JSON.stringify(message));
     },
+    // Ensure multiple channels can be subscribed to in
+    // the same component with `share` set to `true`
+    share: true,
     shouldReconnect: () => !!token,
-    ...options,
+    ...getOptions(),
   });
 
   return { sendMessage, ...rest };
