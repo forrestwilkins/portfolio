@@ -46,13 +46,16 @@ const TopNav = () => {
   const iOS = /(iPad|iPhone|iPod)/g.test(navigator.userAgent);
   const showClearCanvas = isRipples || isSockets;
 
+  const modeToggleText = isDarkMode ? 'Light mode' : 'Dark mode';
   const PauseIcon = isCanvasPaused ? PlayArrow : Pause;
 
-  const handleModeToggleClick = async () => {
-    setAnchorEl(null);
-    await sleep(100);
-    setMode(isDarkMode ? 'light' : 'dark');
-  };
+  const handleModeToggleClick =
+    (mode: 'light' | 'dark' | 'system' = isDarkMode ? 'light' : 'dark') =>
+    async () => {
+      setAnchorEl(null);
+      await sleep(100);
+      setMode(mode);
+    };
 
   const handlePauseBtnClick = () => {
     setIsCanvasPaused(!isCanvasPaused);
@@ -72,22 +75,19 @@ const TopNav = () => {
     setAnchorEl(null);
   };
 
-  const renderModeToggle = () => {
-    if (isDarkMode) {
-      return (
-        <>
-          <LightModeOutlined fontSize="small" sx={{ marginRight: '1.25ch' }} />
-          Light mode
-        </>
-      );
-    }
-    return (
-      <>
-        <DarkMode fontSize="small" sx={{ marginRight: '1.25ch' }} />
-        Dark mode
-      </>
+  const renderModeToggleIcon = (isSystem = false) =>
+    (isSystem ? !isDarkMode : isDarkMode) ? (
+      <LightModeOutlined fontSize="small" sx={{ marginRight: '1.25ch' }} />
+    ) : (
+      <DarkMode
+        sx={{
+          transform: 'translateX(1px)',
+          marginRight: '1.25ch',
+          marginTop: 0.15,
+        }}
+        fontSize="small"
+      />
     );
-  };
 
   return (
     <>
@@ -155,8 +155,14 @@ const TopNav = () => {
             </MenuItem>
           )}
 
-          <MenuItem onClick={handleModeToggleClick}>
-            {renderModeToggle()}
+          <MenuItem onClick={handleModeToggleClick()}>
+            {renderModeToggleIcon()}
+            {modeToggleText}
+          </MenuItem>
+
+          <MenuItem onClick={handleModeToggleClick('system')}>
+            {renderModeToggleIcon(true)}
+            System
           </MenuItem>
         </Menu>
       </Box>
