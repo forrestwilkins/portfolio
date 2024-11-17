@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import Canvas from '../components/shared/canvas/canvas';
 import {
   PubSubMessage,
@@ -19,6 +19,7 @@ interface Dot {
 }
 
 const Sockets = () => {
+  const [isMouseDown, setIsMouseDown] = useState(false);
   const token = useAppStore((state) => state.token);
 
   const [canvasWidth, canvasHeight] = useScreenSize();
@@ -111,7 +112,7 @@ const Sockets = () => {
 
   const handleMouseMove = (x: number, y: number, canvas: HTMLCanvasElement) => {
     const isMobile = isMobileAgent();
-    if (isMobile) {
+    if (isMobile || !isMouseDown) {
       return;
     }
     drawDot(x, y, canvas);
@@ -129,6 +130,8 @@ const Sockets = () => {
       height={canvasHeight}
       onTouchMove={handleTouchMove}
       onMouseMove={handleMouseMove}
+      onMouseDown={() => setIsMouseDown(true)}
+      onMouseUp={() => setIsMouseDown(false)}
       fillViewport
     />
   );
