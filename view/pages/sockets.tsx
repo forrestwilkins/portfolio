@@ -16,7 +16,6 @@ const SOCKETS_CLEAR_CHANNEL = 'sockets:clear';
 interface Dot {
   x: number;
   y: number;
-  duration: number;
 }
 
 const Sockets = () => {
@@ -86,7 +85,7 @@ const Sockets = () => {
     };
   }, [token, drawDot, canvasWidth, canvasHeight]);
 
-  const sendDot = (x: number, y: number, duration: number) => {
+  const sendDot = (x: number, y: number) => {
     if (!token) {
       return;
     }
@@ -97,7 +96,6 @@ const Sockets = () => {
     const body = {
       x: normalizedX,
       y: normalizedY,
-      duration,
       canvasWidth,
       canvasHeight,
     };
@@ -111,36 +109,26 @@ const Sockets = () => {
     sendMessage(JSON.stringify(message));
   };
 
-  const handleMouseUp = (
-    x: number,
-    y: number,
-    duration: number,
-    canvas: HTMLCanvasElement,
-  ) => {
+  const handleMouseMove = (x: number, y: number, canvas: HTMLCanvasElement) => {
     const isMobile = isMobileAgent();
     if (isMobile) {
       return;
     }
     drawDot(x, y, canvas);
-    sendDot(x, y, duration);
+    sendDot(x, y);
   };
 
-  const handleTouchEnd = (
-    x: number,
-    y: number,
-    duration: number,
-    canvas: HTMLCanvasElement,
-  ) => {
+  const handleTouchMove = (x: number, y: number, canvas: HTMLCanvasElement) => {
     drawDot(x, y, canvas);
-    sendDot(x, y, duration);
+    sendDot(x, y);
   };
 
   return (
     <Canvas
       width={canvasWidth}
       height={canvasHeight}
-      onMouseUp={handleMouseUp}
-      onTouchEnd={handleTouchEnd}
+      onTouchMove={handleTouchMove}
+      onMouseMove={handleMouseMove}
       fillViewport
     />
   );
