@@ -18,6 +18,11 @@
   src: url('/fonts/Comfortaa.ttf') format('woff');
 }
 
+:root {
+  touch-action: pan-x pan-y;
+  height: 100%;
+}
+
 /* Disable pull-to-refresh and overscroll stretch effect */
 body,
 html {
