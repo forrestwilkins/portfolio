@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from 'react';
+import { MouseEvent, useCallback, useEffect, useRef } from 'react';
 import Canvas from '../components/shared/canvas/canvas';
 import { clearCanvas } from '../components/shared/canvas/canvas.utils';
 import {
@@ -13,6 +13,7 @@ import { getRandomRGB } from '../utils/visual.utils';
 
 const SOCKETS_CHANNEL = 'sockets';
 const SOCKETS_CLEAR_CHANNEL = 'sockets:clear';
+const INIT_DEBOUNCE = 200;
 
 interface Dot {
   x: number;
@@ -29,6 +30,18 @@ const Sockets = () => {
 
   const [canvasWidth, canvasHeight] = useScreenSize();
   const isDarkMode = useIsDarkMode();
+
+  const drawDot = useCallback(
+    (x: number, y: number, color: string, canvas: HTMLCanvasElement) => {
+      const ctx = canvas.getContext('2d');
+      if (!ctx) {
+        return;
+      }
+      ctx.fillStyle = color;
+      ctx.fillRect(x, y, 1, 1);
+    },
+    [isDarkMode],
+  );
 
   const { sendMessage } = useSubscription(SOCKETS_CHANNEL, {
     onMessage: (event) => {
@@ -53,18 +66,6 @@ const Sockets = () => {
     },
   });
 
-  const drawDot = useCallback(
-    (x: number, y: number, color: string, canvas: HTMLCanvasElement) => {
-      const ctx = canvas.getContext('2d');
-      if (!ctx) {
-        return;
-      }
-      ctx.fillStyle = color;
-      ctx.fillRect(x, y, 1, 1);
-    },
-    [isDarkMode],
-  );
-
   useEffect(() => {
     if (!token) {
       return;
@@ -84,7 +85,7 @@ const Sockets = () => {
           drawDot(denormalizedX, denormalizedY, message.color, canvas);
         }
       }
-    }, 200);
+    }, INIT_DEBOUNCE);
 
     return () => {
       clearTimeout(init);
@@ -124,10 +125,9 @@ const Sockets = () => {
       return;
     }
 
-    const color = getRandomRGB();
-
     // Set up path
     const { current: canvasCtx } = canvasCtxRef;
+    const color = getRandomRGB();
     canvasCtx.beginPath();
     canvasCtx.lineWidth = 2;
     canvasCtx.lineCap = 'round';
@@ -148,23 +148,30 @@ const Sockets = () => {
     sendDot(x, y, color);
   };
 
+  const handleMouseDown = (
+    _canvas: HTMLCanvasElement,
+    e: MouseEvent<Element>,
+  ) => {
+    isMouseDownRef.current = true;
+    setPosition(e.clientX, e.clientY);
+  };
+
+  const handleMount = (canvas: HTMLCanvasElement) => {
+    const ctx = canvas.getContext('2d');
+    if (!ctx) {
+      return;
+    }
+    canvasCtxRef.current = ctx;
+  };
+
   return (
     <Canvas
       width={canvasWidth}
       height={canvasHeight}
-      onTouchMove={handleTouchMove}
+      onMount={handleMount}
+      onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
-      onMount={(canvas) => {
-        const ctx = canvas.getContext('2d');
-        if (!ctx) {
-          return;
-        }
-        canvasCtxRef.current = ctx;
-      }}
-      onMouseDown={(_canvas, e) => {
-        isMouseDownRef.current = true;
-        setPosition(e.clientX, e.clientY);
-      }}
+      onTouchMove={handleTouchMove}
       onMouseUp={() => {
         isMouseDownRef.current = false;
       }}
