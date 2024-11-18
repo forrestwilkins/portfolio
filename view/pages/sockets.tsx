@@ -120,10 +120,10 @@ const Sockets = () => {
 
   const handleMouseMove = (x: number, y: number) => {
     const isMobile = isMobileAgent();
-
     if (isMobile || !isMouseDownRef.current || !canvasCtxRef.current) {
       return;
     }
+
     const color = getRandomRGB();
 
     // Set up path
@@ -138,6 +138,8 @@ const Sockets = () => {
     setPosition(x, y); // update position
     canvasCtx.lineTo(mousePositionRef.current.x, mousePositionRef.current.y); // to
     canvasCtx.stroke();
+
+    sendDot(x, y, color);
   };
 
   const handleTouchMove = (x: number, y: number, canvas: HTMLCanvasElement) => {
