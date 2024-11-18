@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import Canvas from '../components/shared/canvas/canvas';
 import { clearCanvas } from '../components/shared/canvas/canvas.utils';
 import {
@@ -21,11 +21,11 @@ interface Dot {
 }
 
 const Sockets = () => {
-  const [isMouseDown, setIsMouseDown] = useState(false);
   const token = useAppStore((state) => state.token);
 
   const canvasCtxRef = useRef<CanvasRenderingContext2D | null>(null);
-  const positionRef = useRef({ x: 0, y: 0 });
+  const mousePositionRef = useRef({ x: 0, y: 0 });
+  const isMouseDownRef = useRef(false);
 
   const [canvasWidth, canvasHeight] = useScreenSize();
   const isDarkMode = useIsDarkMode();
@@ -115,13 +115,13 @@ const Sockets = () => {
   };
 
   const setPosition = (x: number, y: number) => {
-    positionRef.current = { x, y };
+    mousePositionRef.current = { x, y };
   };
 
   const handleMouseMove = (x: number, y: number) => {
     const isMobile = isMobileAgent();
 
-    if (isMobile || !isMouseDown || !canvasCtxRef.current) {
+    if (isMobile || !isMouseDownRef.current || !canvasCtxRef.current) {
       return;
     }
     const color = getRandomRGB();
@@ -134,9 +134,9 @@ const Sockets = () => {
     canvasCtx.strokeStyle = color;
 
     // Draw line
-    canvasCtx.moveTo(positionRef.current.x, positionRef.current.y); // from
+    canvasCtx.moveTo(mousePositionRef.current.x, mousePositionRef.current.y); // from
     setPosition(x, y); // update position
-    canvasCtx.lineTo(positionRef.current.x, positionRef.current.y); // to
+    canvasCtx.lineTo(mousePositionRef.current.x, mousePositionRef.current.y); // to
     canvasCtx.stroke();
   };
 
@@ -160,10 +160,12 @@ const Sockets = () => {
         canvasCtxRef.current = ctx;
       }}
       onMouseDown={(_canvas, e) => {
-        setIsMouseDown(true);
+        isMouseDownRef.current = true;
         setPosition(e.clientX, e.clientY);
       }}
-      onMouseUp={() => setIsMouseDown(false)}
+      onMouseUp={() => {
+        isMouseDownRef.current = false;
+      }}
       fillViewport
     />
   );
