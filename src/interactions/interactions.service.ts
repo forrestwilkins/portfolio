@@ -9,6 +9,7 @@ const SOCKETS_CHANNEL = 'sockets';
 interface Dot {
   x: number;
   y: number;
+  color: string;
 }
 
 class InteractionsService {
@@ -28,11 +29,15 @@ class InteractionsService {
     await pubSubService.publish(SOCKETS_CLEAR_CHANNEL, { clear: true });
   }
 
-  async handleSocketTestMessage({ x, y }: Dot, publisher: WebSocketWithId) {
+  async handleSocketTestMessage(
+    { x, y, color }: Dot,
+    publisher: WebSocketWithId,
+  ) {
     await cacheService.addStreamMessage(SOCKETS_STREAM_KEY, {
       userId: publisher.id,
       x: x.toString(),
       y: y.toString(),
+      color,
     });
   }
 }
