@@ -115,6 +115,15 @@ const Sockets = () => {
     };
   }, [token, isCanvasMounted, canvasWidth, canvasHeight, isDarkMode]);
 
+  const handleCanvasMount = useCallback((canvas: HTMLCanvasElement) => {
+    const ctx = canvas.getContext('2d');
+    if (!ctx) {
+      return;
+    }
+    canvasCtxRef.current = ctx;
+    setIsCanvasMounted(true);
+  }, []);
+
   const sendStroke = (stroke: Dot[]) => {
     if (!token) {
       return;
@@ -171,20 +180,11 @@ const Sockets = () => {
     isMouseDownRef.current = true;
   };
 
-  const handleMount = useCallback((canvas: HTMLCanvasElement) => {
-    const ctx = canvas.getContext('2d');
-    if (!ctx) {
-      return;
-    }
-    canvasCtxRef.current = ctx;
-    setIsCanvasMounted(true);
-  }, []);
-
   return (
     <Canvas
       width={canvasWidth}
       height={canvasHeight}
-      onMount={handleMount}
+      onMount={handleCanvasMount}
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
       onTouchMove={handleTouchMove}
