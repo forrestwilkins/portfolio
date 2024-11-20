@@ -9,7 +9,6 @@ import {
 } from '../hooks/shared.hooks';
 import useAppStore from '../store/app.store';
 import { isMobileAgent } from '../utils/shared.utils';
-import { getRandomRGB } from '../utils/visual.utils';
 
 const SOCKETS_CHANNEL = 'sockets';
 const SOCKETS_CLEAR_CHANNEL = 'sockets:clear';
@@ -18,7 +17,6 @@ const INIT_DEBOUNCE = 200;
 interface Dot {
   x: number;
   y: number;
-  color: string;
 }
 
 const Sockets = () => {
@@ -32,12 +30,12 @@ const Sockets = () => {
   const isDarkMode = useIsDarkMode();
 
   const drawDot = useCallback(
-    (x: number, y: number, color: string, canvas: HTMLCanvasElement) => {
+    (x: number, y: number, canvas: HTMLCanvasElement) => {
       const ctx = canvas.getContext('2d');
       if (!ctx) {
         return;
       }
-      ctx.fillStyle = color;
+      ctx.fillStyle = isDarkMode ? 'white' : 'black';
       ctx.fillRect(x, y, 1, 1);
     },
     [isDarkMode],
@@ -50,7 +48,7 @@ const Sockets = () => {
       if (canvas && body) {
         const denormalizedX = Math.round(body.x * canvasWidth);
         const denormalizedY = Math.round(body.y * canvasHeight);
-        drawDot(denormalizedX, denormalizedY, body.color, canvas);
+        drawDot(denormalizedX, denormalizedY, canvas);
       }
     },
   });
@@ -82,7 +80,7 @@ const Sockets = () => {
         if (canvas) {
           const denormalizedX = Math.round(message.x * canvasWidth);
           const denormalizedY = Math.round(message.y * canvasHeight);
-          drawDot(denormalizedX, denormalizedY, message.color, canvas);
+          drawDot(denormalizedX, denormalizedY, canvas);
         }
       }
     }, INIT_DEBOUNCE);
@@ -92,19 +90,14 @@ const Sockets = () => {
     };
   }, [token, drawDot, canvasWidth, canvasHeight]);
 
-  const sendDot = (x: number, y: number, color: string) => {
+  const sendDot = (x: number, y: number) => {
     if (!token) {
       return;
     }
 
     const normalizedX = x / canvasWidth;
     const normalizedY = y / canvasHeight;
-
-    const body = {
-      x: normalizedX,
-      y: normalizedY,
-      color,
-    };
+    const body = { x: normalizedX, y: normalizedY };
 
     const message: PubSubMessage<Dot> = {
       request: 'PUBLISH',
@@ -127,11 +120,11 @@ const Sockets = () => {
 
     // Set up path
     const { current: canvasCtx } = canvasCtxRef;
-    const color = getRandomRGB();
+
     canvasCtx.beginPath();
     canvasCtx.lineWidth = 2;
     canvasCtx.lineCap = 'round';
-    canvasCtx.strokeStyle = color;
+    canvasCtx.strokeStyle = isDarkMode ? 'white' : 'black';
 
     // Draw line
     canvasCtx.moveTo(mousePositionRef.current.x, mousePositionRef.current.y); // from
@@ -139,13 +132,12 @@ const Sockets = () => {
     canvasCtx.lineTo(mousePositionRef.current.x, mousePositionRef.current.y); // to
     canvasCtx.stroke();
 
-    sendDot(x, y, color);
+    sendDot(x, y);
   };
 
   const handleTouchMove = (x: number, y: number, canvas: HTMLCanvasElement) => {
-    const color = getRandomRGB();
-    drawDot(x, y, color, canvas);
-    sendDot(x, y, color);
+    drawDot(x, y, canvas);
+    sendDot(x, y);
   };
 
   const handleMouseDown = (
