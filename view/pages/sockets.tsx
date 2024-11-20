@@ -1,4 +1,4 @@
-import { MouseEvent, useCallback, useEffect, useRef } from 'react';
+import { MouseEvent, useEffect, useRef, useState } from 'react';
 import Canvas from '../components/shared/canvas/canvas';
 import { clearCanvas } from '../components/shared/canvas/canvas.utils';
 import {
@@ -12,6 +12,7 @@ import { isMobileAgent } from '../utils/shared.utils';
 
 const SOCKETS_CHANNEL = 'sockets';
 const SOCKETS_CLEAR_CHANNEL = 'sockets:clear';
+const MAX_BUFFER_SIZE = 5;
 const INIT_DEBOUNCE = 200;
 
 interface Dot {
@@ -19,36 +20,53 @@ interface Dot {
   y: number;
 }
 
+interface Stroke {
+  path: Dot[];
+}
+
 const Sockets = () => {
   const token = useAppStore((state) => state.token);
+  const [isCanvasMounted, setIsCanvasMounted] = useState(false);
 
   const canvasCtxRef = useRef<CanvasRenderingContext2D | null>(null);
+  const strokeBufferRef = useRef<{ x: number; y: number }[]>([]);
   const mousePositionRef = useRef({ x: 0, y: 0 });
   const isMouseDownRef = useRef(false);
 
   const [canvasWidth, canvasHeight] = useScreenSize();
   const isDarkMode = useIsDarkMode();
 
-  const drawDot = useCallback(
-    (x: number, y: number, canvas: HTMLCanvasElement) => {
-      const ctx = canvas.getContext('2d');
-      if (!ctx) {
-        return;
-      }
-      ctx.fillStyle = isDarkMode ? 'white' : 'black';
-      ctx.fillRect(x, y, 1, 1);
-    },
-    [isDarkMode],
-  );
+  console.log('Current state:', {
+    token,
+    isCanvasMounted,
+    canvasWidth,
+    canvasHeight,
+    isDarkMode,
+  });
 
   const { sendMessage } = useSubscription(SOCKETS_CHANNEL, {
     onMessage: (event) => {
-      const { body }: PubSubMessage<Dot> = JSON.parse(event.data);
-      const canvas = document.querySelector('canvas');
-      if (canvas && body) {
-        const denormalizedX = Math.round(body.x * canvasWidth);
-        const denormalizedY = Math.round(body.y * canvasHeight);
-        drawDot(denormalizedX, denormalizedY, canvas);
+      const { body }: PubSubMessage<Stroke> = JSON.parse(event.data);
+      if (!canvasCtxRef.current || !body) {
+        return;
+      }
+
+      let previousDot: Dot | null = null;
+      for (const { x, y } of body.path) {
+        const denormalizedX = Math.round(x * canvasWidth);
+        const denormalizedY = Math.round(y * canvasHeight);
+
+        if (previousDot) {
+          canvasCtxRef.current.beginPath();
+          canvasCtxRef.current.lineWidth = 2;
+          canvasCtxRef.current.lineCap = 'round';
+          canvasCtxRef.current.strokeStyle = isDarkMode ? 'white' : 'black';
+          canvasCtxRef.current.moveTo(previousDot.x, previousDot.y);
+          canvasCtxRef.current.lineTo(denormalizedX, denormalizedY);
+          canvasCtxRef.current.stroke();
+        }
+
+        previousDot = { x: denormalizedX, y: denormalizedY };
       }
     },
   });
@@ -65,22 +83,37 @@ const Sockets = () => {
   });
 
   useEffect(() => {
-    if (!token) {
+    if (!token || !isCanvasMounted) {
       return;
     }
+
     const init = setTimeout(async () => {
       const result = await fetch('/api/interactions/sockets', {
         headers: { Authorization: `Bearer ${token}` },
       });
-      const data: { message: Dot }[] = await result.json();
-      const canvas = document.querySelector('canvas');
+      const data: { message: Stroke }[] = await result.json();
+      if (!canvasCtxRef.current) {
+        return;
+      }
 
       clearCanvas();
       for (const { message } of data) {
-        if (canvas) {
-          const denormalizedX = Math.round(message.x * canvasWidth);
-          const denormalizedY = Math.round(message.y * canvasHeight);
-          drawDot(denormalizedX, denormalizedY, canvas);
+        let previousDot: Dot | null = null;
+        for (const { x, y } of message.path) {
+          const denormalizedX = Math.round(x * canvasWidth);
+          const denormalizedY = Math.round(y * canvasHeight);
+
+          if (previousDot) {
+            canvasCtxRef.current.beginPath();
+            canvasCtxRef.current.lineWidth = 2;
+            canvasCtxRef.current.lineCap = 'round';
+            canvasCtxRef.current.strokeStyle = isDarkMode ? 'white' : 'black';
+            canvasCtxRef.current.moveTo(previousDot.x, previousDot.y);
+            canvasCtxRef.current.lineTo(denormalizedX, denormalizedY);
+            canvasCtxRef.current.stroke();
+          }
+
+          previousDot = { x: denormalizedX, y: denormalizedY };
         }
       }
     }, INIT_DEBOUNCE);
@@ -88,22 +121,21 @@ const Sockets = () => {
     return () => {
       clearTimeout(init);
     };
-  }, [token, drawDot, canvasWidth, canvasHeight]);
+  }, [token, isCanvasMounted, canvasWidth, canvasHeight, isDarkMode]);
 
-  const sendDot = (x: number, y: number) => {
+  const sendStroke = (stroke: Dot[]) => {
     if (!token) {
       return;
     }
-
-    const normalizedX = x / canvasWidth;
-    const normalizedY = y / canvasHeight;
-    const body = { x: normalizedX, y: normalizedY };
-
-    const message: PubSubMessage<Dot> = {
+    const normalizedStroke = stroke.map(({ x, y }) => ({
+      x: x / canvasWidth,
+      y: y / canvasHeight,
+    }));
+    const message: PubSubMessage<Stroke> = {
       request: 'PUBLISH',
       channel: SOCKETS_CHANNEL,
+      body: { path: normalizedStroke },
       token,
-      body,
     };
     sendMessage(JSON.stringify(message));
   };
@@ -120,7 +152,6 @@ const Sockets = () => {
 
     // Set up path
     const { current: canvasCtx } = canvasCtxRef;
-
     canvasCtx.beginPath();
     canvasCtx.lineWidth = 2;
     canvasCtx.lineCap = 'round';
@@ -132,12 +163,16 @@ const Sockets = () => {
     canvasCtx.lineTo(mousePositionRef.current.x, mousePositionRef.current.y); // to
     canvasCtx.stroke();
 
-    sendDot(x, y);
+    // Add stroke to buffer and send if buffer is full
+    strokeBufferRef.current.push({ x, y });
+    if (strokeBufferRef.current.length > MAX_BUFFER_SIZE) {
+      sendStroke(strokeBufferRef.current);
+      strokeBufferRef.current = [];
+    }
   };
 
   const handleTouchMove = (x: number, y: number, canvas: HTMLCanvasElement) => {
-    drawDot(x, y, canvas);
-    sendDot(x, y);
+    console.log('TODO: Implement handleTouchMove', x, y, canvas.id);
   };
 
   const handleMouseDown = (
@@ -148,12 +183,14 @@ const Sockets = () => {
     setPosition(e.clientX, e.clientY);
   };
 
+  // TODO: Determine why canvas is getting remounted when new messages are received
   const handleMount = (canvas: HTMLCanvasElement) => {
     const ctx = canvas.getContext('2d');
     if (!ctx) {
       return;
     }
     canvasCtxRef.current = ctx;
+    setIsCanvasMounted(true);
   };
 
   return (

@@ -11,6 +11,10 @@ interface Dot {
   y: number;
 }
 
+interface Stroke {
+  path: Dot[];
+}
+
 class InteractionsService {
   constructor() {
     pubSubService.registerChannelHandler(
@@ -20,7 +24,11 @@ class InteractionsService {
   }
 
   async getSocketTestStream() {
-    return cacheService.getStreamMessages(SOCKETS_STREAM_KEY);
+    const stream = await cacheService.getStreamMessages(SOCKETS_STREAM_KEY);
+    return stream.map(({ id, message }) => ({
+      message: { path: JSON.parse(message.path) },
+      id,
+    }));
   }
 
   async clearSocketTestStream() {
@@ -28,11 +36,10 @@ class InteractionsService {
     await pubSubService.publish(SOCKETS_CLEAR_CHANNEL, { clear: true });
   }
 
-  async handleSocketTestMessage({ x, y }: Dot, publisher: WebSocketWithId) {
+  async handleSocketTestMessage({ path }: Stroke, publisher: WebSocketWithId) {
     await cacheService.addStreamMessage(SOCKETS_STREAM_KEY, {
       userId: publisher.id,
-      x: x.toString(),
-      y: y.toString(),
+      path: JSON.stringify(path),
     });
   }
 }
