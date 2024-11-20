@@ -1,4 +1,4 @@
-import { MouseEvent, useEffect, useRef, useState } from 'react';
+import { MouseEvent, useCallback, useEffect, useRef, useState } from 'react';
 import Canvas from '../components/shared/canvas/canvas';
 import { clearCanvas } from '../components/shared/canvas/canvas.utils';
 import {
@@ -171,15 +171,14 @@ const Sockets = () => {
     isMouseDownRef.current = true;
   };
 
-  // TODO: Determine why canvas is getting remounted when new messages are received
-  const handleMount = (canvas: HTMLCanvasElement) => {
+  const handleMount = useCallback((canvas: HTMLCanvasElement) => {
     const ctx = canvas.getContext('2d');
     if (!ctx) {
       return;
     }
     canvasCtxRef.current = ctx;
     setIsCanvasMounted(true);
-  };
+  }, []);
 
   return (
     <Canvas
