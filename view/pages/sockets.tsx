@@ -132,10 +132,6 @@ const Sockets = () => {
     sendMessage(JSON.stringify(message));
   };
 
-  const setPosition = (x: number, y: number) => {
-    mousePositionRef.current = { x, y };
-  };
-
   const handleMouseMove = (x: number, y: number) => {
     const isMobile = isMobileAgent();
     if (isMobile || !isMouseDownRef.current || !canvasCtxRef.current) {
@@ -151,7 +147,7 @@ const Sockets = () => {
 
     // Draw line
     canvasCtx.moveTo(mousePositionRef.current.x, mousePositionRef.current.y); // from
-    setPosition(x, y); // update position
+    mousePositionRef.current = { x, y }; // update position
     canvasCtx.lineTo(mousePositionRef.current.x, mousePositionRef.current.y); // to
     canvasCtx.stroke();
 
@@ -171,8 +167,8 @@ const Sockets = () => {
     _canvas: HTMLCanvasElement,
     e: MouseEvent<Element>,
   ) => {
+    mousePositionRef.current = { x: e.clientX, y: e.clientY };
     isMouseDownRef.current = true;
-    setPosition(e.clientX, e.clientY);
   };
 
   // TODO: Determine why canvas is getting remounted when new messages are received
