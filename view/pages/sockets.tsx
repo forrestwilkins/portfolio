@@ -57,7 +57,6 @@ const Sockets = () => {
           canvasCtxRef.current.lineTo(denormalizedX, denormalizedY);
           canvasCtxRef.current.stroke();
         }
-
         previousDot = { x: denormalizedX, y: denormalizedY };
       }
     },
@@ -141,6 +140,10 @@ const Sockets = () => {
     sendMessage(JSON.stringify(message));
   };
 
+  const setMousePosition = (x: number, y: number) => {
+    mousePositionRef.current = { x, y };
+  };
+
   const handleMouseMove = (x: number, y: number) => {
     const isMobile = isMobileAgent();
     if (isMobile || !isMouseDownRef.current || !canvasCtxRef.current) {
@@ -156,7 +159,7 @@ const Sockets = () => {
 
     // Draw line
     canvasCtx.moveTo(mousePositionRef.current.x, mousePositionRef.current.y); // from
-    mousePositionRef.current = { x, y }; // update position
+    setMousePosition(x, y); // update position
     canvasCtx.lineTo(mousePositionRef.current.x, mousePositionRef.current.y); // to
     canvasCtx.stroke();
 
@@ -182,7 +185,7 @@ const Sockets = () => {
 
     // Draw line
     canvasCtx.moveTo(mousePositionRef.current.x, mousePositionRef.current.y); // from
-    mousePositionRef.current = { x, y }; // update position
+    setMousePosition(x, y); // update position
     canvasCtx.lineTo(mousePositionRef.current.x, mousePositionRef.current.y); // to
     canvasCtx.stroke();
 
@@ -198,15 +201,8 @@ const Sockets = () => {
     _canvas: HTMLCanvasElement,
     e: MouseEvent<Element>,
   ) => {
-    mousePositionRef.current = { x: e.clientX, y: e.clientY };
+    setMousePosition(e.clientX, e.clientY);
     isMouseDownRef.current = true;
-  };
-
-  const handleTouchStart = (x: number, y: number) => {
-    if (!canvasCtxRef.current) {
-      return;
-    }
-    mousePositionRef.current = { x, y };
   };
 
   return (
@@ -217,7 +213,7 @@ const Sockets = () => {
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
       onTouchMove={handleTouchMove}
-      onTouchStart={handleTouchStart}
+      onTouchStart={setMousePosition}
       onMouseUp={() => {
         isMouseDownRef.current = false;
       }}
