@@ -36,14 +36,6 @@ const Sockets = () => {
   const [canvasWidth, canvasHeight] = useScreenSize();
   const isDarkMode = useIsDarkMode();
 
-  console.log('Current state:', {
-    token,
-    isCanvasMounted,
-    canvasWidth,
-    canvasHeight,
-    isDarkMode,
-  });
-
   const { sendMessage } = useSubscription(SOCKETS_CHANNEL, {
     onMessage: (event) => {
       const { body }: PubSubMessage<Stroke> = JSON.parse(event.data);
