@@ -168,8 +168,30 @@ const Sockets = () => {
     }
   };
 
-  const handleTouchMove = (x: number, y: number, canvas: HTMLCanvasElement) => {
-    console.log('TODO: Implement handleTouchMove', x, y, canvas.id);
+  const handleTouchMove = (x: number, y: number) => {
+    if (!canvasCtxRef.current) {
+      return;
+    }
+
+    // Set up path
+    const { current: canvasCtx } = canvasCtxRef;
+    canvasCtx.beginPath();
+    canvasCtx.lineWidth = 2;
+    canvasCtx.lineCap = 'round';
+    canvasCtx.strokeStyle = isDarkMode ? 'white' : 'black';
+
+    // Draw line
+    canvasCtx.moveTo(mousePositionRef.current.x, mousePositionRef.current.y); // from
+    mousePositionRef.current = { x, y }; // update position
+    canvasCtx.lineTo(mousePositionRef.current.x, mousePositionRef.current.y); // to
+    canvasCtx.stroke();
+
+    // Add stroke to buffer and send if buffer is full
+    strokeBufferRef.current.push({ x, y });
+    if (strokeBufferRef.current.length > MAX_BUFFER_SIZE) {
+      sendStroke(strokeBufferRef.current);
+      strokeBufferRef.current = [];
+    }
   };
 
   const handleMouseDown = (
@@ -180,6 +202,13 @@ const Sockets = () => {
     isMouseDownRef.current = true;
   };
 
+  const handleTouchStart = (x: number, y: number) => {
+    if (!canvasCtxRef.current) {
+      return;
+    }
+    mousePositionRef.current = { x, y };
+  };
+
   return (
     <Canvas
       width={canvasWidth}
@@ -188,6 +217,7 @@ const Sockets = () => {
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
       onTouchMove={handleTouchMove}
+      onTouchStart={handleTouchStart}
       onMouseUp={() => {
         isMouseDownRef.current = false;
       }}
