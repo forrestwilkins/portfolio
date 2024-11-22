@@ -43,22 +43,24 @@ const Sockets = () => {
         return;
       }
 
-      let previousDot: Dot | null = null;
-      for (const { x, y } of body.path) {
-        const denormalizedX = Math.round(x * canvasWidth);
-        const denormalizedY = Math.round(y * canvasHeight);
+      const { current: ctx } = canvasCtxRef;
+      ctx.beginPath();
+      ctx.lineWidth = 2;
+      ctx.lineCap = 'round';
+      ctx.strokeStyle = isDarkMode ? 'white' : 'black';
 
-        if (previousDot) {
-          canvasCtxRef.current.beginPath();
-          canvasCtxRef.current.lineWidth = 2;
-          canvasCtxRef.current.lineCap = 'round';
-          canvasCtxRef.current.strokeStyle = isDarkMode ? 'white' : 'black';
-          canvasCtxRef.current.moveTo(previousDot.x, previousDot.y);
-          canvasCtxRef.current.lineTo(denormalizedX, denormalizedY);
-          canvasCtxRef.current.stroke();
+      for (const point of body.path) {
+        const denormalizedX = Math.round(point.x * canvasWidth);
+        const denormalizedY = Math.round(point.y * canvasHeight);
+        const isFirstPoint = body.path.indexOf(point) === 0;
+
+        if (isFirstPoint) {
+          ctx.moveTo(denormalizedX, denormalizedY);
+        } else {
+          ctx.lineTo(denormalizedX, denormalizedY);
         }
-        previousDot = { x: denormalizedX, y: denormalizedY };
       }
+      ctx.stroke();
     },
   });
 
