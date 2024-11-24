@@ -2,42 +2,42 @@ import cacheService from '../cache/cache.service';
 import { WebSocketWithId } from '../pub-sub/pub-sub.models';
 import pubSubService from '../pub-sub/pub-sub.service';
 
-const SOCKETS_STREAM_KEY = 'interactions:sockets';
-const SOCKETS_CLEAR_CHANNEL = 'sockets:clear';
-const SOCKETS_CHANNEL = 'sockets';
+const DRAW_STREAM_KEY = 'interactions:draw';
+const DRAW_CLEAR_CHANNEL = 'draw:clear';
+const DRAW_CHANNEL = 'draw';
 
-interface Dot {
+interface Point {
   x: number;
   y: number;
 }
 
 interface Stroke {
-  path: Dot[];
+  path: Point[];
 }
 
 class InteractionsService {
   constructor() {
     pubSubService.registerChannelHandler(
-      SOCKETS_CHANNEL,
-      this.handleSocketTestMessage.bind(this),
+      DRAW_CHANNEL,
+      this.handleDrawMessage.bind(this),
     );
   }
 
-  async getSocketTestStream() {
-    const stream = await cacheService.getStreamMessages(SOCKETS_STREAM_KEY);
+  async getDrawStream() {
+    const stream = await cacheService.getStreamMessages(DRAW_STREAM_KEY);
     return stream.map(({ id, message }) => ({
       message: { path: JSON.parse(message.path) },
       id,
     }));
   }
 
-  async clearSocketTestStream() {
-    await cacheService.trimStreamMessages(SOCKETS_STREAM_KEY, Date.now());
-    await pubSubService.publish(SOCKETS_CLEAR_CHANNEL, { clear: true });
+  async clearDrawStream() {
+    await cacheService.trimStreamMessages(DRAW_STREAM_KEY, Date.now());
+    await pubSubService.publish(DRAW_CLEAR_CHANNEL, { clear: true });
   }
 
-  async handleSocketTestMessage({ path }: Stroke, publisher: WebSocketWithId) {
-    await cacheService.addStreamMessage(SOCKETS_STREAM_KEY, {
+  async handleDrawMessage({ path }: Stroke, publisher: WebSocketWithId) {
+    await cacheService.addStreamMessage(DRAW_STREAM_KEY, {
       userId: publisher.id,
       path: JSON.stringify(path),
     });

@@ -65,7 +65,7 @@ const TopNav = () => {
   const handleClearCanvasClick = async () => {
     if (isDraw) {
       setIsClearLoading(true);
-      await fetch('/api/interactions/sockets', {
+      await fetch('/api/interactions/draw', {
         method: 'DELETE',
       });
       setIsClearLoading(false);

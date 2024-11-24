@@ -3,13 +3,13 @@ import interactionsService from './interactions.service';
 
 const interactionsRouter = express.Router();
 
-interactionsRouter.get('/sockets', async (_, res) => {
-  const payload = await interactionsService.getSocketTestStream();
+interactionsRouter.get('/draw', async (_, res) => {
+  const payload = await interactionsService.getDrawStream();
   res.json(payload);
 });
 
-interactionsRouter.delete('/sockets', async (_, res) => {
-  await interactionsService.clearSocketTestStream();
+interactionsRouter.delete('/draw', async (_, res) => {
+  await interactionsService.clearDrawStream();
   res.status(204).end();
 });
 

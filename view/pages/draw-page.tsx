@@ -10,18 +10,18 @@ import {
 import useAppStore from '../store/app.store';
 import { isMobileAgent } from '../utils/shared.utils';
 
-const SOCKETS_CHANNEL = 'sockets';
-const SOCKETS_CLEAR_CHANNEL = 'sockets:clear';
+const DRAW_CHANNEL = 'draw';
+const DRAW_CLEAR_CHANNEL = 'draw:clear';
 const MAX_BUFFER_SIZE = 5;
 const INIT_DEBOUNCE = 200;
 
-interface Dot {
+interface Point {
   x: number;
   y: number;
 }
 
 interface Stroke {
-  path: Dot[];
+  path: Point[];
 }
 
 const DrawPage = () => {
@@ -36,7 +36,7 @@ const DrawPage = () => {
   const [canvasWidth, canvasHeight] = useScreenSize();
   const isDarkMode = useIsDarkMode();
 
-  const { sendMessage } = useSubscription(SOCKETS_CHANNEL, {
+  const { sendMessage } = useSubscription(DRAW_CHANNEL, {
     onMessage: (event) => {
       const { body }: PubSubMessage<Stroke> = JSON.parse(event.data);
       if (!canvasCtxRef.current || !body) {
@@ -64,7 +64,7 @@ const DrawPage = () => {
     },
   });
 
-  useSubscription(SOCKETS_CLEAR_CHANNEL, {
+  useSubscription(DRAW_CLEAR_CHANNEL, {
     onMessage: (event) => {
       const { body }: PubSubMessage<{ clear: boolean }> = JSON.parse(
         event.data,
@@ -81,7 +81,7 @@ const DrawPage = () => {
     }
 
     const init = setTimeout(async () => {
-      const result = await fetch('/api/interactions/sockets', {
+      const result = await fetch('/api/interactions/draw', {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data: { message: Stroke }[] = await result.json();
@@ -91,22 +91,22 @@ const DrawPage = () => {
 
       clearCanvas();
       for (const { message } of data) {
-        let previousDot: Dot | null = null;
+        let previousPoint: Point | null = null;
         for (const { x, y } of message.path) {
           const denormalizedX = Math.round(x * canvasWidth);
           const denormalizedY = Math.round(y * canvasHeight);
 
-          if (previousDot) {
+          if (previousPoint) {
             canvasCtxRef.current.beginPath();
             canvasCtxRef.current.lineWidth = 2;
             canvasCtxRef.current.lineCap = 'round';
             canvasCtxRef.current.strokeStyle = isDarkMode ? 'white' : 'black';
-            canvasCtxRef.current.moveTo(previousDot.x, previousDot.y);
+            canvasCtxRef.current.moveTo(previousPoint.x, previousPoint.y);
             canvasCtxRef.current.lineTo(denormalizedX, denormalizedY);
             canvasCtxRef.current.stroke();
           }
 
-          previousDot = { x: denormalizedX, y: denormalizedY };
+          previousPoint = { x: denormalizedX, y: denormalizedY };
         }
       }
     }, INIT_DEBOUNCE);
@@ -125,7 +125,7 @@ const DrawPage = () => {
     setIsCanvasMounted(true);
   }, []);
 
-  const sendStroke = (stroke: Dot[]) => {
+  const sendStroke = (stroke: Point[]) => {
     if (!token) {
       return;
     }
@@ -135,7 +135,7 @@ const DrawPage = () => {
     }));
     const message: PubSubMessage<Stroke> = {
       request: 'PUBLISH',
-      channel: SOCKETS_CHANNEL,
+      channel: DRAW_CHANNEL,
       body: { path: normalizedStroke },
       token,
     };
