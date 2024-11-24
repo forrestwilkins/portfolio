@@ -47,16 +47,16 @@ const HomePage = () => {
         Color Grid
       </Link>
 
+      <Link to="/draw" sx={linkStyles}>
+        Draw (WIP)
+      </Link>
+
       <Link to="/audio-visual" sx={linkStyles}>
         Audio Visual
       </Link>
 
       <Link to="/hello-sound" sx={linkStyles}>
         Hello Sound
-      </Link>
-
-      <Link to="/draw" sx={linkStyles}>
-        Draw (WIP)
       </Link>
 
       {time && (
