@@ -55,8 +55,8 @@ const HomePage = () => {
         Hello Sound
       </Link>
 
-      <Link to="/sockets" sx={linkStyles}>
-        Sockets
+      <Link to="/draw" sx={linkStyles}>
+        Draw (WIP)
       </Link>
 
       {time && (

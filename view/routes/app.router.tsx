@@ -36,7 +36,7 @@ const appRouter = createBrowserRouter([
         element: <Ripples />,
       },
       {
-        path: 'sockets',
+        path: 'draw',
         element: <Sockets />,
       },
       {
