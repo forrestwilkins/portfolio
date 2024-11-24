@@ -24,7 +24,7 @@ interface Stroke {
   path: Dot[];
 }
 
-const Sockets = () => {
+const DrawPage = () => {
   const token = useAppStore((state) => state.token);
   const [isCanvasMounted, setIsCanvasMounted] = useState(false);
 
@@ -224,4 +224,4 @@ const Sockets = () => {
   );
 };
 
-export default Sockets;
+export default DrawPage;
