@@ -41,10 +41,10 @@ const TopNav = () => {
   const navigate = useNavigate();
 
   const isHome = location.pathname === '/';
+  const isDraw = location.pathname === '/draw';
   const isRipples = location.pathname === '/ripples';
-  const isSockets = location.pathname === '/sockets';
   const iOS = /(iPad|iPhone|iPod)/g.test(navigator.userAgent);
-  const showClearCanvas = isRipples || isSockets;
+  const showClearCanvas = isRipples || isDraw;
 
   const modeToggleText = isDarkMode ? 'Light mode' : 'Dark mode';
   const PauseIcon = isCanvasPaused ? PlayArrow : Pause;
@@ -63,7 +63,7 @@ const TopNav = () => {
   };
 
   const handleClearCanvasClick = async () => {
-    if (isSockets) {
+    if (isDraw) {
       setIsClearLoading(true);
       await fetch('/api/interactions/sockets', {
         method: 'DELETE',
