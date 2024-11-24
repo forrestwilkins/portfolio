@@ -49,12 +49,12 @@ const DrawPage = () => {
       ctx.lineCap = 'round';
       ctx.strokeStyle = isDarkMode ? 'white' : 'black';
 
-      for (const point of body.path) {
+      for (let i = 0; i < body.path.length; i++) {
+        const point = body.path[i];
         const denormalizedX = Math.round(point.x * canvasWidth);
         const denormalizedY = Math.round(point.y * canvasHeight);
-        const isFirstPoint = body.path.indexOf(point) === 0;
 
-        if (isFirstPoint) {
+        if (i === 0) {
           ctx.moveTo(denormalizedX, denormalizedY);
         } else {
           ctx.lineTo(denormalizedX, denormalizedY);
@@ -91,23 +91,26 @@ const DrawPage = () => {
 
       clearCanvas();
       for (const { message } of data) {
-        let previousPoint: Point | null = null;
-        for (const { x, y } of message.path) {
-          const denormalizedX = Math.round(x * canvasWidth);
-          const denormalizedY = Math.round(y * canvasHeight);
+        const { path } = message;
+        const { current: ctx } = canvasCtxRef;
 
-          if (previousPoint) {
-            canvasCtxRef.current.beginPath();
-            canvasCtxRef.current.lineWidth = 2;
-            canvasCtxRef.current.lineCap = 'round';
-            canvasCtxRef.current.strokeStyle = isDarkMode ? 'white' : 'black';
-            canvasCtxRef.current.moveTo(previousPoint.x, previousPoint.y);
-            canvasCtxRef.current.lineTo(denormalizedX, denormalizedY);
-            canvasCtxRef.current.stroke();
+        ctx.beginPath();
+        ctx.lineWidth = 2;
+        ctx.lineCap = 'round';
+        ctx.strokeStyle = isDarkMode ? 'white' : 'black';
+
+        for (let i = 0; i < path.length; i++) {
+          const point = path[i];
+          const denormalizedX = Math.round(point.x * canvasWidth);
+          const denormalizedY = Math.round(point.y * canvasHeight);
+
+          if (i === 0) {
+            ctx.moveTo(denormalizedX, denormalizedY);
+          } else {
+            ctx.lineTo(denormalizedX, denormalizedY);
           }
-
-          previousPoint = { x: denormalizedX, y: denormalizedY };
         }
+        ctx.stroke();
       }
     }, INIT_DEBOUNCE);
 
