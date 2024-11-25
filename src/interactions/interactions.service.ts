@@ -25,7 +25,9 @@ class InteractionsService {
 
   async getDrawStream() {
     const stream = await cacheService.getStreamMessages(DRAW_STREAM_KEY);
-    return stream.map(({ id, message }) => ({
+    const reversedStream = stream.reverse();
+
+    return reversedStream.map(({ id, message }) => ({
       message: { path: JSON.parse(message.path) },
       id,
     }));
