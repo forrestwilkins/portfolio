@@ -1,4 +1,5 @@
 import { MouseEvent, useCallback, useEffect, useRef, useState } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 import Canvas from '../components/shared/canvas/canvas';
 import { clearCanvas } from '../components/shared/canvas/canvas.utils';
 import {
@@ -21,6 +22,7 @@ interface Point {
 }
 
 interface Stroke {
+  id: string;
   path: Point[];
 }
 
@@ -29,15 +31,17 @@ const DrawPage = () => {
   const [isCanvasMounted, setIsCanvasMounted] = useState(false);
 
   const canvasCtxRef = useRef<CanvasRenderingContext2D | null>(null);
-  const strokeBufferRef = useRef<{ x: number; y: number }[]>([]);
+  const activeStrokeIdRef = useRef<string | null>(null);
+  const previousStroke = useRef<Stroke | null>(null);
   const mousePositionRef = useRef({ x: 0, y: 0 });
+  const strokeBufferRef = useRef<Point[]>([]);
   const isMouseDownRef = useRef(false);
 
   const [canvasWidth, canvasHeight] = useScreenSize();
   const isDarkMode = useIsDarkMode();
 
   const drawMessagePath = useCallback(
-    (path: Point[]) => {
+    (stroke: Stroke, previousStroke?: Stroke | null) => {
       if (!canvasCtxRef.current) {
         return;
       }
@@ -48,8 +52,21 @@ const DrawPage = () => {
       ctx.lineCap = 'round';
       ctx.strokeStyle = isDarkMode ? 'white' : 'black';
 
-      for (let i = 0; i < path.length; i++) {
-        const point = path[i];
+      if (previousStroke && stroke.id === previousStroke.id) {
+        const previousPoint =
+          previousStroke.path[previousStroke.path.length - 1];
+        const denormalizedX = Math.round(previousPoint.x * canvasWidth);
+        const denormalizedY = Math.round(previousPoint.y * canvasHeight);
+        ctx.moveTo(denormalizedX, denormalizedY);
+
+        const firstPoint = stroke.path[0];
+        const firstDenormalizedX = Math.round(firstPoint.x * canvasWidth);
+        const firstDenormalizedY = Math.round(firstPoint.y * canvasHeight);
+        ctx.lineTo(firstDenormalizedX, firstDenormalizedY);
+      }
+
+      for (let i = 0; i < stroke.path.length; i++) {
+        const point = stroke.path[i];
         const denormalizedX = Math.round(point.x * canvasWidth);
         const denormalizedY = Math.round(point.y * canvasHeight);
 
@@ -70,7 +87,8 @@ const DrawPage = () => {
       if (!body) {
         return;
       }
-      drawMessagePath(body.path);
+      drawMessagePath(body, previousStroke.current);
+      previousStroke.current = body;
     },
   });
 
@@ -100,8 +118,10 @@ const DrawPage = () => {
       }
 
       clearCanvas();
+      let previousStroke: Stroke | undefined;
       for (const { message } of data) {
-        drawMessagePath(message.path);
+        drawMessagePath(message, previousStroke);
+        previousStroke = message;
       }
     }, INIT_DEBOUNCE);
 
@@ -120,18 +140,21 @@ const DrawPage = () => {
   }, []);
 
   const sendStroke = () => {
-    if (!token) {
+    if (!token || !activeStrokeIdRef.current) {
       return;
     }
     const { current } = strokeBufferRef;
-    const normalizedStroke = current.map(({ x, y }) => ({
+    const normalizedPath = current.map(({ x, y }) => ({
       x: x / canvasWidth,
       y: y / canvasHeight,
     }));
     const message: PubSubMessage<Stroke> = {
       request: 'PUBLISH',
       channel: DRAW_CHANNEL,
-      body: { path: normalizedStroke },
+      body: {
+        id: activeStrokeIdRef.current,
+        path: normalizedPath,
+      },
       token,
     };
     sendMessage(JSON.stringify(message));
@@ -169,25 +192,37 @@ const DrawPage = () => {
     }
   };
 
-  const handleMouseMove = (x: number, y: number) => {
-    const isMobile = isMobileAgent();
-    if (isMobile || !isMouseDownRef.current) {
-      return;
-    }
-    handleDraw(x, y);
+  const handleTouchStart = (x: number, y: number) => {
+    setMousePosition(x, y);
+    activeStrokeIdRef.current = uuidv4();
+  };
+
+  const handleTouchEnd = () => {
+    sendStroke();
+    activeStrokeIdRef.current = null;
   };
 
   const handleMouseDown = (
     _canvas: HTMLCanvasElement,
     e: MouseEvent<Element>,
   ) => {
-    isMouseDownRef.current = true;
     setMousePosition(e.clientX, e.clientY);
+    activeStrokeIdRef.current = uuidv4();
+    isMouseDownRef.current = true;
   };
 
   const handleMouseUp = () => {
-    isMouseDownRef.current = false;
     sendStroke();
+    activeStrokeIdRef.current = null;
+    isMouseDownRef.current = false;
+  };
+
+  const handleMouseMove = (x: number, y: number) => {
+    const isMobile = isMobileAgent();
+    if (isMobile || !isMouseDownRef.current) {
+      return;
+    }
+    handleDraw(x, y);
   };
 
   return (
@@ -198,9 +233,9 @@ const DrawPage = () => {
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
+      onTouchEnd={handleTouchEnd}
       onTouchMove={handleDraw}
-      onTouchStart={setMousePosition}
-      onTouchEnd={() => sendStroke()}
+      onTouchStart={handleTouchStart}
       fillViewport
     />
   );
