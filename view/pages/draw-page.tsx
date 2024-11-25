@@ -144,33 +144,7 @@ const DrawPage = () => {
     mousePositionRef.current = { x, y };
   };
 
-  const handleMouseMove = (x: number, y: number) => {
-    const isMobile = isMobileAgent();
-    if (isMobile || !isMouseDownRef.current || !canvasCtxRef.current) {
-      return;
-    }
-
-    // Set up path
-    const { current: canvasCtx } = canvasCtxRef;
-    canvasCtx.beginPath();
-    canvasCtx.lineWidth = 2;
-    canvasCtx.lineCap = 'round';
-    canvasCtx.strokeStyle = isDarkMode ? 'white' : 'black';
-
-    // Draw line
-    canvasCtx.moveTo(mousePositionRef.current.x, mousePositionRef.current.y); // from
-    setMousePosition(x, y); // update position
-    canvasCtx.lineTo(mousePositionRef.current.x, mousePositionRef.current.y); // to
-    canvasCtx.stroke();
-
-    // Add stroke to buffer and send if buffer is full
-    strokeBufferRef.current.push({ x, y });
-    if (strokeBufferRef.current.length > MAX_BUFFER_SIZE) {
-      sendStroke();
-    }
-  };
-
-  const handleTouchMove = (x: number, y: number) => {
+  const handleDraw = (x: number, y: number) => {
     if (!canvasCtxRef.current) {
       return;
     }
@@ -195,6 +169,14 @@ const DrawPage = () => {
     }
   };
 
+  const handleMouseMove = (x: number, y: number) => {
+    const isMobile = isMobileAgent();
+    if (isMobile || !isMouseDownRef.current) {
+      return;
+    }
+    handleDraw(x, y);
+  };
+
   const handleMouseDown = (
     _canvas: HTMLCanvasElement,
     e: MouseEvent<Element>,
@@ -216,7 +198,7 @@ const DrawPage = () => {
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
-      onTouchMove={handleTouchMove}
+      onTouchMove={handleDraw}
       onTouchStart={setMousePosition}
       onTouchEnd={() => sendStroke()}
       fillViewport
