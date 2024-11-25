@@ -36,10 +36,9 @@ const DrawPage = () => {
   const [canvasWidth, canvasHeight] = useScreenSize();
   const isDarkMode = useIsDarkMode();
 
-  const { sendMessage } = useSubscription(DRAW_CHANNEL, {
-    onMessage: (event) => {
-      const { body }: PubSubMessage<Stroke> = JSON.parse(event.data);
-      if (!canvasCtxRef.current || !body) {
+  const drawMessagePath = useCallback(
+    (path: Point[]) => {
+      if (!canvasCtxRef.current) {
         return;
       }
 
@@ -49,8 +48,8 @@ const DrawPage = () => {
       ctx.lineCap = 'round';
       ctx.strokeStyle = isDarkMode ? 'white' : 'black';
 
-      for (let i = 0; i < body.path.length; i++) {
-        const point = body.path[i];
+      for (let i = 0; i < path.length; i++) {
+        const point = path[i];
         const denormalizedX = Math.round(point.x * canvasWidth);
         const denormalizedY = Math.round(point.y * canvasHeight);
 
@@ -61,6 +60,17 @@ const DrawPage = () => {
         }
       }
       ctx.stroke();
+    },
+    [canvasWidth, canvasHeight, isDarkMode],
+  );
+
+  const { sendMessage } = useSubscription(DRAW_CHANNEL, {
+    onMessage: (event) => {
+      const { body }: PubSubMessage<Stroke> = JSON.parse(event.data);
+      if (!body) {
+        return;
+      }
+      drawMessagePath(body.path);
     },
   });
 
@@ -91,33 +101,14 @@ const DrawPage = () => {
 
       clearCanvas();
       for (const { message } of data) {
-        const { path } = message;
-        const { current: ctx } = canvasCtxRef;
-
-        ctx.beginPath();
-        ctx.lineWidth = 2;
-        ctx.lineCap = 'round';
-        ctx.strokeStyle = isDarkMode ? 'white' : 'black';
-
-        for (let i = 0; i < path.length; i++) {
-          const point = path[i];
-          const denormalizedX = Math.round(point.x * canvasWidth);
-          const denormalizedY = Math.round(point.y * canvasHeight);
-
-          if (i === 0) {
-            ctx.moveTo(denormalizedX, denormalizedY);
-          } else {
-            ctx.lineTo(denormalizedX, denormalizedY);
-          }
-        }
-        ctx.stroke();
+        drawMessagePath(message.path);
       }
     }, INIT_DEBOUNCE);
 
     return () => {
       clearTimeout(init);
     };
-  }, [token, isCanvasMounted, canvasWidth, canvasHeight, isDarkMode]);
+  }, [token, isCanvasMounted, drawMessagePath]);
 
   const handleCanvasMount = useCallback((canvas: HTMLCanvasElement) => {
     const ctx = canvas.getContext('2d');
