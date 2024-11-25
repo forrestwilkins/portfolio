@@ -31,16 +31,17 @@ const DrawPage = () => {
   const [isCanvasMounted, setIsCanvasMounted] = useState(false);
 
   const canvasCtxRef = useRef<CanvasRenderingContext2D | null>(null);
-  const strokeBufferRef = useRef<{ x: number; y: number }[]>([]);
   const activeStrokeIdRef = useRef<string | null>(null);
+  const previousStroke = useRef<Stroke | null>(null);
   const mousePositionRef = useRef({ x: 0, y: 0 });
+  const strokeBufferRef = useRef<Point[]>([]);
   const isMouseDownRef = useRef(false);
 
   const [canvasWidth, canvasHeight] = useScreenSize();
   const isDarkMode = useIsDarkMode();
 
   const drawMessagePath = useCallback(
-    (stroke: Stroke, previousStroke?: Stroke) => {
+    (stroke: Stroke, previousStroke?: Stroke | null) => {
       if (!canvasCtxRef.current) {
         return;
       }
@@ -86,7 +87,8 @@ const DrawPage = () => {
       if (!body) {
         return;
       }
-      drawMessagePath(body);
+      drawMessagePath(body, previousStroke.current);
+      previousStroke.current = body;
     },
   });
 
@@ -142,7 +144,7 @@ const DrawPage = () => {
       return;
     }
     const { current } = strokeBufferRef;
-    const normalizedStroke = current.map(({ x, y }) => ({
+    const normalizedPath = current.map(({ x, y }) => ({
       x: x / canvasWidth,
       y: y / canvasHeight,
     }));
@@ -151,7 +153,7 @@ const DrawPage = () => {
       channel: DRAW_CHANNEL,
       body: {
         id: activeStrokeIdRef.current,
-        path: normalizedStroke,
+        path: normalizedPath,
       },
       token,
     };

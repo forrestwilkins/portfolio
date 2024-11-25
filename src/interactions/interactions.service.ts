@@ -40,6 +40,10 @@ class InteractionsService {
   }
 
   async handleDrawMessage(stroke: Stroke, publisher: WebSocketWithId) {
+    if (!stroke.path.length || !stroke.path[0]) {
+      // TODO: Send error message to the publisher
+      return;
+    }
     await cacheService.addStreamMessage(DRAW_STREAM_KEY, {
       userId: publisher.id,
       stroke: JSON.stringify(stroke),
