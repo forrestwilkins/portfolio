@@ -40,7 +40,7 @@ const DrawPage = () => {
   const isDarkMode = useIsDarkMode();
 
   const drawMessagePath = useCallback(
-    (path: Point[]) => {
+    (stroke: Stroke, previousStroke?: Stroke) => {
       if (!canvasCtxRef.current) {
         return;
       }
@@ -51,8 +51,21 @@ const DrawPage = () => {
       ctx.lineCap = 'round';
       ctx.strokeStyle = isDarkMode ? 'white' : 'black';
 
-      for (let i = 0; i < path.length; i++) {
-        const point = path[i];
+      if (previousStroke && stroke.id === previousStroke.id) {
+        const previousPoint =
+          previousStroke.path[previousStroke.path.length - 1];
+        const denormalizedX = Math.round(previousPoint.x * canvasWidth);
+        const denormalizedY = Math.round(previousPoint.y * canvasHeight);
+        ctx.moveTo(denormalizedX, denormalizedY);
+
+        const firstPoint = stroke.path[0];
+        const firstDenormalizedX = Math.round(firstPoint.x * canvasWidth);
+        const firstDenormalizedY = Math.round(firstPoint.y * canvasHeight);
+        ctx.lineTo(firstDenormalizedX, firstDenormalizedY);
+      }
+
+      for (let i = 0; i < stroke.path.length; i++) {
+        const point = stroke.path[i];
         const denormalizedX = Math.round(point.x * canvasWidth);
         const denormalizedY = Math.round(point.y * canvasHeight);
 
@@ -73,7 +86,7 @@ const DrawPage = () => {
       if (!body) {
         return;
       }
-      drawMessagePath(body.path);
+      drawMessagePath(body);
     },
   });
 
@@ -103,8 +116,10 @@ const DrawPage = () => {
       }
 
       clearCanvas();
+      let previousStroke: Stroke | undefined;
       for (const { message } of data) {
-        drawMessagePath(message.path);
+        drawMessagePath(message, previousStroke);
+        previousStroke = message;
       }
     }, INIT_DEBOUNCE);
 
