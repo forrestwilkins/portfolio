@@ -128,11 +128,12 @@ const DrawPage = () => {
     setIsCanvasMounted(true);
   }, []);
 
-  const sendStroke = (stroke: Point[]) => {
+  const sendStroke = () => {
     if (!token) {
       return;
     }
-    const normalizedStroke = stroke.map(({ x, y }) => ({
+    const { current } = strokeBufferRef;
+    const normalizedStroke = current.map(({ x, y }) => ({
       x: x / canvasWidth,
       y: y / canvasHeight,
     }));
@@ -143,6 +144,9 @@ const DrawPage = () => {
       token,
     };
     sendMessage(JSON.stringify(message));
+
+    // Clear buffer after sending
+    strokeBufferRef.current = [];
   };
 
   const setMousePosition = (x: number, y: number) => {
@@ -171,8 +175,7 @@ const DrawPage = () => {
     // Add stroke to buffer and send if buffer is full
     strokeBufferRef.current.push({ x, y });
     if (strokeBufferRef.current.length > MAX_BUFFER_SIZE) {
-      sendStroke(strokeBufferRef.current);
-      strokeBufferRef.current = [];
+      sendStroke();
     }
   };
 
@@ -197,8 +200,7 @@ const DrawPage = () => {
     // Add stroke to buffer and send if buffer is full
     strokeBufferRef.current.push({ x, y });
     if (strokeBufferRef.current.length > MAX_BUFFER_SIZE) {
-      sendStroke(strokeBufferRef.current);
-      strokeBufferRef.current = [];
+      sendStroke();
     }
   };
 
@@ -206,8 +208,13 @@ const DrawPage = () => {
     _canvas: HTMLCanvasElement,
     e: MouseEvent<Element>,
   ) => {
-    setMousePosition(e.clientX, e.clientY);
     isMouseDownRef.current = true;
+    setMousePosition(e.clientX, e.clientY);
+  };
+
+  const handleMouseUp = () => {
+    isMouseDownRef.current = false;
+    sendStroke();
   };
 
   return (
@@ -217,11 +224,10 @@ const DrawPage = () => {
       onMount={handleCanvasMount}
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
+      onMouseUp={handleMouseUp}
       onTouchMove={handleTouchMove}
       onTouchStart={setMousePosition}
-      onMouseUp={() => {
-        isMouseDownRef.current = false;
-      }}
+      onTouchEnd={() => sendStroke()}
       fillViewport
     />
   );
