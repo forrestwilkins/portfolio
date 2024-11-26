@@ -140,7 +140,11 @@ const DrawPage = () => {
   }, []);
 
   const sendStroke = () => {
-    if (!token || !activeStrokeIdRef.current) {
+    if (
+      !token ||
+      !activeStrokeIdRef.current ||
+      !strokeBufferRef.current.length
+    ) {
       return;
     }
     const { current } = strokeBufferRef;
@@ -157,9 +161,9 @@ const DrawPage = () => {
       },
       token,
     };
-    sendMessage(JSON.stringify(message));
 
-    // Clear buffer after sending
+    // Send message and reset buffer after
+    sendMessage(JSON.stringify(message));
     strokeBufferRef.current = [];
   };
 
