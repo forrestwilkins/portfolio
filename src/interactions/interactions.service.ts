@@ -11,9 +11,9 @@ interface Point {
   y: number;
 }
 
-interface Stroke {
+interface Path {
   id: string;
-  path: Point[];
+  points: Point[];
 }
 
 class InteractionsService {
@@ -29,7 +29,7 @@ class InteractionsService {
     const reversedStream = stream.reverse();
 
     return reversedStream.map(({ id, message }) => ({
-      message: JSON.parse(message.stroke),
+      message: JSON.parse(message.path),
       id,
     }));
   }
@@ -39,14 +39,14 @@ class InteractionsService {
     await pubSubService.publish(DRAW_CLEAR_CHANNEL, { clear: true });
   }
 
-  async handleDrawMessage(stroke: Stroke, publisher: WebSocketWithId) {
-    if (!stroke.path.length || !stroke.path[0]) {
+  async handleDrawMessage(path: Path, publisher: WebSocketWithId) {
+    if (!path.points.length || !path.points[0]) {
       // TODO: Send error message to the publisher
       return;
     }
     await cacheService.addStreamMessage(DRAW_STREAM_KEY, {
       userId: publisher.id,
-      stroke: JSON.stringify(stroke),
+      path: JSON.stringify(path),
     });
   }
 }

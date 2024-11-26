@@ -21,9 +21,9 @@ interface Point {
   y: number;
 }
 
-interface Stroke {
+interface Path {
   id: string;
-  path: Point[];
+  points: Point[];
 }
 
 const DrawPage = () => {
@@ -31,17 +31,17 @@ const DrawPage = () => {
   const [isCanvasMounted, setIsCanvasMounted] = useState(false);
 
   const canvasCtxRef = useRef<CanvasRenderingContext2D | null>(null);
-  const activeStrokeIdRef = useRef<string | null>(null);
-  const previousStroke = useRef<Stroke | null>(null);
+  const activePathIdRef = useRef<string | null>(null);
+  const previousPath = useRef<Path | null>(null);
   const mousePositionRef = useRef({ x: 0, y: 0 });
-  const strokeBufferRef = useRef<Point[]>([]);
+  const pathBufferRef = useRef<Point[]>([]);
   const isMouseDownRef = useRef(false);
 
   const [canvasWidth, canvasHeight] = useScreenSize();
   const isDarkMode = useIsDarkMode();
 
   const drawMessagePath = useCallback(
-    (stroke: Stroke, previousStroke?: Stroke | null) => {
+    (path: Path, previousPath?: Path | null) => {
       if (!canvasCtxRef.current) {
         return;
       }
@@ -52,21 +52,21 @@ const DrawPage = () => {
       ctx.lineCap = 'round';
       ctx.strokeStyle = isDarkMode ? 'white' : 'black';
 
-      if (previousStroke && stroke.id === previousStroke.id) {
+      if (previousPath && path.id === previousPath.id) {
         const previousPoint =
-          previousStroke.path[previousStroke.path.length - 1];
+          previousPath.points[previousPath.points.length - 1];
         const denormalizedX = Math.round(previousPoint.x * canvasWidth);
         const denormalizedY = Math.round(previousPoint.y * canvasHeight);
         ctx.moveTo(denormalizedX, denormalizedY);
 
-        const firstPoint = stroke.path[0];
+        const firstPoint = path.points[0];
         const firstDenormalizedX = Math.round(firstPoint.x * canvasWidth);
         const firstDenormalizedY = Math.round(firstPoint.y * canvasHeight);
         ctx.lineTo(firstDenormalizedX, firstDenormalizedY);
       }
 
-      for (let i = 0; i < stroke.path.length; i++) {
-        const point = stroke.path[i];
+      for (let i = 0; i < path.points.length; i++) {
+        const point = path.points[i];
         const denormalizedX = Math.round(point.x * canvasWidth);
         const denormalizedY = Math.round(point.y * canvasHeight);
 
@@ -83,12 +83,12 @@ const DrawPage = () => {
 
   const { sendMessage } = useSubscription(DRAW_CHANNEL, {
     onMessage: (event) => {
-      const { body }: PubSubMessage<Stroke> = JSON.parse(event.data);
+      const { body }: PubSubMessage<Path> = JSON.parse(event.data);
       if (!body) {
         return;
       }
-      drawMessagePath(body, previousStroke.current);
-      previousStroke.current = body;
+      drawMessagePath(body, previousPath.current);
+      previousPath.current = body;
     },
   });
 
@@ -103,32 +103,28 @@ const DrawPage = () => {
     },
   });
 
-  const sendStroke = useCallback(() => {
-    if (
-      !token ||
-      !activeStrokeIdRef.current ||
-      !strokeBufferRef.current.length
-    ) {
+  const sendPath = useCallback(() => {
+    if (!token || !activePathIdRef.current || !pathBufferRef.current.length) {
       return;
     }
-    const { current } = strokeBufferRef;
+    const { current } = pathBufferRef;
     const normalizedPath = current.map(({ x, y }) => ({
       x: x / canvasWidth,
       y: y / canvasHeight,
     }));
-    const message: PubSubMessage<Stroke> = {
+    const message: PubSubMessage<Path> = {
       request: 'PUBLISH',
       channel: DRAW_CHANNEL,
       body: {
-        id: activeStrokeIdRef.current,
-        path: normalizedPath,
+        id: activePathIdRef.current,
+        points: normalizedPath,
       },
       token,
     };
 
     // Send message and reset buffer after
     sendMessage(JSON.stringify(message));
-    strokeBufferRef.current = [];
+    pathBufferRef.current = [];
   }, [token, canvasWidth, canvasHeight, sendMessage]);
 
   useEffect(() => {
@@ -140,16 +136,16 @@ const DrawPage = () => {
       const result = await fetch('/api/interactions/draw', {
         headers: { Authorization: `Bearer ${token}` },
       });
-      const data: { message: Stroke }[] = await result.json();
+      const data: { message: Path }[] = await result.json();
       if (!canvasCtxRef.current) {
         return;
       }
 
       clearCanvas();
-      let previousStroke: Stroke | undefined;
+      let previousPath: Path | undefined;
       for (const { message } of data) {
-        drawMessagePath(message, previousStroke);
-        previousStroke = message;
+        drawMessagePath(message, previousPath);
+        previousPath = message;
       }
     }, INIT_DEBOUNCE);
 
@@ -161,8 +157,8 @@ const DrawPage = () => {
   useEffect(() => {
     const handleMouseLeave = () => {
       if (isMouseDownRef.current) {
-        sendStroke();
-        activeStrokeIdRef.current = null;
+        sendPath();
+        activePathIdRef.current = null;
         isMouseDownRef.current = false;
       }
     };
@@ -170,7 +166,7 @@ const DrawPage = () => {
     return () => {
       document.removeEventListener('mouseleave', handleMouseLeave);
     };
-  }, [sendStroke]);
+  }, [sendPath]);
 
   const handleCanvasMount = useCallback((canvas: HTMLCanvasElement) => {
     const ctx = canvas.getContext('2d');
@@ -203,21 +199,21 @@ const DrawPage = () => {
     canvasCtx.lineTo(mousePositionRef.current.x, mousePositionRef.current.y); // to
     canvasCtx.stroke();
 
-    // Add stroke to buffer and send if buffer is full
-    strokeBufferRef.current.push({ x, y });
-    if (strokeBufferRef.current.length > MAX_BUFFER_SIZE) {
-      sendStroke();
+    // Add path to buffer and send if buffer is full
+    pathBufferRef.current.push({ x, y });
+    if (pathBufferRef.current.length > MAX_BUFFER_SIZE) {
+      sendPath();
     }
   };
 
   const handleTouchStart = (x: number, y: number) => {
     setMousePosition(x, y);
-    activeStrokeIdRef.current = uuidv4();
+    activePathIdRef.current = uuidv4();
   };
 
   const handleTouchEnd = () => {
-    sendStroke();
-    activeStrokeIdRef.current = null;
+    sendPath();
+    activePathIdRef.current = null;
   };
 
   const handleMouseDown = (
@@ -225,13 +221,13 @@ const DrawPage = () => {
     e: MouseEvent<Element>,
   ) => {
     setMousePosition(e.clientX, e.clientY);
-    activeStrokeIdRef.current = uuidv4();
+    activePathIdRef.current = uuidv4();
     isMouseDownRef.current = true;
   };
 
   const handleMouseUp = () => {
-    sendStroke();
-    activeStrokeIdRef.current = null;
+    sendPath();
+    activePathIdRef.current = null;
     isMouseDownRef.current = false;
   };
 
