@@ -103,6 +103,34 @@ const DrawPage = () => {
     },
   });
 
+  const sendStroke = useCallback(() => {
+    if (
+      !token ||
+      !activeStrokeIdRef.current ||
+      !strokeBufferRef.current.length
+    ) {
+      return;
+    }
+    const { current } = strokeBufferRef;
+    const normalizedPath = current.map(({ x, y }) => ({
+      x: x / canvasWidth,
+      y: y / canvasHeight,
+    }));
+    const message: PubSubMessage<Stroke> = {
+      request: 'PUBLISH',
+      channel: DRAW_CHANNEL,
+      body: {
+        id: activeStrokeIdRef.current,
+        path: normalizedPath,
+      },
+      token,
+    };
+
+    // Send message and reset buffer after
+    sendMessage(JSON.stringify(message));
+    strokeBufferRef.current = [];
+  }, [token, canvasWidth, canvasHeight, sendMessage]);
+
   useEffect(() => {
     if (!token || !isCanvasMounted) {
       return;
@@ -130,6 +158,20 @@ const DrawPage = () => {
     };
   }, [token, isCanvasMounted, drawMessagePath]);
 
+  useEffect(() => {
+    const handleMouseLeave = () => {
+      if (isMouseDownRef.current) {
+        sendStroke();
+        activeStrokeIdRef.current = null;
+        isMouseDownRef.current = false;
+      }
+    };
+    document.addEventListener('mouseleave', handleMouseLeave);
+    return () => {
+      document.removeEventListener('mouseleave', handleMouseLeave);
+    };
+  }, [sendStroke]);
+
   const handleCanvasMount = useCallback((canvas: HTMLCanvasElement) => {
     const ctx = canvas.getContext('2d');
     if (!ctx) {
@@ -138,34 +180,6 @@ const DrawPage = () => {
     canvasCtxRef.current = ctx;
     setIsCanvasMounted(true);
   }, []);
-
-  const sendStroke = () => {
-    if (
-      !token ||
-      !activeStrokeIdRef.current ||
-      !strokeBufferRef.current.length
-    ) {
-      return;
-    }
-    const { current } = strokeBufferRef;
-    const normalizedPath = current.map(({ x, y }) => ({
-      x: x / canvasWidth,
-      y: y / canvasHeight,
-    }));
-    const message: PubSubMessage<Stroke> = {
-      request: 'PUBLISH',
-      channel: DRAW_CHANNEL,
-      body: {
-        id: activeStrokeIdRef.current,
-        path: normalizedPath,
-      },
-      token,
-    };
-
-    // Send message and reset buffer after
-    sendMessage(JSON.stringify(message));
-    strokeBufferRef.current = [];
-  };
 
   const setMousePosition = (x: number, y: number) => {
     mousePositionRef.current = { x, y };
