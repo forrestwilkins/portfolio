@@ -32,7 +32,7 @@ const DrawPage = () => {
 
   const canvasCtxRef = useRef<CanvasRenderingContext2D | null>(null);
   const activePathIdRef = useRef<string | null>(null);
-  const previousPath = useRef<Path | null>(null);
+  const previousPathRef = useRef<Path | null>(null);
   const mousePositionRef = useRef({ x: 0, y: 0 });
   const pathBufferRef = useRef<Point[]>([]);
   const isMouseDownRef = useRef(false);
@@ -87,8 +87,8 @@ const DrawPage = () => {
       if (!body) {
         return;
       }
-      drawMessagePath(body, previousPath.current);
-      previousPath.current = body;
+      drawMessagePath(body, previousPathRef.current);
+      previousPathRef.current = body;
     },
   });
 
