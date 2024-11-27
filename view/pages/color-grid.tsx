@@ -1,5 +1,4 @@
 import { Box } from '@mui/material';
-import { MouseEvent, TouchEvent } from 'react';
 import Canvas from '../components/shared/canvas/canvas';
 import { useScreenSize } from '../hooks/shared.hooks';
 import { constrain, mapRange } from '../utils/math.utils';
@@ -10,30 +9,15 @@ const ColorGrid = () => {
   const canvasWidth = constrain(screenWidth * 0.8, 0, 600);
   const canvasHeight = constrain(screenHeight * 0.65, 0, 500);
 
-  const getMousePosition = (
-    canvas: HTMLCanvasElement,
-    e: MouseEvent<Element> | TouchEvent<Element>,
-  ) => {
-    const rect = canvas.getBoundingClientRect();
-    const clientX = 'clientX' in e ? e.clientX : e.touches[0].clientX;
-    const clientY = 'clientY' in e ? e.clientY : e.touches[0].clientY;
-
-    return {
-      x: clientX - rect.left,
-      y: clientY - rect.top,
-    };
-  };
-
-  const handleMouseMove = (
-    canvas: HTMLCanvasElement,
-    e: TouchEvent<Element> | MouseEvent<Element>,
-  ) => {
+  const handleMouseMove = (x: number, y: number, canvas: HTMLCanvasElement) => {
     const context = canvas.getContext('2d');
     if (!context) {
       return;
     }
 
-    const { x: mouseX, y: mouseY } = getMousePosition(canvas, e);
+    const rect = canvas.getBoundingClientRect();
+    const mouseX = x - rect.left;
+    const mouseY = y - rect.top;
 
     for (let y = 0; y < canvas.height; y += 8) {
       for (let x = 0; x < canvas.width; x += 8) {

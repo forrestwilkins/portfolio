@@ -7,7 +7,7 @@ import HelloSound from '../pages/hello-sound';
 import HomePage from '../pages/home-page';
 import PageNotFound from '../pages/page-not-found';
 import Ripples from '../pages/ripples/ripples';
-import Sockets from '../pages/sockets';
+import DrawPage from '../pages/draw-page';
 
 const appRouter = createBrowserRouter([
   {
@@ -36,8 +36,8 @@ const appRouter = createBrowserRouter([
         element: <Ripples />,
       },
       {
-        path: 'sockets',
-        element: <Sockets />,
+        path: 'draw',
+        element: <DrawPage />,
       },
       {
         path: '*',

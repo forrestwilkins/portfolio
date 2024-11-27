@@ -23,7 +23,7 @@ interface Props {
   onFrameRender?(canvas: HTMLCanvasElement, frameCount: number): void;
   onMount?(canvas: HTMLCanvasElement): void;
   onMouseDown?(canvas: HTMLCanvasElement, e: MouseEvent<Element>): void;
-  onMouseMove?(canvas: HTMLCanvasElement, e: MouseEvent<Element>): void;
+  onMouseMove?(x: number, y: number, canvas: HTMLCanvasElement): void;
   onScreenResize?(canvas: HTMLCanvasElement): void;
 
   // TODO: Add handler props types so fields can be omitted
@@ -44,7 +44,7 @@ interface Props {
     canvas: HTMLCanvasElement,
   ): void;
 
-  onTouchMove?(canvas: HTMLCanvasElement, e: TouchEvent<Element>): void;
+  onTouchMove?(x: number, y: number, canvas: HTMLCanvasElement): void;
   sx?: SxProps;
 }
 
@@ -269,7 +269,7 @@ const Canvas = ({
 
   const handleMouseMove = (e: MouseEvent<Element>) => {
     if (canvasRef.current && onMouseMove) {
-      onMouseMove(canvasRef.current, e);
+      onMouseMove(e.clientX, e.clientY, canvasRef.current);
     }
   };
 
@@ -277,15 +277,17 @@ const Canvas = ({
     if (!canvasRef.current) {
       return;
     }
-    if (onTouchMove) {
-      onTouchMove(canvasRef.current, e);
-    }
 
-    // Update touch points on move
     for (const { clientX, clientY, identifier } of Array.from(e.touches)) {
       const touchPoint = touchPointsRef.current[identifier];
+
+      // Update touch points on move
       touchPoint.x = clientX - canvasRef.current.offsetLeft;
       touchPoint.y = clientY - canvasRef.current.offsetTop;
+
+      if (onTouchMove) {
+        onTouchMove(clientX, clientY, canvasRef.current);
+      }
     }
   };
 
