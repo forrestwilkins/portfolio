@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   app:
-    container_name: rhizome
+    container_name: portfolio
     build:
       context: .
       target: runtime_stage
