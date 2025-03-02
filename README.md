@@ -1,6 +1,6 @@
-## Rhizome
+## Portfolio
 
-Exploring audio-visual interactive art concepts
+Portfolio for Forrest Wilkins - Exploring audio-visual interactive art concepts
 
 ## Installation
 

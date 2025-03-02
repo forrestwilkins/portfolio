@@ -1,7 +1,7 @@
 {
-  "name": "rhizome",
-  "private": true,
-  "version": "0.0.0",
+  "name": "portfolio",
+  "author": "Forrest Wilkins",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "start": "tsx watch src/main.ts",
