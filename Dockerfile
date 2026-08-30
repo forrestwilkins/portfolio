@@ -7,6 +7,7 @@ COPY view /app/view
 
 COPY package.json /app
 COPY package-lock.json /app
+COPY .npmrc /app
 COPY tsconfig.json /app
 COPY tsconfig.src.json /app
 COPY tsconfig.view.json /app

@@ -4,7 +4,13 @@ Portfolio for Forrest Wilkins - Exploring audio-visual interactive art concepts
 
 ## Installation
 
-Ensure that you're using Node v20.16.0 before proceeding.
+The required Node version is pinned in `.nvmrc` and `package.json` engines. `npm install` will refuse to run on any other version.
+
+```bash
+# Switch to the project's Node version
+$ nvm install
+$ nvm use
+```
 
 ```bash
 # Install project dependencies
