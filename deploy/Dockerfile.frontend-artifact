@@ -1,0 +1,19 @@
+# syntax=docker/dockerfile:1
+
+FROM node:20.16.0-alpine AS builder
+
+WORKDIR /app
+
+COPY package.json package-lock.json .npmrc ./
+RUN npm ci
+
+COPY tsconfig.json tsconfig.src.json tsconfig.view.json ./
+COPY .eslintrc.cjs vite.config.ts ./
+COPY view ./view
+
+RUN npx tsc -b tsconfig.view.json \
+    && npx eslint view --ext ts,tsx \
+    && npx vite build --emptyOutDir true
+
+FROM scratch
+COPY --from=builder /app/dist/view /

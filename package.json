@@ -12,6 +12,9 @@
     "start:client": "vite --host",
     "build": "tsc -b && eslint src --ext ts && tsc && babel -x .ts -d dist src",
     "build:client": "tsc -b && eslint view --ext ts,tsx && vite build --emptyOutDir true",
+    "build:server-artifact": "./scripts/build-backend-artifact.sh",
+    "build:client-artifact": "./scripts/build-frontend-artifact.sh",
+    "build:artifacts": "npm run build:server-artifact && npm run build:client-artifact",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },
@@ -53,6 +56,7 @@
     "@vitejs/plugin-react": "^4.3.1",
     "autoprefixer": "^10.4.20",
     "babel-plugin-add-import-extension": "^1.6.0",
+    "esbuild": "^0.25.12",
     "eslint": "^8.57.0",
     "eslint-plugin-react-hooks": "^4.6.2",
     "eslint-plugin-react-refresh": "^0.4.7",
