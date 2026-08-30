@@ -4,8 +4,8 @@
     {
       "name": "client",
       "runtimeExecutable": "npx",
-      "runtimeArgs": ["vite", "--port", "3100", "--strictPort"],
-      "port": 3100,
+      "runtimeArgs": ["vite", "--port", "3210", "--strictPort"],
+      "port": 3210,
       "autoPort": false
     }
   ]
