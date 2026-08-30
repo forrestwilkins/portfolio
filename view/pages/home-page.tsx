@@ -39,6 +39,14 @@ const HomePage = () => {
       paddingLeft={isAboveLg ? 0 : '70px'}
       paddingTop={isAboveLg ? 0 : '20px'}
     >
+      <Link
+        to="https://praxis-dev.ntc.dsausa.org/i/52ec59ef"
+        sx={linkStyles}
+        external
+      >
+        Praxis
+      </Link>
+
       <Link to="/ripples" sx={linkStyles}>
         Ripples
       </Link>

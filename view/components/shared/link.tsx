@@ -5,6 +5,7 @@ import { Link as ReactRouterLink } from 'react-router-dom';
 interface Props {
   children: ReactNode;
   disabled?: boolean;
+  external?: boolean;
   leftSpace?: boolean;
   onClick?: () => void;
   state?: Record<string, unknown>;
@@ -15,27 +16,32 @@ interface Props {
 const Link = ({
   children,
   disabled,
+  external,
   leftSpace,
   onClick,
   state,
   sx,
   to,
-}: Props) => (
-  <MuiLink
-    component={ReactRouterLink}
-    onClick={onClick}
-    state={state}
-    to={to}
-    sx={{
-      pointerEvents: disabled ? 'none' : undefined,
-      textDecoration: 'none',
-      color: 'text.primary',
-      ...sx,
-    }}
-  >
-    {leftSpace ? ' ' : ''}
-    {children}
-  </MuiLink>
-);
+}: Props) => {
+  const linkProps = external
+    ? { href: to, target: '_blank', rel: 'noopener noreferrer' }
+    : { component: ReactRouterLink, state, to };
+
+  return (
+    <MuiLink
+      {...linkProps}
+      onClick={onClick}
+      sx={{
+        pointerEvents: disabled ? 'none' : undefined,
+        textDecoration: 'none',
+        color: 'text.primary',
+        ...sx,
+      }}
+    >
+      {leftSpace ? ' ' : ''}
+      {children}
+    </MuiLink>
+  );
+};
 
 export default Link;
