@@ -10,7 +10,7 @@ docker compose up -d --build
 curl --fail http://127.0.0.1:${SERVER_PORT}/api/health
 ```
 
-The VPS build only copies `deploy/artifacts` into a `node:20.16.0-alpine`
+The VPS build only copies `deploy/artifacts` into a `node:24.20.0-alpine`
 image. It never runs `npm ci`, `tsc`, `eslint`, `babel`, or `vite`.
 
 Do not run `docker compose down --volumes`; Redis uses a named volume.

@@ -4,8 +4,8 @@
   "version": "1.0.0",
   "type": "module",
   "engines": {
-    "node": "20.16.0",
-    "npm": "^10.8.1"
+    "node": "24.20.0",
+    "npm": "^11.19.0"
   },
   "scripts": {
     "start": "tsx watch src/main.ts",
@@ -31,12 +31,12 @@
     "path": "^0.12.7",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-router-dom": "^6.26.1",
+    "react-router-dom": "^7.18.3",
     "react-use-websocket": "^4.10.0",
     "redis": "^4.7.0",
     "tone": "^15.0.4",
     "url": "^0.11.4",
-    "uuid": "^10.0.0",
+    "uuid": "^14.0.2",
     "ws": "^8.18.0",
     "zustand": "^4.5.5"
   },
@@ -46,24 +46,23 @@
     "@babel/preset-typescript": "^7.25.7",
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.0",
-    "@types/node": "^22.5.0",
+    "@types/node": "^24.13.3",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
-    "@types/uuid": "^10.0.0",
     "@types/ws": "^8.5.12",
     "@typescript-eslint/eslint-plugin": "^7.15.0",
     "@typescript-eslint/parser": "^7.15.0",
-    "@vitejs/plugin-react": "^4.3.1",
+    "@vitejs/plugin-react": "^5.2.0",
     "autoprefixer": "^10.4.20",
     "babel-plugin-add-import-extension": "^1.6.0",
-    "esbuild": "^0.25.12",
+    "esbuild": "^0.28.2",
     "eslint": "^8.57.0",
     "eslint-plugin-react-hooks": "^4.6.2",
     "eslint-plugin-react-refresh": "^0.4.7",
     "prettier": "^3.3.3",
     "tsx": "^4.19.1",
-    "typescript": "^5.2.2",
-    "vite": "^5.3.4",
+    "typescript": "^5.9.3",
+    "vite": "^7.3.6",
     "vite-plugin-dynamic-import": "^1.5.0"
   }
 }

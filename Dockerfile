@@ -3,7 +3,7 @@
 # Runtime image built from the artifacts in deploy/artifacts. Both artifacts
 # are produced locally with `npm run build:artifacts`, so this build only
 # copies files and never installs dependencies or compiles anything.
-FROM node:20.16.0-alpine AS production
+FROM node:24.20.0-alpine AS production
 
 WORKDIR /app
 
