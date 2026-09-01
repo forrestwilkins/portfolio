@@ -3,9 +3,12 @@
   "configurations": [
     {
       "name": "client",
-      "runtimeExecutable": "npx",
-      "runtimeArgs": ["vite", "--port", "3210", "--strictPort"],
-      "port": 3210,
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "run",
+        "start:client"
+      ],
+      "port": 3200,
       "autoPort": false
     }
   ]

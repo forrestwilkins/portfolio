@@ -19,6 +19,17 @@ $ npm install
 
 ## Running the app
 
+Create `.env` and adjust the ports if anything else on your machine already
+uses them. Redis runs in Docker; the rest runs on the host.
+
+```bash
+# Create local config
+$ cp .env.example .env
+
+# Start Redis on REDIS_PORT
+$ docker compose up -d cache
+```
+
 ```bash
 # Start server for development
 $ npm run start
@@ -27,7 +38,9 @@ $ npm run start
 $ npm run start:client
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to view and interact with the UI.
+Open the client at `http://localhost:$CLIENT_PORT` to view and interact with
+the UI. The client proxies `/api` and the WebSocket to the server on
+`$SERVER_PORT`, so both need to be running.
 
 ## Building for deployment
 
