@@ -11,7 +11,7 @@ const HomeLink = ({ external, label, to }: Props) => (
   <Link
     to={to}
     external={external}
-    className="font-display w-fit text-[2.125rem] leading-none font-bold tracking-[-0.02em] underline-offset-8 hover:underline md:text-[3rem]"
+    className="font-display w-fit text-[2.125rem] leading-none font-bold tracking-[-0.02em] md:text-[3rem]"
   >
     {label}
   </Link>

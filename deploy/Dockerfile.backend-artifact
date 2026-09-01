@@ -8,11 +8,11 @@ COPY package.json package-lock.json .npmrc ./
 RUN npm ci
 
 COPY tsconfig.json tsconfig.src.json ./
-COPY .eslintrc.cjs ./
+COPY eslint.config.js ./
 COPY src ./src
 
 RUN npx tsc -b tsconfig.src.json \
-    && npx eslint src --ext ts \
+    && npx eslint src \
     && npx esbuild src/main.ts \
         --bundle \
         --platform=node \

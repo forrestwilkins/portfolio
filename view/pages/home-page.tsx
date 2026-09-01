@@ -32,12 +32,12 @@ const HomePage = () => {
   }, [token]);
 
   return (
-    <div className="flex flex-col pt-5 pl-[70px] lg:pt-0 lg:pl-0">
-      <p className="text-muted-foreground font-mono text-[10px] tracking-[0.28em] uppercase">
+    <div className="flex flex-col pt-5 pl-17.5 lg:pt-0 lg:pl-3">
+      <p className="text-muted-foreground font-mono text-sm tracking-[0.28em] uppercase">
         Forrest Wilkins
       </p>
 
-      <nav className="mt-6 flex flex-col gap-4 md:mt-8 md:gap-3">
+      <nav className="mt-7 flex flex-col gap-7 md:mt-8 md:gap-6">
         {LINKS.map(({ external, label, to }) => (
           <HomeLink key={to} label={label} to={to} external={external} />
         ))}
