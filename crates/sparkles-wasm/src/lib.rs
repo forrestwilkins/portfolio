@@ -1,3 +1,6 @@
+mod nebula;
+
+use nebula::Nebula;
 use std::{cell::RefCell, rc::Rc};
 use wasm_bindgen::{closure::Closure, prelude::*, JsCast};
 use web_sys::{window, CanvasRenderingContext2d, HtmlCanvasElement, Window};
@@ -82,6 +85,7 @@ struct Sparkle {
 struct State {
     canvas: HtmlCanvasElement,
     ctx: CanvasRenderingContext2d,
+    nebula: Nebula,
     sparkles: Vec<Sparkle>,
     reduced_motion: bool,
     width: f64,
@@ -117,9 +121,14 @@ impl Sparkles {
             .map(|query| query.matches())
             .unwrap_or(false);
 
+        let document = window
+            .document()
+            .ok_or_else(|| JsValue::from_str("document unavailable"))?;
+
         let state = Rc::new(RefCell::new(State {
             canvas,
             ctx,
+            nebula: Nebula::new(&document, dark_mode, seed)?,
             sparkles: build_sparkles(dark_mode, seed),
             reduced_motion,
             width: 0.0,
@@ -255,6 +264,7 @@ fn resize_canvas(state: &Rc<RefCell<State>>) -> Result<(), JsValue> {
 
     state.width = width;
     state.height = height;
+    state.nebula.resize(width, height);
 
     state.ctx.set_transform(1.0, 0.0, 0.0, 1.0, 0.0, 0.0)?;
     state.ctx.scale(dpr, dpr)?;
@@ -263,11 +273,21 @@ fn resize_canvas(state: &Rc<RefCell<State>>) -> Result<(), JsValue> {
 }
 
 fn render(state: &Rc<RefCell<State>>, time: f64) {
-    let state = state.borrow();
-    let ctx = &state.ctx;
+    let mut state = state.borrow_mut();
     let seconds = time / 1000.0;
 
+    // Frozen at the first frame when motion is not wanted
+    let nebula_seconds = if state.reduced_motion { 0.0 } else { seconds };
+
+    if state.nebula.needs_update(time) {
+        let _ = state.nebula.update(time, nebula_seconds);
+    }
+
+    let state = &*state;
+    let ctx = &state.ctx;
+
     ctx.clear_rect(0.0, 0.0, state.width, state.height);
+    state.nebula.draw(ctx, state.width, state.height);
 
     for sparkle in &state.sparkles {
         let intensity = if state.reduced_motion {

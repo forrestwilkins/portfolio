@@ -20,8 +20,8 @@ export interface InitOutput {
     readonly __wbg_sparkles_free: (a: number, b: number) => void;
     readonly sparkles_new: (a: any, b: number, c: number) => [number, number, number];
     readonly sparkles_stop: (a: number) => void;
-    readonly wasm_bindgen__convert__closures_____invoke__he1c4d7ec66af6c61: (a: number, b: number, c: number) => void;
-    readonly wasm_bindgen__convert__closures_____invoke__h8177f3faa206c380: (a: number, b: number) => void;
+    readonly wasm_bindgen__convert__closures_____invoke__hfa240bc6aac8527c: (a: number, b: number, c: number) => void;
+    readonly wasm_bindgen__convert__closures_____invoke__ha10b4805468d8d82: (a: number, b: number) => void;
     readonly __wbindgen_exn_store: (a: number) => void;
     readonly __externref_table_alloc: () => number;
     readonly __wbindgen_externrefs: WebAssembly.Table;
