@@ -1,0 +1,15 @@
+{
+  "name": "sparkles-wasm",
+  "type": "module",
+  "version": "0.1.0",
+  "files": [
+    "sparkles_wasm_bg.wasm",
+    "sparkles_wasm.js",
+    "sparkles_wasm.d.ts"
+  ],
+  "main": "sparkles_wasm.js",
+  "types": "sparkles_wasm.d.ts",
+  "sideEffects": [
+    "./snippets/*"
+  ]
+}

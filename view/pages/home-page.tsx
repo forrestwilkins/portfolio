@@ -1,15 +1,22 @@
-import { Box, SxProps, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
-import Link from '../components/shared/link';
-import { useAboveBreakpoint } from '../hooks/shared.hooks';
+import HomeLink from '../components/home/home-link';
+import Sparkles from '../components/home/sparkles';
 import useAppStore from '../store/app.store';
+
+const LINKS = [
+  {
+    label: 'Praxis - Chat Based CDM',
+    to: 'https://praxis-dev.ntc.dsausa.org/i/52ec59ef',
+    external: true,
+  },
+  { label: 'Live Canvas', to: '/draw' },
+  { label: 'Color Grid', to: '/color-grid' },
+  { label: 'Ripples', to: '/ripples' },
+];
 
 const HomePage = () => {
   const token = useAppStore((state) => state.token);
   const [time, setTime] = useState<string>();
-
-  const isAboveMd = useAboveBreakpoint('md');
-  const isAboveLg = useAboveBreakpoint('lg');
 
   useEffect(() => {
     if (!token) {
@@ -25,63 +32,26 @@ const HomePage = () => {
     init();
   }, [token]);
 
-  const linkStyles: SxProps = {
-    scrollMargin: '20px',
-    fontSize: isAboveMd ? '50px' : '35px',
-    fontWeight: 800,
-  };
-
   return (
-    <Box
-      display="flex"
-      flexDirection="column"
-      gap={isAboveMd ? '4px' : '16px'}
-      paddingLeft={isAboveLg ? 0 : '70px'}
-      paddingTop={isAboveLg ? 0 : '20px'}
-    >
-      <Link to="/ripples" sx={linkStyles}>
-        Ripples
-      </Link>
+    <div className="relative z-0 flex flex-col pt-5 pl-17.5 lg:pt-0 lg:pl-3">
+      <Sparkles />
 
-      <Link to="/color-grid" sx={linkStyles}>
-        Color Grid
-      </Link>
+      <p className="text-muted-foreground font-mono text-sm tracking-[0.28em] uppercase">
+        Forrest Wilkins
+      </p>
 
-      <Link to="/draw" sx={linkStyles}>
-        Draw (WIP)
-      </Link>
-
-      <Link to="/audio-visual" sx={linkStyles}>
-        Audio Visual
-      </Link>
-
-      <Link to="/hello-sound" sx={linkStyles}>
-        Hello Sound
-      </Link>
+      <nav className="mt-7 flex flex-col gap-7 md:mt-8 md:gap-6">
+        {LINKS.map(({ external, label, to }) => (
+          <HomeLink key={to} label={label} to={to} external={external} />
+        ))}
+      </nav>
 
       {time && (
-        <Box
-          position="fixed"
-          bottom={10}
-          right={10}
-          width="fit-content"
-          height={10}
-        >
-          <Typography
-            fontSize="8px"
-            color="text.secondary"
-            borderRadius="2px"
-            paddingX={0.3}
-            sx={{
-              '&:hover': { color: 'text.primary' },
-              transition: 'all 0.3s ease-in-out',
-            }}
-          >
-            {time}
-          </Typography>
-        </Box>
+        <p className="text-muted-foreground hover:text-foreground fixed right-2.5 bottom-2.5 font-mono text-[8px] transition-colors duration-300">
+          {time}
+        </p>
       )}
-    </Box>
+    </div>
   );
 };
 

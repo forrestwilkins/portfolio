@@ -4,7 +4,13 @@ Portfolio for Forrest Wilkins - Exploring audio-visual interactive art concepts
 
 ## Installation
 
-Ensure that you're using Node v20.16.0 before proceeding.
+The required Node version is pinned in `.nvmrc` and `package.json` engines. `npm install` will refuse to run on any other version.
+
+```bash
+# Switch to the project's Node version
+$ nvm install
+$ nvm use
+```
 
 ```bash
 # Install project dependencies
@@ -12,6 +18,17 @@ $ npm install
 ```
 
 ## Running the app
+
+Create `.env` and adjust the ports if anything else on your machine already
+uses them. Redis runs in Docker; the rest runs on the host.
+
+```bash
+# Create local config
+$ cp .env.example .env
+
+# Start Redis on REDIS_PORT
+$ docker compose up -d cache
+```
 
 ```bash
 # Start server for development
@@ -21,7 +38,47 @@ $ npm run start
 $ npm run start:client
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to view and interact with the UI.
+Open the client at `http://localhost:$CLIENT_PORT` to view and interact with
+the UI. The client proxies `/api` and the WebSocket to the server on
+`$SERVER_PORT`, so both need to be running.
+
+## Sparkles background
+
+The faint sparkles behind the home page are drawn by a small Rust crate in
+`crates/sparkles-wasm`, compiled to WebAssembly. The generated package in
+`view/wasm/sparkles_pkg` is committed, so neither the Vite build nor the
+deployment image needs a Rust toolchain.
+
+After changing anything under `crates/sparkles-wasm`, regenerate it. This
+needs [Rust](https://rustup.rs), the `wasm32-unknown-unknown` target, and
+[wasm-pack](https://drager.github.io/wasm-pack/installer/):
+
+```bash
+# Rebuild view/wasm/sparkles_pkg
+$ npm run wasm:build
+```
+
+Commit the regenerated package along with the Rust change.
+
+## Building for deployment
+
+Deployment artifacts are built locally and committed to the repository, so the
+Docker build on the server only copies files. Both scripts run the real build
+inside Docker and require [Docker](https://docs.docker.com/engine/install).
+
+```bash
+# Bundle the backend into deploy/artifacts/server
+$ npm run build:server-artifact
+
+# Build the frontend into deploy/artifacts/frontend-dist
+$ npm run build:client-artifact
+
+# Both of the above
+$ npm run build:artifacts
+```
+
+Commit the refreshed artifacts alongside the source changes. See
+[DEPLOY.md](./DEPLOY.md) for the deployment steps.
 
 ## Docker
 
@@ -31,6 +88,6 @@ Ensure that you have [Docker](https://docs.docker.com/engine/install) installed 
 # Start app in a container
 $ docker compose up -d
 
-# Build and restart app after making changes
+# Rebuild and restart the app from the current artifacts
 $ docker compose up -d --build
 ```
