@@ -10,6 +10,7 @@
   "scripts": {
     "start": "tsx watch src/main.ts",
     "start:client": "vite --host",
+    "wasm:build": "./scripts/build-wasm.sh",
     "build": "tsc -b && eslint src && tsc && babel -x .ts -d dist src",
     "build:client": "tsc -b && eslint view && vite build --emptyOutDir true",
     "build:server-artifact": "./scripts/build-backend-artifact.sh",

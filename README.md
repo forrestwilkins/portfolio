@@ -42,6 +42,24 @@ Open the client at `http://localhost:$CLIENT_PORT` to view and interact with
 the UI. The client proxies `/api` and the WebSocket to the server on
 `$SERVER_PORT`, so both need to be running.
 
+## Sparkles background
+
+The faint sparkles behind the home page are drawn by a small Rust crate in
+`crates/sparkles-wasm`, compiled to WebAssembly. The generated package in
+`view/wasm/sparkles_pkg` is committed, so neither the Vite build nor the
+deployment image needs a Rust toolchain.
+
+After changing anything under `crates/sparkles-wasm`, regenerate it. This
+needs [Rust](https://rustup.rs), the `wasm32-unknown-unknown` target, and
+[wasm-pack](https://drager.github.io/wasm-pack/installer/):
+
+```bash
+# Rebuild view/wasm/sparkles_pkg
+$ npm run wasm:build
+```
+
+Commit the regenerated package along with the Rust change.
+
 ## Building for deployment
 
 Deployment artifacts are built locally and committed to the repository, so the

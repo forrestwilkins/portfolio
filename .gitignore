@@ -1,5 +1,6 @@
 # App files
 node_modules
+crates/*/target
 dist
 dist-ssr
 dev-dist

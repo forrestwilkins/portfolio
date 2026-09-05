@@ -28,5 +28,6 @@
       "@/*": ["./view/*"]
     }
   },
-  "include": ["view", "vite.config.ts"]
+  "include": ["view", "vite.config.ts"],
+  "exclude": ["view/wasm"]
 }
