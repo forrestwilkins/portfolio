@@ -4,7 +4,7 @@ use web_sys::{window, CanvasRenderingContext2d, HtmlCanvasElement, Window};
 
 /// Kept deliberately low so the effect reads as faint texture rather than
 /// decoration.
-const SPARKLE_COUNT: usize = 16;
+const SPARKLE_COUNT: usize = 8;
 
 /// Opacity at the peak of a flash. Each flash is brief, so this can sit
 /// higher than a steady glow would.
@@ -12,7 +12,7 @@ const PEAK_ALPHA: f64 = 0.55;
 
 /// Portion of a sparkle's cycle spent flashing. The rest is fully dark, so
 /// only a handful are lit at any moment.
-const FLASH_FRACTION: f64 = 0.22;
+const FLASH_FRACTION: f64 = 0.6;
 
 /// How far the glare reaches past the solid arm, as a multiple of it
 const RAY_SCALE: f64 = 5.0;
@@ -26,15 +26,19 @@ const RAY_ALPHA: f64 = 0.32;
 
 /// Diagonal spikes are the secondary ones, so they stay shorter and fainter
 /// than the axis-aligned pair
-const DIAGONAL_SCALE: f64 = 0.6;
-const DIAGONAL_ALPHA: f64 = 0.55;
+const DIAGONAL_SCALE: f64 = 0.85;
+const DIAGONAL_ALPHA: f64 = 0.85;
 
 /// Halo radius as a multiple of the arm, and how faint it sits
 const RING_SCALE: f64 = 3.2;
 const RING_ALPHA: f64 = 0.2;
 
+/// Share of stars that scintillate, and how much of their brightness wobbles
+const FLICKER_SHARE: f64 = 0.4;
+const FLICKER_DEPTH: f64 = 0.3;
+
 /// Share of stars given diagonal spikes, and a halo
-const DIAGONAL_SHARE: f64 = 0.35;
+const DIAGONAL_SHARE: f64 = 0.5;
 const RING_SHARE: f64 = 0.25;
 
 /// Approximate blackbody colors across the stellar classes, hot blue through
@@ -67,6 +71,8 @@ struct Sparkle {
     diagonals: bool,
     /// Whether this one carries a faint halo
     ring: bool,
+    /// Scintillation rate; zero means this star burns steady
+    flicker_speed: f64,
     /// Offset into the cycle, so they don't all flash together
     phase: f64,
     /// Seconds between flashes
@@ -224,8 +230,13 @@ fn build_sparkles(dark_mode: bool, seed: f64) -> Vec<Sparkle> {
                 ),
                 diagonals: hash(index.wrapping_add(salt), 7) < DIAGONAL_SHARE,
                 ring: hash(index.wrapping_add(salt), 8) < RING_SHARE,
+                flicker_speed: if hash(index.wrapping_add(salt), 9) < FLICKER_SHARE {
+                    1.5 + hash(index.wrapping_add(salt), 10) * 2.5
+                } else {
+                    0.0
+                },
                 phase: hash(index.wrapping_add(salt), 4),
-                period: 11.0 + hash(index.wrapping_add(salt), 5) * 16.0,
+                period: 9.0 + hash(index.wrapping_add(salt), 5) * 13.0,
             }
         })
         .collect()
@@ -262,7 +273,7 @@ fn render(state: &Rc<RefCell<State>>, time: f64) {
         let intensity = if state.reduced_motion {
             0.5
         } else {
-            flash(sparkle, seconds)
+            flash(sparkle, seconds) * flicker(sparkle, seconds)
         };
 
         if intensity <= 0.0 {
@@ -294,6 +305,20 @@ fn flash(sparkle: &Sparkle, seconds: f64) -> f64 {
 
     let progress = cycle / FLASH_FRACTION;
     (progress * std::f64::consts::PI).sin().powf(1.8)
+}
+
+/// A fast, shallow wobble on top of the slow flash, so a few stars scintillate
+/// the way real ones do through atmosphere. Two sines at an irrational ratio,
+/// so it never settles into an obvious loop.
+fn flicker(sparkle: &Sparkle, seconds: f64) -> f64 {
+    if sparkle.flicker_speed <= 0.0 {
+        return 1.0;
+    }
+
+    let t = seconds * sparkle.flicker_speed + sparkle.phase * std::f64::consts::TAU;
+    let wobble = (t * 3.1).sin() * 0.6 + (t * 7.7).sin() * 0.4;
+
+    1.0 - FLICKER_DEPTH * (0.5 - 0.5 * wobble)
 }
 
 /// A four-point pixel star: a one pixel cross with a brighter square at the
