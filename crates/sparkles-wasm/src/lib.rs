@@ -4,7 +4,7 @@ use web_sys::{window, CanvasRenderingContext2d, HtmlCanvasElement, Window};
 
 /// Kept deliberately low so the effect reads as faint texture rather than
 /// decoration.
-const SPARKLE_COUNT: usize = 28;
+const SPARKLE_COUNT: usize = 16;
 
 /// Opacity at the peak of a flash. Each flash is brief, so this can sit
 /// higher than a steady glow would.
@@ -24,14 +24,15 @@ const RAY_STEPS: usize = 6;
 /// Opacity of the glare where it leaves the star, relative to the star itself
 const RAY_ALPHA: f64 = 0.32;
 
-/// Rough stellar colors, hot blue-white through to a cool amber, kept
-/// desaturated so the tint reads as temperature rather than confetti.
+/// Approximate blackbody colors across the stellar classes, hot blue through
+/// to cool red. Saturated enough to read as a tint, but every entry is a
+/// color a real star actually has.
 const STAR_COLORS: [(u8, u8, u8); 5] = [
-    (202, 220, 255),
-    (232, 240, 255),
-    (255, 250, 240),
-    (255, 236, 205),
-    (255, 216, 182),
+    (155, 176, 255), // class O/B, hottest
+    (202, 215, 255), // class A
+    (248, 247, 255), // class F, near white
+    (255, 210, 161), // class K
+    (255, 204, 111), // class M, coolest
 ];
 
 /// The rAF closure has to hold a reference to itself in order to reschedule,
