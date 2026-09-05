@@ -1,14 +1,14 @@
 import { useEffect, useRef } from 'react';
 import { useIsDarkMode } from '../../hooks/shared.hooks';
 
-/** A faint field of four-point stars that flash, drawn by the sparkles-wasm crate */
-const Sparkles = () => {
+/** A faint field of four-point stars that flash, drawn by the stars crate */
+const Stars = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const isDarkMode = useIsDarkMode();
 
   useEffect(() => {
     let disposed = false;
-    let sparkles: { stop: () => void } | undefined;
+    let stars: { stop: () => void } | undefined;
 
     const mount = async () => {
       const canvas = canvasRef.current;
@@ -16,7 +16,7 @@ const Sparkles = () => {
         return;
       }
 
-      const wasm = await import('../../wasm/sparkles_pkg/sparkles_wasm.js');
+      const wasm = await import('../../wasm/stars_pkg/stars.js');
       if (disposed) {
         return;
       }
@@ -28,13 +28,13 @@ const Sparkles = () => {
 
       // Seeded per mount, so the layout differs between page loads but is
       // fixed for the life of this one
-      sparkles = new wasm.Sparkles(canvas, isDarkMode, Math.random());
+      stars = new wasm.Stars(canvas, isDarkMode, Math.random());
     };
     void mount();
 
     return () => {
       disposed = true;
-      sparkles?.stop();
+      stars?.stop();
     };
   }, [isDarkMode]);
 
@@ -47,4 +47,4 @@ const Sparkles = () => {
   );
 };
 
-export default Sparkles;
+export default Stars;

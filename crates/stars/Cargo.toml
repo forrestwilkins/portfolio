@@ -1,5 +1,5 @@
 [package]
-name = "sparkles-wasm"
+name = "stars"
 version = "0.1.0"
 edition = "2021"
 
@@ -7,6 +7,7 @@ edition = "2021"
 crate-type = ["cdylib"]
 
 [dependencies]
+nebula = { path = "../nebula" }
 wasm-bindgen = "0.2"
 
 [dependencies.web-sys]
@@ -18,7 +19,6 @@ features = [
   "DomRect",
   "Element",
   "HtmlCanvasElement",
-  "ImageData",
   "MediaQueryList",
   "Window",
 ]

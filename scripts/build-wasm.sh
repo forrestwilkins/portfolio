@@ -3,9 +3,9 @@ set -euo pipefail
 
 repo_root="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$repo_root"
-package_dir="view/wasm/sparkles_pkg"
+package_dir="view/wasm/stars_pkg"
 
-wasm-pack build crates/sparkles-wasm \
+wasm-pack build crates/stars \
   --target web \
   --out-dir "../../$package_dir" \
   --release

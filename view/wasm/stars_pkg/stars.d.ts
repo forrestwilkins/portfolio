@@ -1,7 +1,7 @@
 /* tslint:disable */
 /* eslint-disable */
 
-export class Sparkles {
+export class Stars {
     free(): void;
     [Symbol.dispose](): void;
     /**
@@ -17,11 +17,11 @@ export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembl
 
 export interface InitOutput {
     readonly memory: WebAssembly.Memory;
-    readonly __wbg_sparkles_free: (a: number, b: number) => void;
-    readonly sparkles_new: (a: any, b: number, c: number) => [number, number, number];
-    readonly sparkles_stop: (a: number) => void;
-    readonly wasm_bindgen__convert__closures_____invoke__hfa240bc6aac8527c: (a: number, b: number, c: number) => void;
-    readonly wasm_bindgen__convert__closures_____invoke__ha10b4805468d8d82: (a: number, b: number) => void;
+    readonly __wbg_stars_free: (a: number, b: number) => void;
+    readonly stars_new: (a: any, b: number, c: number) => [number, number, number];
+    readonly stars_stop: (a: number) => void;
+    readonly wasm_bindgen__convert__closures_____invoke__h5c87fe1843c915da: (a: number, b: number, c: number) => void;
+    readonly wasm_bindgen__convert__closures_____invoke__h5df1de6e718e13f3: (a: number, b: number) => void;
     readonly __wbindgen_exn_store: (a: number) => void;
     readonly __externref_table_alloc: () => number;
     readonly __wbindgen_externrefs: WebAssembly.Table;

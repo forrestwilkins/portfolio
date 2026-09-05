@@ -13,8 +13,8 @@ const CELL: f64 = 7.0;
 
 /// Peak opacity of the brightest filaments. Deliberately low - the links sit
 /// on top of this, and they have to stay comfortable to read.
-const ALPHA_DARK: f64 = 0.15;
-const ALPHA_LIGHT: f64 = 0.09;
+const ALPHA_DARK: f64 = 0.2;
+const ALPHA_LIGHT: f64 = 0.1;
 
 /// Roughly how many large blobs span the viewport width
 const SCALE: f64 = 2.6;
@@ -22,21 +22,39 @@ const SCALE: f64 = 2.6;
 /// Layers of noise. Each one is finer and weaker than the last.
 const OCTAVES: usize = 3;
 
+/// Vertical squash of the sample space, so features come out wider than they
+/// are tall and sweep across rather than sitting as round blobs
+const STRETCH: f64 = 2.2;
+
+/// How far a second noise field drags the first. This is what bends the
+/// billows into arms instead of clouds.
+const WARP: f64 = 0.55;
+const WARP_OCTAVES: usize = 2;
+
+/// Share of brightness carried by ridged detail - thin bright filaments -
+/// rather than the plain density envelope. Multiplied by the envelope rather
+/// than blended with it, so it never lights up the voids.
+const RIDGE_MIX: f64 = 0.6;
+
+/// Sparse bright dust drifting inside the cloud
+const SPECKLE_CHANCE: f64 = 0.055;
+const SPECKLE_BOOST: f64 = 2.1;
+
 /// Noise below this is empty space, so the nebula reads as filaments in a void
 /// rather than as an even wash. Stacked value noise only spans about
 /// 0.25 to 0.78, so SPAN normalizes against that real range rather than
 /// against 1.0 - otherwise the brightest filament lands near a third of the
 /// intended opacity and the whole layer disappears.
-const FLOOR: f64 = 0.44;
-const SPAN: f64 = 0.3;
+const FLOOR: f64 = 0.32;
+const SPAN: f64 = 0.28;
 
 /// Applied after the remap, to deepen the voids without dimming the ridges
-const CONTRAST: f64 = 1.8;
+const CONTRAST: f64 = 1.6;
 
 /// Discrete brightness bands. Smooth noise makes neighbouring cells almost the
 /// same color, which hides the grid; posterizing gives the flat steps that
 /// read as pixel art rather than as a soft gradient.
-const LEVELS: f64 = 6.0;
+const LEVELS: f64 = 8.0;
 
 /// How fast the field flows, in noise units per second
 const DRIFT: f64 = 0.012;
@@ -45,11 +63,23 @@ const DRIFT: f64 = 0.012;
 /// only the buffer is throttled, which is invisible at this speed.
 const UPDATE_MS: f64 = 90.0;
 
-/// Deep space through to a lit filament edge
-const PALETTE_DARK: [(u8, u8, u8); 3] = [(34, 24, 68), (92, 50, 138), (198, 108, 172)];
+/// Deep space, through indigo and violet, out to a pale magenta filament core
+const PALETTE_DARK: [(u8, u8, u8); 5] = [
+    (18, 20, 52),
+    (46, 58, 132),
+    (108, 92, 200),
+    (188, 112, 210),
+    (240, 196, 236),
+];
 
 /// The same progression, lightened so dark text stays readable over it
-const PALETTE_LIGHT: [(u8, u8, u8); 3] = [(154, 150, 198), (178, 152, 200), (208, 160, 188)];
+const PALETTE_LIGHT: [(u8, u8, u8); 5] = [
+    (176, 180, 212),
+    (160, 166, 208),
+    (172, 154, 208),
+    (200, 160, 206),
+    (224, 196, 220),
+];
 
 pub struct Nebula {
     canvas: HtmlCanvasElement,
@@ -57,7 +87,7 @@ pub struct Nebula {
     pixels: Vec<u8>,
     width: u32,
     height: u32,
-    palette: [(u8, u8, u8); 3],
+    palette: [(u8, u8, u8); 5],
     alpha: f64,
     seed: i32,
     updated_at: f64,
@@ -116,14 +146,27 @@ impl Nebula {
 
         for y in 0..height {
             for x in 0..width {
-                let value = fbm(x as f64 * step, y as f64 * step, self.seed, drift);
+                let (value, speckle) = field(x as f64 * step, y as f64 * step, self.seed, drift);
 
                 // Lift the floor away, stretch across the usable range, then
                 // curve it so voids fall off faster than ridges dim
                 let shaped = ((value - FLOOR) / SPAN).clamp(0.0, 1.0).powf(CONTRAST);
+
+                // Dust rides along with the cloud rather than sitting on the
+                // screen, so it only shows where there is something to light
+                let shaped = if speckle > 1.0 - SPECKLE_CHANCE && shaped > 0.0 {
+                    (shaped * SPECKLE_BOOST).min(1.0)
+                } else {
+                    shaped
+                };
+
                 let shaped = (shaped * LEVELS).floor() / LEVELS;
 
-                let (r, g, b) = palette_at(&self.palette, shaped);
+                // Hue runs up the palette faster than opacity does. Driving
+                // both from density leaves everything but the densest cores
+                // sitting on the dark end, which reads as grey once composited
+                // at these opacities.
+                let (r, g, b) = palette_at(&self.palette, shaped.sqrt());
                 let index = (y * width + x) * 4;
                 self.pixels[index] = r;
                 self.pixels[index + 1] = g;
@@ -161,15 +204,48 @@ impl Nebula {
     }
 }
 
+/// The full nebula field: a warped density envelope carrying ridged filaments,
+/// plus the dust value for this point. Returns both so the caller samples the
+/// warp only once.
+fn field(x: f64, y: f64, seed: i32, drift: f64) -> (f64, f64) {
+    let y = y * STRETCH;
+
+    // Dragging the sample point by a second field is what bends the billows
+    // into arms
+    let warp_x = fbm(x, y, seed.wrapping_add(11), drift, WARP_OCTAVES);
+    let warp_y = fbm(x + 5.2, y + 1.3, seed.wrapping_add(29), drift, WARP_OCTAVES);
+    let warped_x = x + WARP * (warp_x - 0.5) * 2.0;
+    let warped_y = y + WARP * (warp_y - 0.5) * 2.0;
+
+    let envelope = fbm(warped_x, warped_y, seed, drift, OCTAVES);
+
+    let detail = fbm(
+        warped_x * 2.1,
+        warped_y * 2.1,
+        seed.wrapping_add(53),
+        drift,
+        2,
+    );
+    let ridge = 1.0 - (detail * 2.0 - 1.0).abs();
+
+    let speckle = corner(
+        (warped_x * 47.0) as i32,
+        (warped_y * 47.0) as i32,
+        seed.wrapping_add(97),
+    );
+
+    (envelope * (1.0 - RIDGE_MIX + RIDGE_MIX * ridge), speckle)
+}
+
 /// Stacked value noise. Each octave slides at its own rate, so the field keeps
 /// evolving instead of merely sliding past.
-fn fbm(x: f64, y: f64, seed: i32, drift: f64) -> f64 {
+fn fbm(x: f64, y: f64, seed: i32, drift: f64, octaves: usize) -> f64 {
     let mut total = 0.0;
     let mut amplitude = 1.0;
     let mut frequency = 1.0;
     let mut normalizer = 0.0;
 
-    for octave in 0..OCTAVES {
+    for octave in 0..octaves {
         let offset = drift * (octave as f64 + 1.0);
         total += amplitude
             * value_noise(
@@ -225,7 +301,7 @@ fn corner(x: i32, y: i32, seed: i32) -> f64 {
     (value & 1023) as f64 / 1023.0
 }
 
-fn palette_at(stops: &[(u8, u8, u8); 3], t: f64) -> (u8, u8, u8) {
+fn palette_at(stops: &[(u8, u8, u8)], t: f64) -> (u8, u8, u8) {
     let scaled = t.clamp(0.0, 1.0) * (stops.len() - 1) as f64;
     let index = (scaled.floor() as usize).min(stops.len() - 2);
     let fraction = scaled - index as f64;

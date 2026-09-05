@@ -50,6 +50,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "nebula"
+version = "0.1.0"
+dependencies = [
+ "wasm-bindgen",
+ "web-sys",
+]
+
+[[package]]
 name = "once_cell"
 version = "1.21.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -92,9 +100,10 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0c790de23124f9ab44544d7ac05d60440adc586479ce501c1d6d7da3cd8c9cf5"
 
 [[package]]
-name = "sparkles-wasm"
+name = "stars"
 version = "0.1.0"
 dependencies = [
+ "nebula",
  "wasm-bindgen",
  "web-sys",
 ]

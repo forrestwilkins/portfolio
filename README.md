@@ -42,19 +42,19 @@ Open the client at `http://localhost:$CLIENT_PORT` to view and interact with
 the UI. The client proxies `/api` and the WebSocket to the server on
 `$SERVER_PORT`, so both need to be running.
 
-## Sparkles background
+## Starfield background
 
-The faint sparkles behind the home page are drawn by a small Rust crate in
-`crates/sparkles-wasm`, compiled to WebAssembly. The generated package in
-`view/wasm/sparkles_pkg` is committed, so neither the Vite build nor the
+The faint stars and nebula behind the home page are drawn by two small Rust crates,
+`crates/stars` and `crates/nebula`, compiled to WebAssembly. The generated package in
+`view/wasm/stars_pkg` is committed, so neither the Vite build nor the
 deployment image needs a Rust toolchain.
 
-After changing anything under `crates/sparkles-wasm`, regenerate it. This
+After changing anything under `crates/stars`, regenerate it. This
 needs [Rust](https://rustup.rs), the `wasm32-unknown-unknown` target, and
 [wasm-pack](https://drager.github.io/wasm-pack/installer/):
 
 ```bash
-# Rebuild view/wasm/sparkles_pkg
+# Rebuild view/wasm/stars_pkg
 $ npm run wasm:build
 ```
 

@@ -1,5 +1,3 @@
-mod nebula;
-
 use nebula::Nebula;
 use std::{cell::RefCell, rc::Rc};
 use wasm_bindgen::{closure::Closure, prelude::*, JsCast};
@@ -7,13 +5,13 @@ use web_sys::{window, CanvasRenderingContext2d, HtmlCanvasElement, Window};
 
 /// Kept deliberately low so the effect reads as faint texture rather than
 /// decoration.
-const SPARKLE_COUNT: usize = 8;
+const STAR_COUNT: usize = 8;
 
 /// Opacity at the peak of a flash. Each flash is brief, so this can sit
 /// higher than a steady glow would.
 const PEAK_ALPHA: f64 = 0.55;
 
-/// Portion of a sparkle's cycle spent flashing. The rest is fully dark, so
+/// Portion of a star's cycle spent flashing. The rest is fully dark, so
 /// only a handful are lit at any moment.
 const FLASH_FRACTION: f64 = 0.6;
 
@@ -59,7 +57,7 @@ const STAR_COLORS: [(u8, u8, u8); 5] = [
 /// hence the nesting.
 type AnimationCallback = Rc<RefCell<Option<Closure<dyn FnMut(f64)>>>>;
 
-struct Sparkle {
+struct Star {
     /// Normalized [0, 1] position, so a resize redistributes rather than
     /// reseeds the field
     x: f64,
@@ -86,14 +84,14 @@ struct State {
     canvas: HtmlCanvasElement,
     ctx: CanvasRenderingContext2d,
     nebula: Nebula,
-    sparkles: Vec<Sparkle>,
+    stars: Vec<Star>,
     reduced_motion: bool,
     width: f64,
     height: f64,
 }
 
 #[wasm_bindgen]
-pub struct Sparkles {
+pub struct Stars {
     window: Window,
     _state: Rc<RefCell<State>>,
     animation: AnimationCallback,
@@ -102,12 +100,12 @@ pub struct Sparkles {
 }
 
 #[wasm_bindgen]
-impl Sparkles {
+impl Stars {
     /// Colors are chosen per star from a stellar palette; `dark_mode` picks
     /// between the lit palette and dimmed variants of the same hues. `seed`
     /// lays the field out differently on each page load; pass a random value.
     #[wasm_bindgen(constructor)]
-    pub fn new(canvas: HtmlCanvasElement, dark_mode: bool, seed: f64) -> Result<Sparkles, JsValue> {
+    pub fn new(canvas: HtmlCanvasElement, dark_mode: bool, seed: f64) -> Result<Stars, JsValue> {
         let window = window().ok_or_else(|| JsValue::from_str("window unavailable"))?;
         let ctx = canvas
             .get_context("2d")?
@@ -129,7 +127,7 @@ impl Sparkles {
             canvas,
             ctx,
             nebula: Nebula::new(&document, dark_mode, seed)?,
-            sparkles: build_sparkles(dark_mode, seed),
+            stars: build_stars(dark_mode, seed),
             reduced_motion,
             width: 0.0,
             height: 0.0,
@@ -149,7 +147,7 @@ impl Sparkles {
         // Nothing moves without motion, so paint once and skip the loop
         if reduced_motion {
             render(&state, 0.0);
-            return Ok(Sparkles {
+            return Ok(Stars {
                 window,
                 _state: state,
                 animation,
@@ -180,7 +178,7 @@ impl Sparkles {
             *frame_id.borrow_mut() = Some(id);
         }
 
-        Ok(Sparkles {
+        Ok(Stars {
             window,
             _state: state,
             animation,
@@ -200,14 +198,14 @@ impl Sparkles {
     }
 }
 
-impl Drop for Sparkles {
+impl Drop for Stars {
     fn drop(&mut self) {
         self.stop();
         self.animation.borrow_mut().take();
     }
 }
 
-fn build_sparkles(dark_mode: bool, seed: f64) -> Vec<Sparkle> {
+fn build_stars(dark_mode: bool, seed: f64) -> Vec<Star> {
     // The R2 low-discrepancy sequence. A plain hash clumps badly at this few
     // points; this covers the viewport evenly without looking like a grid.
     const PLASTIC: f64 = 1.324_717_957_244_746;
@@ -221,11 +219,11 @@ fn build_sparkles(dark_mode: bool, seed: f64) -> Vec<Sparkle> {
     let offset_y = (seed * 7.0).fract();
     let salt = (seed * 1_000_003.0) as i32;
 
-    (0..SPARKLE_COUNT)
+    (0..STAR_COUNT)
         .map(|index| {
             let step = index as f64 + 1.0;
             let index = index as i32;
-            Sparkle {
+            Star {
                 x: (offset_x + a1 * step).fract(),
                 y: (offset_y + a2 * step).fract(),
                 // Squared, so most stay small and only a few are large
@@ -289,25 +287,25 @@ fn render(state: &Rc<RefCell<State>>, time: f64) {
     ctx.clear_rect(0.0, 0.0, state.width, state.height);
     state.nebula.draw(ctx, state.width, state.height);
 
-    for sparkle in &state.sparkles {
+    for star in &state.stars {
         let intensity = if state.reduced_motion {
             0.5
         } else {
-            flash(sparkle, seconds) * flicker(sparkle, seconds)
+            flash(star, seconds) * flicker(star, seconds)
         };
 
         if intensity <= 0.0 {
             continue;
         }
 
-        ctx.set_fill_style_str(&sparkle.color);
+        ctx.set_fill_style_str(&star.color);
         draw_star(
             ctx,
-            sparkle,
-            (sparkle.x * state.width).round(),
-            (sparkle.y * state.height).round(),
-            sparkle.size * intensity,
-            PEAK_ALPHA * intensity * sparkle.brightness,
+            star,
+            (star.x * state.width).round(),
+            (star.y * state.height).round(),
+            star.size * intensity,
+            PEAK_ALPHA * intensity * star.brightness,
         );
     }
 
@@ -315,9 +313,9 @@ fn render(state: &Rc<RefCell<State>>, time: f64) {
 }
 
 /// Dark for most of the cycle, then a single quick pop: fast rise, faster
-/// fall. This is what separates a sparkle from a slow fade.
-fn flash(sparkle: &Sparkle, seconds: f64) -> f64 {
-    let cycle = (seconds / sparkle.period + sparkle.phase).fract();
+/// fall. This is what separates a star from a slow fade.
+fn flash(star: &Star, seconds: f64) -> f64 {
+    let cycle = (seconds / star.period + star.phase).fract();
 
     if cycle > FLASH_FRACTION {
         return 0.0;
@@ -330,12 +328,12 @@ fn flash(sparkle: &Sparkle, seconds: f64) -> f64 {
 /// A fast, shallow wobble on top of the slow flash, so a few stars scintillate
 /// the way real ones do through atmosphere. Two sines at an irrational ratio,
 /// so it never settles into an obvious loop.
-fn flicker(sparkle: &Sparkle, seconds: f64) -> f64 {
-    if sparkle.flicker_speed <= 0.0 {
+fn flicker(star: &Star, seconds: f64) -> f64 {
+    if star.flicker_speed <= 0.0 {
         return 1.0;
     }
 
-    let t = seconds * sparkle.flicker_speed + sparkle.phase * std::f64::consts::TAU;
+    let t = seconds * star.flicker_speed + star.phase * std::f64::consts::TAU;
     let wobble = (t * 3.1).sin() * 0.6 + (t * 7.7).sin() * 0.4;
 
     1.0 - FLICKER_DEPTH * (0.5 - 0.5 * wobble)
@@ -343,23 +341,16 @@ fn flicker(sparkle: &Sparkle, seconds: f64) -> f64 {
 
 /// A four-point pixel star: a one pixel cross with a brighter square at the
 /// center. Coordinates are pre-rounded so the arms stay crisp.
-fn draw_star(
-    ctx: &CanvasRenderingContext2d,
-    sparkle: &Sparkle,
-    x: f64,
-    y: f64,
-    arm: f64,
-    alpha: f64,
-) {
+fn draw_star(ctx: &CanvasRenderingContext2d, star: &Star, x: f64, y: f64, arm: f64, alpha: f64) {
     let arm = arm.round().max(1.0);
 
-    if sparkle.ring {
-        draw_ring(ctx, sparkle, x, y, arm * RING_SCALE, alpha * RING_ALPHA);
+    if star.ring {
+        draw_ring(ctx, star, x, y, arm * RING_SCALE, alpha * RING_ALPHA);
     }
 
     draw_rays(ctx, x, y, arm, alpha);
 
-    if sparkle.diagonals {
+    if star.diagonals {
         draw_diagonal_rays(ctx, x, y, arm, alpha);
     }
 
@@ -422,20 +413,13 @@ fn draw_diagonal_rays(ctx: &CanvasRenderingContext2d, x: f64, y: f64, arm: f64, 
 }
 
 /// A single hairline halo, the way a bright light rings through a lens
-fn draw_ring(
-    ctx: &CanvasRenderingContext2d,
-    sparkle: &Sparkle,
-    x: f64,
-    y: f64,
-    radius: f64,
-    alpha: f64,
-) {
+fn draw_ring(ctx: &CanvasRenderingContext2d, star: &Star, x: f64, y: f64, radius: f64, alpha: f64) {
     if alpha < 0.002 {
         return;
     }
 
     ctx.set_global_alpha(alpha);
-    ctx.set_stroke_style_str(&sparkle.color);
+    ctx.set_stroke_style_str(&star.color);
     ctx.set_line_width(1.0);
     ctx.begin_path();
     let _ = ctx.arc(x, y, radius, 0.0, std::f64::consts::TAU);

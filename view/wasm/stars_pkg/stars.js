@@ -1,15 +1,15 @@
-/* @ts-self-types="./sparkles_wasm.d.ts" */
+/* @ts-self-types="./stars.d.ts" */
 
-export class Sparkles {
+export class Stars {
     __destroy_into_raw() {
         const ptr = this.__wbg_ptr;
         this.__wbg_ptr = 0;
-        SparklesFinalization.unregister(this);
+        StarsFinalization.unregister(this);
         return ptr;
     }
     free() {
         const ptr = this.__destroy_into_raw();
-        wasm.__wbg_sparkles_free(ptr, 0);
+        wasm.__wbg_stars_free(ptr, 0);
     }
     /**
      * Colors are chosen per star from a stellar palette; `dark_mode` picks
@@ -20,19 +20,19 @@ export class Sparkles {
      * @param {number} seed
      */
     constructor(canvas, dark_mode, seed) {
-        const ret = wasm.sparkles_new(canvas, dark_mode, seed);
+        const ret = wasm.stars_new(canvas, dark_mode, seed);
         if (ret[2]) {
             throw takeFromExternrefTable0(ret[1]);
         }
         this.__wbg_ptr = ret[0];
-        SparklesFinalization.register(this, this.__wbg_ptr, this);
+        StarsFinalization.register(this, this.__wbg_ptr, this);
         return this;
     }
     stop() {
-        wasm.sparkles_stop(this.__wbg_ptr);
+        wasm.stars_stop(this.__wbg_ptr);
     }
 }
-if (Symbol.dispose) Sparkles.prototype[Symbol.dispose] = Sparkles.prototype.free;
+if (Symbol.dispose) Stars.prototype[Symbol.dispose] = Stars.prototype.free;
 function __wbg_get_imports() {
     const import0 = {
         __proto__: null,
@@ -207,12 +207,12 @@ function __wbg_get_imports() {
         },
         __wbindgen_generic_0000000000000001: function(arg0, arg1) {
             // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [F64], shim_idx: 9, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
-            const ret = makeMutClosure(arg0, arg1, wasm_bindgen__convert__closures_____invoke__hfa240bc6aac8527c);
+            const ret = makeMutClosure(arg0, arg1, wasm_bindgen__convert__closures_____invoke__h5c87fe1843c915da);
             return ret;
         },
         __wbindgen_generic_0000000000000002: function(arg0, arg1) {
             // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [], shim_idx: 7, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
-            const ret = makeMutClosure(arg0, arg1, wasm_bindgen__convert__closures_____invoke__ha10b4805468d8d82);
+            const ret = makeMutClosure(arg0, arg1, wasm_bindgen__convert__closures_____invoke__h5df1de6e718e13f3);
             return ret;
         },
         __wbindgen_generic_0000000000000003: function(arg0, arg1) {
@@ -232,21 +232,21 @@ function __wbg_get_imports() {
     };
     return {
         __proto__: null,
-        "./sparkles_wasm_bg.js": import0,
+        "./stars_bg.js": import0,
     };
 }
 
-function wasm_bindgen__convert__closures_____invoke__ha10b4805468d8d82(arg0, arg1) {
-    wasm.wasm_bindgen__convert__closures_____invoke__ha10b4805468d8d82(arg0, arg1);
+function wasm_bindgen__convert__closures_____invoke__h5df1de6e718e13f3(arg0, arg1) {
+    wasm.wasm_bindgen__convert__closures_____invoke__h5df1de6e718e13f3(arg0, arg1);
 }
 
-function wasm_bindgen__convert__closures_____invoke__hfa240bc6aac8527c(arg0, arg1, arg2) {
-    wasm.wasm_bindgen__convert__closures_____invoke__hfa240bc6aac8527c(arg0, arg1, arg2);
+function wasm_bindgen__convert__closures_____invoke__h5c87fe1843c915da(arg0, arg1, arg2) {
+    wasm.wasm_bindgen__convert__closures_____invoke__h5c87fe1843c915da(arg0, arg1, arg2);
 }
 
-const SparklesFinalization = (typeof FinalizationRegistry === 'undefined')
+const StarsFinalization = (typeof FinalizationRegistry === 'undefined')
     ? { register: () => {}, unregister: () => {} }
-    : new FinalizationRegistry(ptr => wasm.__wbg_sparkles_free(ptr, 1));
+    : new FinalizationRegistry(ptr => wasm.__wbg_stars_free(ptr, 1));
 
 function addToExternrefTable0(obj) {
     const idx = wasm.__externref_table_alloc();
@@ -427,7 +427,7 @@ async function __wbg_init(module_or_path) {
     }
 
     if (module_or_path === undefined) {
-        module_or_path = new URL('sparkles_wasm_bg.wasm', import.meta.url);
+        module_or_path = new URL('stars_bg.wasm', import.meta.url);
     }
     const imports = __wbg_get_imports();
 

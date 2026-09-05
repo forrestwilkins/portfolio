@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import HomeLink from '../components/home/home-link';
-import Sparkles from '../components/home/sparkles';
+import Stars from '../components/home/stars';
 import useAppStore from '../store/app.store';
 
 const LINKS = [
@@ -34,7 +34,7 @@ const HomePage = () => {
 
   return (
     <div className="relative z-0 flex flex-col pt-5 pl-17.5 lg:pt-0 lg:pl-3">
-      <Sparkles />
+      <Stars />
 
       <p className="text-muted-foreground font-mono text-sm tracking-[0.28em] uppercase">
         Forrest Wilkins

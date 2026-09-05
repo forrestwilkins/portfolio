@@ -39,10 +39,11 @@ npm run build:client-artifact
 The output lands in `deploy/artifacts/frontend-dist` and is served as static
 files by the backend.
 
-## Refresh the sparkles WebAssembly
+## Refresh the starfield WebAssembly
 
-The home page background is compiled from `crates/sparkles-wasm` into the
-committed package at `view/wasm/sparkles_pkg`, which the frontend artifact
+The home page background is compiled from `crates/stars` (which pulls in
+`crates/nebula`) into the
+committed package at `view/wasm/stars_pkg`, which the frontend artifact
 build consumes as ordinary source. It is the one artifact that needs a local
 Rust toolchain rather than Docker:
 
