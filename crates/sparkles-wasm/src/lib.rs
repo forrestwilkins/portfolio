@@ -24,6 +24,19 @@ const RAY_STEPS: usize = 6;
 /// Opacity of the glare where it leaves the star, relative to the star itself
 const RAY_ALPHA: f64 = 0.32;
 
+/// Diagonal spikes are the secondary ones, so they stay shorter and fainter
+/// than the axis-aligned pair
+const DIAGONAL_SCALE: f64 = 0.6;
+const DIAGONAL_ALPHA: f64 = 0.55;
+
+/// Halo radius as a multiple of the arm, and how faint it sits
+const RING_SCALE: f64 = 3.2;
+const RING_ALPHA: f64 = 0.2;
+
+/// Share of stars given diagonal spikes, and a halo
+const DIAGONAL_SHARE: f64 = 0.35;
+const RING_SHARE: f64 = 0.25;
+
 /// Approximate blackbody colors across the stellar classes, hot blue through
 /// to cool red. Saturated enough to read as a tint, but every entry is a
 /// color a real star actually has.
@@ -50,6 +63,10 @@ struct Sparkle {
     brightness: f64,
     /// Precomputed CSS color, so rendering allocates nothing
     color: String,
+    /// Whether this one also throws diagonal spikes
+    diagonals: bool,
+    /// Whether this one carries a faint halo
+    ring: bool,
     /// Offset into the cycle, so they don't all flash together
     phase: f64,
     /// Seconds between flashes
@@ -205,6 +222,8 @@ fn build_sparkles(dark_mode: bool, seed: f64) -> Vec<Sparkle> {
                         % STAR_COLORS.len()],
                     dark_mode,
                 ),
+                diagonals: hash(index.wrapping_add(salt), 7) < DIAGONAL_SHARE,
+                ring: hash(index.wrapping_add(salt), 8) < RING_SHARE,
                 phase: hash(index.wrapping_add(salt), 4),
                 period: 11.0 + hash(index.wrapping_add(salt), 5) * 16.0,
             }
@@ -253,6 +272,7 @@ fn render(state: &Rc<RefCell<State>>, time: f64) {
         ctx.set_fill_style_str(&sparkle.color);
         draw_star(
             ctx,
+            sparkle,
             (sparkle.x * state.width).round(),
             (sparkle.y * state.height).round(),
             sparkle.size * intensity,
@@ -278,10 +298,25 @@ fn flash(sparkle: &Sparkle, seconds: f64) -> f64 {
 
 /// A four-point pixel star: a one pixel cross with a brighter square at the
 /// center. Coordinates are pre-rounded so the arms stay crisp.
-fn draw_star(ctx: &CanvasRenderingContext2d, x: f64, y: f64, arm: f64, alpha: f64) {
+fn draw_star(
+    ctx: &CanvasRenderingContext2d,
+    sparkle: &Sparkle,
+    x: f64,
+    y: f64,
+    arm: f64,
+    alpha: f64,
+) {
     let arm = arm.round().max(1.0);
 
+    if sparkle.ring {
+        draw_ring(ctx, sparkle, x, y, arm * RING_SCALE, alpha * RING_ALPHA);
+    }
+
     draw_rays(ctx, x, y, arm, alpha);
+
+    if sparkle.diagonals {
+        draw_diagonal_rays(ctx, x, y, arm, alpha);
+    }
 
     ctx.set_global_alpha(alpha);
     ctx.fill_rect(x - arm, y, arm * 2.0 + 1.0, 1.0);
@@ -326,6 +361,40 @@ fn css_color(rgb: (u8, u8, u8), dark_mode: bool) -> String {
 
     let dim = |channel: u8| (channel as f64 * 0.12 + 8.0).round() as u8;
     format!("rgba({}, {}, {}, 0.6)", dim(r), dim(g), dim(b))
+}
+
+/// The same glare rotated 45 degrees, for the stars that get the full eight
+/// point pattern. Rotating means these are anti-aliased rather than pixel
+/// crisp, which suits a secondary spike.
+fn draw_diagonal_rays(ctx: &CanvasRenderingContext2d, x: f64, y: f64, arm: f64, alpha: f64) {
+    ctx.save();
+
+    if ctx.translate(x, y).is_ok() && ctx.rotate(std::f64::consts::FRAC_PI_4).is_ok() {
+        draw_rays(ctx, 0.0, 0.0, arm * DIAGONAL_SCALE, alpha * DIAGONAL_ALPHA);
+    }
+
+    ctx.restore();
+}
+
+/// A single hairline halo, the way a bright light rings through a lens
+fn draw_ring(
+    ctx: &CanvasRenderingContext2d,
+    sparkle: &Sparkle,
+    x: f64,
+    y: f64,
+    radius: f64,
+    alpha: f64,
+) {
+    if alpha < 0.002 {
+        return;
+    }
+
+    ctx.set_global_alpha(alpha);
+    ctx.set_stroke_style_str(&sparkle.color);
+    ctx.set_line_width(1.0);
+    ctx.begin_path();
+    let _ = ctx.arc(x, y, radius, 0.0, std::f64::consts::TAU);
+    ctx.stroke();
 }
 
 /// Small deterministic hash so the field is identical on every load.

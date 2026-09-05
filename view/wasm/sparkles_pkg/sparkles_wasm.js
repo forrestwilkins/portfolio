@@ -49,6 +49,12 @@ function __wbg_get_imports() {
         __wbg_addEventListener_9534e2dc12044ee4: function() { return handleError(function (arg0, arg1, arg2, arg3) {
             arg0.addEventListener(getStringFromWasm0(arg1, arg2), arg3);
         }, arguments); },
+        __wbg_arc_e3bb5e0478f5d999: function() { return handleError(function (arg0, arg1, arg2, arg3, arg4, arg5) {
+            arg0.arc(arg1, arg2, arg3, arg4, arg5);
+        }, arguments); },
+        __wbg_beginPath_ccad41b15817641f: function(arg0) {
+            arg0.beginPath();
+        },
         __wbg_cancelAnimationFrame_4fc0f227c45abccf: function() { return handleError(function (arg0, arg1) {
             arg0.cancelAnimationFrame(arg1);
         }, arguments); },
@@ -109,6 +115,15 @@ function __wbg_get_imports() {
             const ret = arg0.requestAnimationFrame(arg1);
             return ret;
         }, arguments); },
+        __wbg_restore_eecc6aaa55774880: function(arg0) {
+            arg0.restore();
+        },
+        __wbg_rotate_07c9b9c0e2dd68f7: function() { return handleError(function (arg0, arg1) {
+            arg0.rotate(arg1);
+        }, arguments); },
+        __wbg_save_c33ea55c57a4e522: function(arg0) {
+            arg0.save();
+        },
         __wbg_scale_3309b08795192444: function() { return handleError(function (arg0, arg1, arg2) {
             arg0.scale(arg1, arg2);
         }, arguments); },
@@ -123,6 +138,12 @@ function __wbg_get_imports() {
         },
         __wbg_set_height_698fb3b255bc1348: function(arg0, arg1) {
             arg0.height = arg1 >>> 0;
+        },
+        __wbg_set_lineWidth_0b0f32c89c240172: function(arg0, arg1) {
+            arg0.lineWidth = arg1;
+        },
+        __wbg_set_strokeStyle_2ce46a01ec1ff9ad: function(arg0, arg1, arg2) {
+            arg0.strokeStyle = getStringFromWasm0(arg1, arg2);
         },
         __wbg_set_width_4c3a2252e0dea033: function(arg0, arg1) {
             arg0.width = arg1 >>> 0;
@@ -143,6 +164,12 @@ function __wbg_get_imports() {
             const ret = typeof window === 'undefined' ? null : window;
             return isLikeNone(ret) ? 0 : addToExternrefTable0(ret);
         },
+        __wbg_stroke_8a243e7601bb8549: function(arg0) {
+            arg0.stroke();
+        },
+        __wbg_translate_f1b2cec824c31943: function() { return handleError(function (arg0, arg1, arg2) {
+            arg0.translate(arg1, arg2);
+        }, arguments); },
         __wbg_width_71b671f940e3eb8c: function(arg0) {
             const ret = arg0.width;
             return ret;
