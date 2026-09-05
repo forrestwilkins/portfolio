@@ -24,3 +24,10 @@ lerna-debug.log*
 *.njsproj
 *.sln
 *.sw?
+
+# Local only files
+.docs
+.scripts
+.misc
+.logs
+.tmp
