@@ -13,8 +13,8 @@ const CELL: f64 = 7.0;
 
 /// Peak opacity of the brightest filaments. Deliberately low - the links sit
 /// on top of this, and they have to stay comfortable to read.
-const ALPHA_DARK: f64 = 0.2;
-const ALPHA_LIGHT: f64 = 0.1;
+const ALPHA_DARK: f64 = 0.24;
+const ALPHA_LIGHT: f64 = 0.22;
 
 /// Roughly how many large blobs span the viewport width
 const SCALE: f64 = 2.6;
@@ -35,6 +35,11 @@ const WARP_OCTAVES: usize = 2;
 /// rather than the plain density envelope. Multiplied by the envelope rather
 /// than blended with it, so it never lights up the voids.
 const RIDGE_MIX: f64 = 0.6;
+
+/// How much of the color comes from position rather than density. The
+/// reference images lean teal in one region and blue or violet in another,
+/// which density alone cannot produce.
+const HUE_SPREAD: f64 = 0.45;
 
 /// Sparse bright dust drifting inside the cloud
 const SPECKLE_CHANCE: f64 = 0.055;
@@ -63,22 +68,24 @@ const DRIFT: f64 = 0.012;
 /// only the buffer is throttled, which is invisible at this speed.
 const UPDATE_MS: f64 = 90.0;
 
-/// Deep space, through indigo and violet, out to a pale magenta filament core
+/// Deep space, through teal and cyan, into violet and out to a pale core
 const PALETTE_DARK: [(u8, u8, u8); 5] = [
-    (18, 20, 52),
-    (46, 58, 132),
-    (108, 92, 200),
-    (188, 112, 210),
-    (240, 196, 236),
+    (14, 26, 54),
+    (24, 100, 118),
+    (48, 156, 196),
+    (150, 110, 216),
+    (212, 228, 250),
 ];
 
-/// The same progression, lightened so dark text stays readable over it
+/// The same hues, but mid-tones rather than pastels. On a white page the
+/// nebula has to darken what is behind it to register at all, so this palette
+/// runs the opposite way to the dark one: denser means deeper, not brighter.
 const PALETTE_LIGHT: [(u8, u8, u8); 5] = [
-    (176, 180, 212),
-    (160, 166, 208),
-    (172, 154, 208),
-    (200, 160, 206),
-    (224, 196, 220),
+    (186, 206, 212),
+    (132, 184, 194),
+    (92, 150, 192),
+    (104, 120, 190),
+    (126, 104, 178),
 ];
 
 pub struct Nebula {
@@ -146,7 +153,8 @@ impl Nebula {
 
         for y in 0..height {
             for x in 0..width {
-                let (value, speckle) = field(x as f64 * step, y as f64 * step, self.seed, drift);
+                let (value, speckle, tint) =
+                    field(x as f64 * step, y as f64 * step, self.seed, drift);
 
                 // Lift the floor away, stretch across the usable range, then
                 // curve it so voids fall off faster than ridges dim
@@ -162,11 +170,14 @@ impl Nebula {
 
                 let shaped = (shaped * LEVELS).floor() / LEVELS;
 
-                // Hue runs up the palette faster than opacity does. Driving
-                // both from density leaves everything but the densest cores
-                // sitting on the dark end, which reads as grey once composited
-                // at these opacities.
-                let (r, g, b) = palette_at(&self.palette, shaped.sqrt());
+                // Hue runs up the palette faster than opacity does, and part
+                // of it comes from position rather than density. Driving it
+                // from density alone leaves everything but the densest cores
+                // on the dark end, which reads as grey once composited at
+                // these opacities, and gives the whole field one flat hue.
+                let hue =
+                    (shaped.sqrt() * (1.0 - HUE_SPREAD) + tint * HUE_SPREAD).clamp(0.0, 1.0);
+                let (r, g, b) = palette_at(&self.palette, hue);
                 let index = (y * width + x) * 4;
                 self.pixels[index] = r;
                 self.pixels[index + 1] = g;
@@ -205,9 +216,10 @@ impl Nebula {
 }
 
 /// The full nebula field: a warped density envelope carrying ridged filaments,
-/// plus the dust value for this point. Returns both so the caller samples the
-/// warp only once.
-fn field(x: f64, y: f64, seed: i32, drift: f64) -> (f64, f64) {
+/// plus the dust and regional tint for this point. Returns all three so the
+/// caller samples the warp only once - the tint reuses the warp field, which
+/// is already low frequency and already computed.
+fn field(x: f64, y: f64, seed: i32, drift: f64) -> (f64, f64, f64) {
     let y = y * STRETCH;
 
     // Dragging the sample point by a second field is what bends the billows
@@ -234,7 +246,11 @@ fn field(x: f64, y: f64, seed: i32, drift: f64) -> (f64, f64) {
         seed.wrapping_add(97),
     );
 
-    (envelope * (1.0 - RIDGE_MIX + RIDGE_MIX * ridge), speckle)
+    (
+        envelope * (1.0 - RIDGE_MIX + RIDGE_MIX * ridge),
+        speckle,
+        warp_x,
+    )
 }
 
 /// Stacked value noise. Each octave slides at its own rate, so the field keeps
