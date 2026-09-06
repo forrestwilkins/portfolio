@@ -27,7 +27,8 @@ const HomePage = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data: { timestamp: string } = await result.json();
-      setTime(data.timestamp);
+      // Rendered in the viewer's own timezone
+      setTime(new Date(data.timestamp).toLocaleString());
     };
     init();
   }, [token]);
