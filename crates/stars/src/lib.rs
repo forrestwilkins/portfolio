@@ -30,6 +30,17 @@ const RAY_ALPHA: f64 = 0.32;
 const DIAGONAL_SCALE: f64 = 0.85;
 const DIAGONAL_ALPHA: f64 = 0.85;
 
+/// Bright core radius, plus how much it grows with the arm. A square core has
+/// to be 1px or 3px to stay centered and pixel aligned - 1 reads as the bare
+/// crossing of the arms and 3 is chunkier than them - so the core is drawn as
+/// a disc instead, and takes the anti-aliasing in exchange for looking round.
+const CORE_RADIUS: f64 = 0.85;
+const CORE_GROWTH: f64 = 0.12;
+
+/// A soft disc just outside the core, so it glows rather than sitting flat
+const GLOW_SCALE: f64 = 2.4;
+const GLOW_ALPHA: f64 = 0.4;
+
 /// Halo radius as a multiple of the arm, and how faint it sits
 const RING_SCALE: f64 = 3.2;
 const RING_ALPHA: f64 = 0.2;
@@ -344,29 +355,50 @@ fn flicker(star: &Star, seconds: f64) -> f64 {
 fn draw_star(ctx: &CanvasRenderingContext2d, star: &Star, x: f64, y: f64, arm: f64, alpha: f64) {
     let arm = arm.round().max(1.0);
 
+    // Everything hangs off the middle of the pixel at (x, y), not off its
+    // corner. An odd width bar drawn from (x, y) is centered half a pixel
+    // right and down of (x, y) itself, so anything else anchored at (x, y) -
+    // the core, the ring - lands half a pixel off from the arms.
+    let cx = x + 0.5;
+    let cy = y + 0.5;
+
     if star.ring {
-        draw_ring(ctx, star, x, y, arm * RING_SCALE, alpha * RING_ALPHA);
+        draw_ring(ctx, star, cx, cy, arm * RING_SCALE, alpha * RING_ALPHA);
     }
 
-    draw_rays(ctx, x, y, arm, alpha);
+    draw_rays(ctx, cx, cy, arm, alpha);
 
     if star.diagonals {
-        draw_diagonal_rays(ctx, x, y, arm, alpha);
+        draw_diagonal_rays(ctx, cx, cy, arm, alpha);
     }
 
     ctx.set_global_alpha(alpha);
-    ctx.fill_rect(x - arm, y, arm * 2.0 + 1.0, 1.0);
-    ctx.fill_rect(x, y - arm, 1.0, arm * 2.0 + 1.0);
+    ctx.fill_rect(cx - arm - 0.5, cy - 0.5, arm * 2.0 + 1.0, 1.0);
+    ctx.fill_rect(cx - 0.5, cy - arm - 0.5, 1.0, arm * 2.0 + 1.0);
 
-    // The core reads as the glint, so let it run brighter than the arms
+    draw_core(ctx, cx, cy, arm, alpha);
+}
+
+/// The glint at the middle: a small bright disc over a softer one, so the
+/// center reads as a round glow rather than as the bare crossing of the arms
+fn draw_core(ctx: &CanvasRenderingContext2d, cx: f64, cy: f64, arm: f64, alpha: f64) {
+    let radius = CORE_RADIUS + arm * CORE_GROWTH;
+
+    ctx.set_global_alpha((alpha * GLOW_ALPHA).min(1.0));
+    ctx.begin_path();
+    let _ = ctx.arc(cx, cy, radius * GLOW_SCALE, 0.0, std::f64::consts::TAU);
+    ctx.fill();
+
     ctx.set_global_alpha((alpha * 1.7).min(1.0));
-    ctx.fill_rect(x - 1.0, y - 1.0, 2.0, 2.0);
+    ctx.begin_path();
+    let _ = ctx.arc(cx, cy, radius, 0.0, std::f64::consts::TAU);
+    ctx.fill();
 }
 
 /// Thin glare shooting along the same four axes, the way a bright point of
 /// light streaks in a lens or a squint. Drawn as tapering one pixel segments
 /// so it fades out instead of ending abruptly.
-fn draw_rays(ctx: &CanvasRenderingContext2d, x: f64, y: f64, arm: f64, alpha: f64) {
+fn draw_rays(ctx: &CanvasRenderingContext2d, cx: f64, cy: f64, arm: f64, alpha: f64) {
     let step = (arm * RAY_SCALE) / RAY_STEPS as f64;
 
     for index in 0..RAY_STEPS {
@@ -377,12 +409,15 @@ fn draw_rays(ctx: &CanvasRenderingContext2d, x: f64, y: f64, arm: f64, alpha: f6
             continue;
         }
 
-        let offset = arm + step * index as f64;
+        // Measured from the tip of the arm, equally in both directions
+        let near = arm + 0.5 + step * index as f64;
+        let far = near + step;
+
         ctx.set_global_alpha(segment_alpha);
-        ctx.fill_rect(x + offset, y, step, 1.0);
-        ctx.fill_rect(x - offset - step, y, step, 1.0);
-        ctx.fill_rect(x, y + offset, 1.0, step);
-        ctx.fill_rect(x, y - offset - step, 1.0, step);
+        ctx.fill_rect(cx + near, cy - 0.5, step, 1.0);
+        ctx.fill_rect(cx - far, cy - 0.5, step, 1.0);
+        ctx.fill_rect(cx - 0.5, cy + near, 1.0, step);
+        ctx.fill_rect(cx - 0.5, cy - far, 1.0, step);
     }
 }
 
@@ -402,10 +437,10 @@ fn css_color(rgb: (u8, u8, u8), dark_mode: bool) -> String {
 /// The same glare rotated 45 degrees, for the stars that get the full eight
 /// point pattern. Rotating means these are anti-aliased rather than pixel
 /// crisp, which suits a secondary spike.
-fn draw_diagonal_rays(ctx: &CanvasRenderingContext2d, x: f64, y: f64, arm: f64, alpha: f64) {
+fn draw_diagonal_rays(ctx: &CanvasRenderingContext2d, cx: f64, cy: f64, arm: f64, alpha: f64) {
     ctx.save();
 
-    if ctx.translate(x, y).is_ok() && ctx.rotate(std::f64::consts::FRAC_PI_4).is_ok() {
+    if ctx.translate(cx, cy).is_ok() && ctx.rotate(std::f64::consts::FRAC_PI_4).is_ok() {
         draw_rays(ctx, 0.0, 0.0, arm * DIAGONAL_SCALE, alpha * DIAGONAL_ALPHA);
     }
 
@@ -413,7 +448,14 @@ fn draw_diagonal_rays(ctx: &CanvasRenderingContext2d, x: f64, y: f64, arm: f64, 
 }
 
 /// A single hairline halo, the way a bright light rings through a lens
-fn draw_ring(ctx: &CanvasRenderingContext2d, star: &Star, x: f64, y: f64, radius: f64, alpha: f64) {
+fn draw_ring(
+    ctx: &CanvasRenderingContext2d,
+    star: &Star,
+    cx: f64,
+    cy: f64,
+    radius: f64,
+    alpha: f64,
+) {
     if alpha < 0.002 {
         return;
     }
@@ -422,7 +464,7 @@ fn draw_ring(ctx: &CanvasRenderingContext2d, star: &Star, x: f64, y: f64, radius
     ctx.set_stroke_style_str(&star.color);
     ctx.set_line_width(1.0);
     ctx.begin_path();
-    let _ = ctx.arc(x, y, radius, 0.0, std::f64::consts::TAU);
+    let _ = ctx.arc(cx, cy, radius, 0.0, std::f64::consts::TAU);
     ctx.stroke();
 }
 

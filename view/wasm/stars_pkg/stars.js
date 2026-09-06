@@ -79,6 +79,9 @@ function __wbg_get_imports() {
         __wbg_fillRect_ff9957352a08db2c: function(arg0, arg1, arg2, arg3, arg4) {
             arg0.fillRect(arg1, arg2, arg3, arg4);
         },
+        __wbg_fill_61b0872bf5d91622: function(arg0) {
+            arg0.fill();
+        },
         __wbg_getBoundingClientRect_299f40f8641457e6: function(arg0) {
             const ret = arg0.getBoundingClientRect();
             return ret;
