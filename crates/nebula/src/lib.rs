@@ -8,8 +8,9 @@
 use wasm_bindgen::{Clamped, JsCast, JsValue};
 use web_sys::{CanvasRenderingContext2d, Document, HtmlCanvasElement, ImageData};
 
-/// Screen pixels per nebula pixel. Larger is chunkier and cheaper.
-const CELL: f64 = 7.0;
+/// Screen pixels per nebula pixel. Larger is chunkier and cheaper - cost per
+/// update scales with the square of this, so halving it quadruples the work.
+const CELL: f64 = 4.0;
 
 /// Peak opacity of the brightest filaments. Deliberately low - the links sit
 /// on top of this, and they have to stay comfortable to read.
@@ -66,7 +67,7 @@ const DRIFT: f64 = 0.012;
 
 /// Milliseconds between noise recomputes. The blit still happens every frame;
 /// only the buffer is throttled, which is invisible at this speed.
-const UPDATE_MS: f64 = 90.0;
+const UPDATE_MS: f64 = 120.0;
 
 /// Deep space, through teal and cyan, into violet and out to a pale core
 const PALETTE_DARK: [(u8, u8, u8); 5] = [

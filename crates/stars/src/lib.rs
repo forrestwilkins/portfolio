@@ -227,7 +227,7 @@ fn build_stars(dark_mode: bool, seed: f64) -> Vec<Star> {
                 x: (offset_x + a1 * step).fract(),
                 y: (offset_y + a2 * step).fract(),
                 // Squared, so most stay small and only a few are large
-                size: 0.9 + hash(index.wrapping_add(salt), 3).powi(2) * 2.4,
+                size: 0.8 + hash(index.wrapping_add(salt), 3).powi(2) * 4.4,
                 brightness: 0.7 + hash(index.wrapping_add(salt), 3) * 0.3,
                 color: css_color(
                     STAR_COLORS[(hash(index.wrapping_add(salt), 6) * STAR_COLORS.len() as f64)
