@@ -148,7 +148,9 @@ impl Stars {
 
         let resize_state = Rc::clone(&state);
         let resize = Closure::wrap(Box::new(move || {
-            let _ = resize_canvas(&resize_state);
+            if resize_canvas(&resize_state).is_ok() && reduced_motion {
+                render(&resize_state, 0.0);
+            }
         }) as Box<dyn FnMut()>);
         window.add_event_listener_with_callback("resize", resize.as_ref().unchecked_ref())?;
 
