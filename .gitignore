@@ -26,6 +26,9 @@ lerna-debug.log*
 *.sln
 *.sw?
 
+# Script related files
+scripts/__pycache__
+
 # Local only files
 .docs
 .scripts
