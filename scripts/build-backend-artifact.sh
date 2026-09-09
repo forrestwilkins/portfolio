@@ -16,3 +16,5 @@ docker buildx build \
 rm -rf "$artifact_dir"
 mkdir -p "$artifact_dir"
 cp "$temporary_dir/main.mjs" "$artifact_dir/main.mjs"
+
+"$repo_root/scripts/check-artifacts.sh" write server

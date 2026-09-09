@@ -15,3 +15,5 @@ docker buildx build \
 rm -rf "$artifact_dir"
 mkdir -p "$artifact_dir"
 cp -R "$temporary_dir/." "$artifact_dir/"
+
+"$repo_root/scripts/check-artifacts.sh" write client

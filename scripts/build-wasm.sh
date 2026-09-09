@@ -14,3 +14,5 @@ wasm-pack build crates/stars \
 # generated package is committed so the frontend artifact image stays
 # Node-only, so remove it.
 rm -f "$package_dir/.gitignore"
+
+"$repo_root/scripts/check-artifacts.sh" write wasm

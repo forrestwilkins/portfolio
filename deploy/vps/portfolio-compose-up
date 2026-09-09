@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# The only thing the deploy user may run as root. Kept to exactly one action
+# so the sudoers grant cannot be widened by argument: no down, no volume
+# removal, no prune, and no other project directory.
+#
+# Install to /usr/local/bin/portfolio-compose-up, owned by root, mode 0755.
+
+cd "${PORTFOLIO_REPO:-/home/deploy/portfolio}"
+exec docker compose up -d --build
