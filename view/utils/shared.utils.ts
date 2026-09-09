@@ -1,3 +1,11 @@
+import { clsx, type ClassValue } from 'clsx';
+import { twMerge } from 'tailwind-merge';
+
+/** Merge Tailwind classes, letting later classes win over earlier ones */
+export const cn = (...inputs: ClassValue[]) => {
+  return twMerge(clsx(inputs));
+};
+
 export const sleep = (ms: number = 500) =>
   new Promise((resolve) => setTimeout(resolve, ms));
 

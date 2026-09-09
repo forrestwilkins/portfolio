@@ -6,6 +6,7 @@ import useAppStore from '../../store/app.store';
 import theme from '../../styles/theme';
 import { getToneJS } from '../../utils/audio.utils';
 import { isTouchDevice } from '../../utils/shared.utils';
+import ColorSchemeSync from './color-scheme-sync';
 import Layout from './layout';
 
 const App = () => {
@@ -79,6 +80,7 @@ const App = () => {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
+      <ColorSchemeSync />
       <Layout>
         <Outlet />
       </Layout>

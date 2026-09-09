@@ -1,5 +1,7 @@
+import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import * as dotenv from 'dotenv';
+import path from 'path';
 import { defineConfig } from 'vite';
 import dynamicImport from 'vite-plugin-dynamic-import';
 
@@ -9,7 +11,9 @@ dotenv.config();
 export default defineConfig({
   root: 'view',
   server: {
-    port: parseInt(process.env.CLIENT_PORT || '3000'),
+    port: parseInt(process.env.CLIENT_PORT || '3200'),
+    // Fail loudly instead of silently drifting to the next free port
+    strictPort: true,
     proxy: {
       '/api': {
         target: `http://localhost:${process.env.SERVER_PORT}/api`,
@@ -24,6 +28,11 @@ export default defineConfig({
   build: {
     outDir: '../dist/view',
   },
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, 'view'),
+    },
+  },
   plugins: [
     dynamicImport({
       filter(id) {
@@ -33,5 +42,6 @@ export default defineConfig({
       },
     }),
     react(),
+    tailwindcss(),
   ],
 });

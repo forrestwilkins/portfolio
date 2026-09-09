@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <title>Planet</title>
+  <defs>
+    <!-- White keeps, black cuts. These strokes are the gaps between panels,
+         carried over from the old icon; they punch through to transparency.
+         Kept to two, and wide, so they survive being scaled to 16px. -->
+    <mask id="panels">
+      <circle cx="256" cy="256" r="236" fill="#fff"/>
+      <g fill="none" stroke="#000" stroke-width="36" stroke-linecap="round">
+        <path d="M 256 20 A 110 236 0 0 1 256 492"/>
+        <path d="M 35.5 330 A 220.5 68 0 0 1 476.5 330"/>
+      </g>
+    </mask>
+  </defs>
+
+  <!-- An offset disc cuts the terminator, lighting the sphere from the upper
+       left. The mask crops it back, so it can overhang the edge. -->
+  <g mask="url(#panels)">
+    <circle cx="256" cy="256" r="236" fill="#a2c1c0"/>
+    <circle cx="500" cy="408" r="300" fill="#3b596e"/>
+  </g>
+</svg>

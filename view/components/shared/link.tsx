@@ -1,41 +1,57 @@
-import { Link as MuiLink, SxProps } from '@mui/material';
 import { ReactNode } from 'react';
 import { Link as ReactRouterLink } from 'react-router-dom';
+import { cn } from '../../utils/shared.utils';
 
 interface Props {
   children: ReactNode;
+  className?: string;
   disabled?: boolean;
-  leftSpace?: boolean;
+  external?: boolean;
   onClick?: () => void;
   state?: Record<string, unknown>;
-  sx?: SxProps;
   to: string;
 }
 
 const Link = ({
   children,
+  className,
   disabled,
-  leftSpace,
+  external,
   onClick,
   state,
-  sx,
   to,
-}: Props) => (
-  <MuiLink
-    component={ReactRouterLink}
-    onClick={onClick}
-    state={state}
-    to={to}
-    sx={{
-      pointerEvents: disabled ? 'none' : undefined,
-      textDecoration: 'none',
-      color: 'text.primary',
-      ...sx,
-    }}
-  >
-    {leftSpace ? ' ' : ''}
-    {children}
-  </MuiLink>
-);
+}: Props) => {
+  const classes = cn(
+    'text-foreground no-underline outline-none',
+    'focus-visible:ring-ring rounded-sm focus-visible:ring-2 focus-visible:ring-offset-2',
+    disabled && 'pointer-events-none',
+    className,
+  );
+
+  if (external) {
+    return (
+      <a
+        href={to}
+        target="_blank"
+        rel="noopener noreferrer"
+        onClick={onClick}
+        className={classes}
+      >
+        {children}
+      </a>
+    );
+  }
+
+  return (
+    <ReactRouterLink
+      to={to}
+      state={state}
+      onClick={onClick}
+      className={classes}
+    >
+      {children}
+    </ReactRouterLink>
+  );
+};
 
 export default Link;

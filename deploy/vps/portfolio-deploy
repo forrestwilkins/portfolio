@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Forced command for the deploy key. The branch arrives via
+# SSH_ORIGINAL_COMMAND, because the key is pinned to this script and cannot
+# run anything else.
+#
+# Install to /usr/local/bin/portfolio-deploy, owned by root, mode 0755. It
+# must not be writable by the deploy user, or the pin means nothing.
+
+REPO="${PORTFOLIO_REPO:-/home/deploy/portfolio}"
+COMPOSE="/usr/local/bin/portfolio-compose-up"
+
+# $1 when you run it by hand, SSH_ORIGINAL_COMMAND when the key triggers it
+branch="${1:-${SSH_ORIGINAL_COMMAND:-main}}"
+if [[ ! "$branch" =~ ^[A-Za-z0-9][A-Za-z0-9._/-]{0,99}$ ]]; then
+  echo "Refusing branch name: $branch" >&2
+  exit 1
+fi
+
+cd "$REPO"
+echo "==> fetching"
+git fetch --prune origin
+git checkout "$branch"
+
+# ff-only: a diverged checkout should fail loudly rather than be papered over.
+# Never reset --hard here; that would silently discard anything on the box.
+echo "==> updating $branch"
+git pull --ff-only origin "$branch"
+echo "    now at $(git rev-parse --short HEAD) $(git log -1 --pretty=%s)"
+
+echo "==> building and restarting"
+sudo "$COMPOSE"
+
+port="$(grep -E '^SERVER_PORT=' "$REPO/.env" | cut -d= -f2 | tr -d '"'"'"' \r')"
+echo "==> health check on :$port"
+for attempt in $(seq 1 30); do
+  if curl --fail --silent --max-time 3 "http://127.0.0.1:$port/api/health"; then
+    echo
+    echo "==> deployed"
+    exit 0
+  fi
+  sleep 2
+done
+
+echo >&2
+echo "Health check never passed. The container may be unhealthy; previous" >&2
+echo "images are still on the box, so 'git checkout <last good>' and rerun." >&2
+exit 1
