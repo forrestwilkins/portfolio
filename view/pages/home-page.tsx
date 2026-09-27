@@ -6,7 +6,7 @@ import useAppStore from '../store/app.store';
 const LINKS = [
   {
     label: 'Praxis - Chat Based CDM',
-    to: 'https://praxis-dev.ntc.dsausa.org/i/52ec59ef',
+    to: 'https://praxis-app.org/i/4ed2a9ec',
     external: true,
   },
   { label: 'Live Canvas', to: '/draw' },
