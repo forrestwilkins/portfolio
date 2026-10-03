@@ -53631,8 +53631,6 @@ var HealthService = class {
   getHealth() {
     return {
       status: "healthy",
-      // ISO, not a formatted string. Formatting here would bake in the
-      // server's timezone, which is UTC in the container.
       timestamp: (/* @__PURE__ */ new Date()).toISOString()
     };
   }
