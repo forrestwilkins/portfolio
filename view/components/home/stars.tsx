@@ -1,7 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useIsDarkMode } from '../../hooks/shared.hooks';
 
-/** A faint field of four-point stars that flash, drawn by the stars crate */
 const Stars = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const isDarkMode = useIsDarkMode();
@@ -26,9 +25,8 @@ const Stars = () => {
         return;
       }
 
-      // Seeded per mount, so the layout differs between page loads but is
-      // fixed for the life of this one
-      stars = new wasm.Stars(canvas, isDarkMode, Math.random());
+      const layoutSeed = Math.random();
+      stars = new wasm.Stars(canvas, isDarkMode, layoutSeed);
     };
     void mount();
 

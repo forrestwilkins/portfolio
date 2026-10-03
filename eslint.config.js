@@ -35,7 +35,6 @@ export default defineConfig([
       'tailwind-canonical-classes': tailwindCanonicalClasses,
     },
     rules: {
-      // Disable new v7.x react-hooks rules that require significant refactoring
       'react-hooks/immutability': 'off',
       'react-hooks/purity': 'off',
       'react-hooks/set-state-in-effect': 'off',

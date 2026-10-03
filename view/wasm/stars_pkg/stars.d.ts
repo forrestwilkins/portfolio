@@ -4,11 +4,6 @@
 export class Stars {
     free(): void;
     [Symbol.dispose](): void;
-    /**
-     * Colors are chosen per star from a stellar palette; `dark_mode` picks
-     * between the lit palette and dimmed variants of the same hues. `seed`
-     * lays the field out differently on each page load; pass a random value.
-     */
     constructor(canvas: HTMLCanvasElement, dark_mode: boolean, seed: number);
     stop(): void;
 }

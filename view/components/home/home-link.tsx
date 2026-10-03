@@ -6,7 +6,6 @@ interface Props {
   to: string;
 }
 
-/** A single row in the home page index */
 const HomeLink = ({ external, label, to }: Props) => (
   <Link
     to={to}
