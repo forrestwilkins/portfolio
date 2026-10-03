@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+cd "${PORTFOLIO_REPO:-/home/deploy/portfolio}"
+exec docker compose up -d --build

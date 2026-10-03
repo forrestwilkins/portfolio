@@ -2,7 +2,7 @@ class HealthService {
   getHealth() {
     return {
       status: 'healthy',
-      timestamp: new Date().toLocaleString(),
+      timestamp: new Date().toISOString(),
     };
   }
 }

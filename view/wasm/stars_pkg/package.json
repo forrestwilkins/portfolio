@@ -1,0 +1,15 @@
+{
+  "name": "stars",
+  "type": "module",
+  "version": "0.1.0",
+  "files": [
+    "stars_bg.wasm",
+    "stars.js",
+    "stars.d.ts"
+  ],
+  "main": "stars.js",
+  "types": "stars.d.ts",
+  "sideEffects": [
+    "./snippets/*"
+  ]
+}

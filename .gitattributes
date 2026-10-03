@@ -1,0 +1,4 @@
+# Generated build output: collapse in GitHub PRs and hide from local text diffs.
+# Use `git diff --text` to see the real diff when needed.
+deploy/artifacts/** linguist-generated -diff
+view/wasm/stars_pkg/** linguist-generated

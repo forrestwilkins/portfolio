@@ -11,7 +11,7 @@
       "outputCapture": "std",
       "runtimeExecutable": "npm",
       "skipFiles": ["<node_internals>/**"],
-      "runtimeVersion": "20.16.0",
+      "runtimeVersion": "24.20.0",
       "restart": true,
       "type": "node"
     },
@@ -22,7 +22,7 @@
       "outputCapture": "std",
       "runtimeExecutable": "npm",
       "skipFiles": ["<node_internals>/**"],
-      "runtimeVersion": "20.16.0",
+      "runtimeVersion": "24.20.0",
       "restart": true,
       "type": "node"
     }
