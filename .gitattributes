@@ -2,3 +2,4 @@
 # Use `git diff --text` to see the real diff when needed.
 deploy/artifacts/** linguist-generated -diff
 view/wasm/stars_pkg/** linguist-generated
+view/wasm/psychedelic_pkg/** linguist-generated

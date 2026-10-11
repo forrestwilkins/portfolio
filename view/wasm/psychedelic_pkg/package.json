@@ -1,0 +1,15 @@
+{
+  "name": "psychedelic",
+  "type": "module",
+  "version": "0.1.0",
+  "files": [
+    "psychedelic_bg.wasm",
+    "psychedelic.js",
+    "psychedelic.d.ts"
+  ],
+  "main": "psychedelic.js",
+  "types": "psychedelic.d.ts",
+  "sideEffects": [
+    "./snippets/*"
+  ]
+}
