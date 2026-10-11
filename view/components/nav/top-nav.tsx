@@ -1,10 +1,12 @@
 // TODO: Add refresh button for certain pages
 
 import {
+  AutoAwesome,
   Clear,
   DarkMode,
   Fullscreen,
   HomeRounded,
+  InvertColors,
   LightModeOutlined,
   MenuRounded,
   Pause,
@@ -34,6 +36,8 @@ const TopNav = () => {
 
   const isCanvasPaused = useAppStore((state) => state.isCanvasPaused);
   const setIsCanvasPaused = useAppStore((state) => state.setIsCanvasPaused);
+  const homeBackground = useAppStore((state) => state.homeBackground);
+  const setHomeBackground = useAppStore((state) => state.setHomeBackground);
 
   const { setMode } = useColorScheme();
   const isDarkMode = useIsDarkMode();
@@ -49,6 +53,9 @@ const TopNav = () => {
   const modeToggleText = isDarkMode ? 'Light mode' : 'Dark mode';
   const PauseIcon = isCanvasPaused ? PlayArrow : Pause;
 
+  const isPsychedelic = homeBackground === 'psychedelic';
+  const BackgroundIcon = isPsychedelic ? AutoAwesome : InvertColors;
+
   const handleModeToggleClick =
     (mode: 'light' | 'dark' | 'system' = isDarkMode ? 'light' : 'dark') =>
     async () => {
@@ -59,6 +66,11 @@ const TopNav = () => {
 
   const handlePauseBtnClick = () => {
     setIsCanvasPaused(!isCanvasPaused);
+    setAnchorEl(null);
+  };
+
+  const handleBackgroundToggleClick = () => {
+    setHomeBackground(isPsychedelic ? 'stars' : 'psychedelic');
     setAnchorEl(null);
   };
 
@@ -152,6 +164,13 @@ const TopNav = () => {
             <MenuItem onClick={handlePauseBtnClick}>
               <PauseIcon fontSize="small" sx={{ marginRight: '1.25ch' }} />
               {isCanvasPaused ? 'Play' : 'Pause'} canvas
+            </MenuItem>
+          )}
+
+          {isHome && (
+            <MenuItem onClick={handleBackgroundToggleClick}>
+              <BackgroundIcon fontSize="small" sx={{ marginRight: '1.25ch' }} />
+              {isPsychedelic ? 'Starry' : 'Psychedelic'} background
             </MenuItem>
           )}
 

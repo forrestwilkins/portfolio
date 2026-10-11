@@ -42,19 +42,24 @@ Open the client at `http://localhost:$CLIENT_PORT` to view and interact with
 the UI. The client proxies `/api` and the WebSocket to the server on
 `$SERVER_PORT`, so both need to be running.
 
-## Starfield background
+## Home page backgrounds
 
-The faint stars and nebula behind the home page are drawn by two small Rust crates,
-`crates/stars` and `crates/nebula`, compiled to WebAssembly. The generated package in
-`view/wasm/stars_pkg` is committed, so neither the Vite build nor the
+The home page has two animated backgrounds, switchable from the top-right menu.
+Each is a small Rust crate compiled to WebAssembly into its own package:
+
+- Starfield (default): `crates/stars`, which pulls in `crates/nebula`, built to
+  `view/wasm/stars_pkg`
+- Psychedelic: `crates/psychedelic`, built to `view/wasm/psychedelic_pkg`
+
+The generated packages are committed, so neither the Vite build nor the
 deployment image needs a Rust toolchain.
 
-After changing anything under `crates/stars`, regenerate it. This
+After changing anything under `crates`, regenerate them. This
 needs [Rust](https://rustup.rs), the `wasm32-unknown-unknown` target, and
 [wasm-pack](https://drager.github.io/wasm-pack/installer/):
 
 ```bash
-# Rebuild view/wasm/stars_pkg
+# Rebuild both packages under view/wasm
 $ npm run wasm:build
 ```
 

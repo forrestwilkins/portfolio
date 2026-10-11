@@ -8,7 +8,8 @@ set -euo pipefail
 #   scripts/check-artifacts.sh check [target...]   # fails if stale
 #   scripts/check-artifacts.sh write [target...]   # records the fingerprint
 #
-# Targets: wasm, server, client. Default is all three.
+# Targets: stars, psychedelic, server, client. `wasm` expands to both WASM
+# packages. Default is all of them.
 
 repo_root="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$repo_root"
@@ -31,16 +32,31 @@ common=(package.json package-lock.json .npmrc tsconfig.json .dockerignore)
 mode="${1:-check}"
 case "$mode" in
   check|write) [[ $# -gt 0 ]] && shift ;;
-  *) echo "Usage: check-artifacts.sh [check|write] [wasm|server|client ...]" >&2; exit 1 ;;
+  *) echo "Usage: check-artifacts.sh [check|write] [wasm|stars|psychedelic|server|client ...]" >&2; exit 1 ;;
 esac
 targets=("$@")
 [[ ${#targets[@]} -eq 0 ]] && targets=(wasm server client)
 
+expanded=()
+for target in "${targets[@]}"; do
+  if [[ "$target" == wasm ]]; then
+    expanded+=(stars psychedelic)
+  else
+    expanded+=("$target")
+  fi
+done
+targets=("${expanded[@]}")
+
 for target in "${targets[@]}"; do
   case "$target" in
-    wasm)
+    stars)
       dir="view/wasm/stars_pkg"
-      sum="$(fingerprint crates)"
+      sum="$(fingerprint crates/stars crates/nebula)"
+      rebuild="npm run wasm:build"
+      ;;
+    psychedelic)
+      dir="view/wasm/psychedelic_pkg"
+      sum="$(fingerprint crates/psychedelic)"
       rebuild="npm run wasm:build"
       ;;
     server)
